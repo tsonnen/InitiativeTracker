@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:hello_world/character_model.dart';
 
-class NewCharacterFormPage extends StatefulWidget{
-  @override
-  _NewCharacterFormPageState createState() => _NewCharacterFormPageState();
-
-}
-
-class _NewCharacterFormPageState extends State<NewCharacterFormPage>{
+class NewCharacterFormPage extends StatelessWidget{
+  final List<Character> charcters;
   final _formKey = GlobalKey<FormState>();
+
+  // In the constructor, require a Todo
+  NewCharacterFormPage({Key key, @required this.charcters}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +33,7 @@ class _NewCharacterFormPageState extends State<NewCharacterFormPage>{
             ),
             child: RaisedButton(
               onPressed: (){
+                charcters.add(new Character("John Doe", 12, "Notes"));
                 if(_formKey.currentState.validate()){
                   Scaffold.of(context)
                     .showSnackBar(SnackBar(content:Text('Processing Data')));

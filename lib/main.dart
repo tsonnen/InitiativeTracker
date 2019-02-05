@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hello_world/dialogs.dart';
 import 'package:hello_world/character_model.dart';
-
+import 'package:hello_world/character_form.dart';
 
 void main() => runApp(MyApp());
 
@@ -36,43 +36,17 @@ class MyApp extends StatelessWidget {
 
   // TODO: Implement showing the character
   Widget showCharacters(){
+    var now = new DateTime.now();
+    print(_characters.length.toString());
     return Scaffold(
-      body: Text("Super Dope"),
+      body: Text(now.toString()),
     );
   }
 
   //TODO: Implement adding a charcter
   Widget addCharacter(){
     return Scaffold(
-      body: Text("Super Dope"),
-    );
-  }
-}
-
-class ShowActorsWidget extends StatefulWidget{
-  @override
-  ShowActorsApp createState () => new ShowActorsApp();
-}
-
-class ShowActorsApp extends State<ShowActorsWidget>{
-  int counter = 0;
-  bool cboxValue = false;
-  
-  @override
-  Widget build(BuildContext ctxt) {
-    return new Column(
-      children: <Widget>[
-          new Text("count = $counter"),
-          new Checkbox(
-              value: cboxValue,
-              onChanged: (bool newValue) {
-                setState((){
-                  cboxValue = newValue;
-                  counter++;
-                });
-              }
-          )
-      ],
+      body: NewCharacterFormPage(charcters: _characters,),
     );
   }
 }
