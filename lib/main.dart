@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hello_world/dialogs.dart';
-import 'package:hello_world/character_model.dart';
-import 'package:hello_world/character_form.dart';
+import 'package:initiative_tracker/dialogs.dart';
+import 'package:initiative_tracker/character_model.dart';
+import 'package:flutter/foundation.dart';
 
 void main() => runApp(MyApp());
 
@@ -46,7 +46,7 @@ class MyApp extends StatelessWidget {
   //TODO: Implement adding a charcter
   Widget addCharacter(){
     return Scaffold(
-      body: NewCharacterFormPage(charcters: _characters,),
+      body: Text("Hehehe"),
     );
   }
 }

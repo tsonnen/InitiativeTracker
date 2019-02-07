@@ -1,11 +1,27 @@
-class Character{
-  String name;
-  int initiative;
-  List<String> notes;
+import 'package:initiative_tracker/uuid.dart';
+import 'package:initiative_tracker/randomGenerator.dart';
+import 'package:scoped_model/scoped_model.dart';
 
-  Character(String name, int initiative, String notes){
-    this.name = name;
-    this.initiative = initiative;
-    this.notes = notes.split(",");
-  }
+class Character{
+  final String id;
+  final String name;
+  final int initiative;
+  final String notes;
+
+  Character(this.name, {this.notes = '', String id, int initiative})
+      : this.id = id ?? Uuid().generateV4(), this.initiative = initiative ?? rollDice(1, 20);
 }
+
+class CharacterListModel extends Model{
+  List<Character> get characters => _characters.toList();
+
+  
+  List<Character> _characters = [];
+
+  bool _isLoading = false;
+
+  bool get isLoading => _isLoading;
+
+}
+
+
