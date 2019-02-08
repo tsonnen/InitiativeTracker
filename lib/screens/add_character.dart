@@ -10,7 +10,8 @@ class AddCharacterPage extends StatefulWidget {
 }
 
 class AddCharacterPageState extends State<AddCharacterPage> {
-  TextEditingController controller = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController hpController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -19,22 +20,36 @@ class AddCharacterPageState extends State<AddCharacterPage> {
         title: Text('Add Character'),
       ),
       body: Center(
-          child: Column(
-        children: <Widget>[
-          Container(
-            child: TextField(
-              controller: controller,
+        child: Column(
+          children: <Widget>[
+            Container(
+              child: TextField(
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  hintText: "Name",
+                ),
+                controller: nameController,
+              ),
             ),
-          ),
+            Container(
+              child: TextField(
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  hintText: "HP",
+                ),
+                keyboardType: TextInputType.number,
+                controller: hpController,
+              ),
+            ),
           ScopedModelDescendant<CharacterListModel>(
             builder: (context, child, model) => RaisedButton(
-                  child: Text('Add Character'),
-                  onPressed: () {
-                    Character character = Character(controller.text);
-                    model.addCharacter(character);
-                    setState(() => controller.text = '');
-                  },
-                ),
+              child: Text('Add Character'),
+              onPressed: () {
+                Character character = Character(nameController.text);
+                model.addCharacter(character);
+                setState(() => nameController.text = '');
+              },
+            ),
           ),
         ],
       )),

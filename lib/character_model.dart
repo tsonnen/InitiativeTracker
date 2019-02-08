@@ -3,13 +3,20 @@ import 'package:initiative_tracker/randomGenerator.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class Character{
-  final String id;
-  final String name;
-  final int initiative;
-  final String notes;
+  String _id;
+  String _name;
+  int _initiative;
+  int _hp;
+  String _notes;
 
-  Character(this.name, {this.notes = '', String id, int initiative})
-      : this.id = id ?? Uuid().generateV4(), this.initiative = initiative ?? rollDice(1, 20);
+  String get id => _id;
+  String get name => _name;
+  int get initiative => _initiative;
+  String get notes => _notes;
+  int get hp => _hp;
+  
+  Character(this._name, {String id, int initiative})
+      : this._id = id ?? Uuid().generateV4(), this._initiative = initiative ?? rollDice(1, 20);
 }
 
 class CharacterListModel extends Model{
@@ -19,6 +26,7 @@ class CharacterListModel extends Model{
 
   void addCharacter(Character character){
     _characters.add(character);
+    _characters..sort((a, b) => a.initiative.compareTo(b.initiative));
 
     notifyListeners();
   }
