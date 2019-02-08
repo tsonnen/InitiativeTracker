@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:initiative_tracker/character_model.dart';
-import 'package:initiative_tracker/widgets/character_item.dart';
+import 'package:scoped_model/scoped_model.dart';
+import 'package:initiative_tracker/screens/add_character.dart';
 
 class HomeScreen extends StatefulWidget {
-  
-  HomeScreen() : super(key: Key("Home Screen"));
+  static final String route = "Home-Screen";
 
   State<StatefulWidget> createState(){
     return HomeScreenState();
@@ -13,13 +12,34 @@ class HomeScreen extends StatefulWidget {
 }
 
 class HomeScreenState extends State<HomeScreen>{
+
   @override
   Widget build(BuildContext context){
     return Scaffold(
       appBar: AppBar(
         title: Text("Characters"),
       ),
-      body: CharacterList();
+      body: Container(
+        child: ScopedModelDescendant<CharacterListModel>(
+          builder: (context, child, model) => Column(
+            children: model.characters
+              .map((item) => ListTile(
+                title: Text(item.name),
+                onLongPress: () {
+                  model.removeCharacter(item);
+                },
+              ))
+                .toList()),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed:  () {
+                Navigator
+                    .of(context)
+                    .push(MaterialPageRoute(builder: (context) => AddCharacterPage()));
+              },
+        child: Icon(Icons.add),
+      ),
     );
   }
 }

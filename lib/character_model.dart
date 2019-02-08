@@ -14,13 +14,19 @@ class Character{
 
 class CharacterListModel extends Model{
   List<Character> get characters => _characters.toList();
-
   
   List<Character> _characters = [];
 
-  bool _isLoading = false;
+  void addCharacter(Character character){
+    _characters.add(character);
 
-  bool get isLoading => _isLoading;
+    notifyListeners();
+  }
+
+  void removeCharacter(Character character){
+    _characters.remove(character);
+    notifyListeners();
+  }
 
 }
 
