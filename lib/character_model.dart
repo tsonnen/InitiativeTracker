@@ -15,7 +15,7 @@ class Character{
   String get notes => _notes;
   int get hp => _hp;
   
-  Character(this._name, {String id, int initiative})
+  Character(this._name, this._hp, {String id, int initiative})
       : this._id = id ?? Uuid().generateV4(), this._initiative = initiative ?? rollDice(1, 20);
 }
 
@@ -26,7 +26,7 @@ class CharacterListModel extends Model{
 
   void addCharacter(Character character){
     _characters.add(character);
-    _characters..sort((a, b) => a.initiative.compareTo(b.initiative));
+    _characters.sort((a, b) => b.initiative.compareTo(a.initiative));
 
     notifyListeners();
   }

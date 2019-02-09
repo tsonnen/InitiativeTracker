@@ -24,7 +24,7 @@ class HomeScreenState extends State<HomeScreen>{
           builder: (context, child, model) => Column(
             children: model.characters
               .map((item) => ListTile(
-                title: Text(item.name),
+                title: Text(item.name + " " + item.initiative.toString()),
                 onLongPress: () {
                   model.removeCharacter(item);
                 },
