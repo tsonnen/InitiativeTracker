@@ -21,7 +21,7 @@ class HomeScreenState extends State<HomeScreen>{
       ),
       body: Container(
         child: ScopedModelDescendant<CharacterListModel>(
-          builder: (context, child, model) => Column(
+          builder: (context, child, model) => ListView(
             children: model.characters
               .map((item) => ListTile(
                 title: Text(item.name + " " + item.initiative.toString()),
