@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:initiative_tracker/character_model.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:initiative_tracker/screens/add_character.dart';
+import 'package:initiative_tracker/screens/edit_character.dart';
 
 class HomeScreen extends StatefulWidget {
   static final String route = "Home-Screen";
@@ -24,7 +25,12 @@ class HomeScreenState extends State<HomeScreen>{
           builder: (context, child, model) => ListView(
             children: model.characters
               .map((item) => ListTile(
-                title: Text(item.name + " " + item.initiative.toString()),
+                title: Text(item.name),
+                onTap: (){
+                  Navigator
+                    .of(context)
+                    .push(MaterialPageRoute(builder: (context) => EditCharacterScreen(item: item)));
+                },
                 onLongPress: () {
                   model.removeCharacter(item);
                 },
