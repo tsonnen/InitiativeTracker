@@ -36,6 +36,11 @@ class CharacterListModel extends Model{
     notifyListeners();
   }
 
+  void editCharacter(Character character, Character editCharacter){
+    _characters[_characters.indexOf(character)] = editCharacter;
+    notifyListeners();
+  }
+
 }
 
 

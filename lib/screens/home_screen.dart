@@ -29,7 +29,7 @@ class HomeScreenState extends State<HomeScreen>{
                 onTap: (){
                   Navigator
                     .of(context)
-                    .push(MaterialPageRoute(builder: (context) => EditCharacterScreen(item: item)));
+                    .push(MaterialPageRoute(builder: (context) => EditCharacterPage(item: item)));
                 },
                 onLongPress: () {
                   model.removeCharacter(item);

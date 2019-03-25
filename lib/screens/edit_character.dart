@@ -2,21 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:initiative_tracker/character_model.dart';
 import 'package:initiative_tracker/validators.dart';
+import 'package:initiative_tracker/screens/home_screen.dart';
 
-class EditCharacterScreen extends StatelessWidget {
-  // Declare a field that holds the Todo
+class EditCharacterPage extends StatefulWidget {
+  static final String route = "Edit-Page";
+
   final Character item;
+
+  const EditCharacterPage({Key key, this.item}): super(key: key);
+
+  @override
+  EditCharacterPageState createState() => EditCharacterPageState();
+}
+
+class EditCharacterPageState extends State<EditCharacterPage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController hpController = TextEditingController();
-
-  EditCharacterScreen({Key key, @required this.item}) : super(key: key);
 
   final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    nameController.text = item.name;
-    hpController.text = item.hp.toString();
+    nameController.text = widget.item.name;
+    hpController.text = widget.item.hp.toString();
     return Scaffold(
       appBar: AppBar(
         title: Text('Edit Character'),
@@ -61,7 +69,11 @@ class EditCharacterScreen extends StatelessWidget {
                 onPressed: () {
                   if(_formKey.currentState.validate()){
                     Character character = Character(nameController.text, int.parse(hpController.text));
-                    model.addCharacter(character);
+                    model.editCharacter(widget.item, character);
+
+                    Navigator
+                    .of(context)
+                    .push(MaterialPageRoute(builder: (context) => HomeScreen()));
                   }
                 },
               ),
