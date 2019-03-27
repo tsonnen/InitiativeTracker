@@ -16,6 +16,29 @@ class AddCharacterPageState extends State<AddCharacterPage> {
 
   final _formKey = GlobalKey<FormState>();
 
+  List<DropdownMenuItem<int>> _dropDownMenuItems;
+  int _currentMod;
+
+  @override
+  void initState() {
+    _dropDownMenuItems = getDropDownMenuItems();
+    _currentMod = _dropDownMenuItems[(_dropDownMenuItems.length~/2)].value;
+    super.initState();
+  }
+  // here we are creating the list needed for the DropDownButton
+  List<DropdownMenuItem<int>> getDropDownMenuItems() {
+    List<DropdownMenuItem<int>> items = new List();
+    for (int i = -5; i <= 5; i++) {
+      // here we are creating the drop down menu items, you can customize the item right here
+      // but I'll just use a simple text for this
+      items.add(new DropdownMenuItem(
+          value: i,
+          child: new Text(i.toString())
+      ));
+    }
+    return items;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,7 +47,6 @@ class AddCharacterPageState extends State<AddCharacterPage> {
       ),
       body: Form(
         key: _formKey,
-        child: Center(
           child: Column(
             children: <Widget>[
               Container(
@@ -56,24 +78,36 @@ class AddCharacterPageState extends State<AddCharacterPage> {
                   },
                 ),
               ),
-            ScopedModelDescendant<CharacterListModel>(
-              builder: (context, child, model) => RaisedButton(
-                child: Text('Add Character'),
-                onPressed: () {
-                  if(_formKey.currentState.validate()){
-                    Character character = Character(nameController.text, int.parse(hpController.text));
-                    model.addCharacter(character);
+              // Container(
+              //   child: DropdownButton(
+              //     value: _currentMod,
+              //     items: _dropDownMenuItems,
+              //     onChanged: changedDropDownItem,
+              //   )
+              // ),
+              ScopedModelDescendant<CharacterListModel>(
+                builder: (context, child, model) => RaisedButton(
+                  child: Text('Add Character'),
+                  onPressed: () {
+                    if(_formKey.currentState.validate()){
+                      Character character = Character(nameController.text, int.parse(hpController.text));
+                      model.addCharacter(character);
 
-                    Scaffold
-                      .of(context)
-                      .showSnackBar(SnackBar(content: Text('Added Character')));
-                  }
-                },
+                      Scaffold
+                        .of(context)
+                        .showSnackBar(SnackBar(content: Text('Added Character')));
+                    }
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
         )
-      )),
+      ),
     );
+  }
+  void changedDropDownItem(int selectedMod) {
+    setState(() {
+      _currentMod = selectedMod;
+    });
   }
 }
