@@ -15,8 +15,10 @@ class Character{
   String get notes => _notes;
   int get hp => _hp;
   
-  Character(this._name, this._hp, int initiative)
-      : this._id = Uuid().generateV4(), this._initiative = initiative ?? rollDice(1, 20);
+  Character([String name, int hp, int initiative])
+      : this._name = name ?? "TEST", this._hp = hp ?? 123, this._id = Uuid().generateV4(), this._initiative = initiative ?? rollDice(1, 20);
+
+  bool operator==(o)=> this.name==o.name && this.hp ==o.hp && this.initiative==o.initiative;
 }
 
 class CharacterListModel extends Model{
@@ -37,8 +39,10 @@ class CharacterListModel extends Model{
   }
 
   void editCharacter(Character character, Character editCharacter){
-    _characters[_characters.indexOf(character)] = editCharacter;
-    notifyListeners();
+    if(character!=editCharacter){
+      _characters[_characters.indexOf(character)] = editCharacter;
+      notifyListeners();
+    }
   }
 
 }
