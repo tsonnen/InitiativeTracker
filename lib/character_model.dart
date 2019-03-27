@@ -15,8 +15,8 @@ class Character{
   String get notes => _notes;
   int get hp => _hp;
   
-  Character(this._name, this._hp, {String id, int initiative})
-      : this._id = id ?? Uuid().generateV4(), this._initiative = initiative ?? rollDice(1, 20);
+  Character(this._name, this._hp, int initiative)
+      : this._id = Uuid().generateV4(), this._initiative = initiative ?? rollDice(1, 20);
 }
 
 class CharacterListModel extends Model{

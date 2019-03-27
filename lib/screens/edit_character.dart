@@ -18,6 +18,8 @@ class EditCharacterPage extends StatefulWidget {
 class EditCharacterPageState extends State<EditCharacterPage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController hpController = TextEditingController();
+  final TextEditingController initController = TextEditingController();
+
 
   final _formKey = GlobalKey<FormState>();
 
@@ -25,29 +27,34 @@ class EditCharacterPageState extends State<EditCharacterPage> {
   Widget build(BuildContext context) {
     nameController.text = widget.item.name;
     hpController.text = widget.item.hp.toString();
+    initController.text =widget.item.initiative.toString();
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit Character'),
+        title: Text('Add Character'),
       ),
       body: Form(
         key: _formKey,
-        child: Center(
           child: Column(
             children: <Widget>[
-              Container(
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: "Name",
+              Row(
+                children: <Widget>[
+                  Flexible(
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "Name",
+                      ),
+                      controller: nameController,
+                      validator: (value){
+                        if(value.isEmpty){
+                          return 'Please enter a name';
+                        }
+                      },
+                    ),
                   ),
-                  controller: nameController,
-                  validator: (value){
-                    if(value.isEmpty){
-                      return 'Please enter a name';
-                    }
-                  },
-                ),
-              ),
+                ],
+              ), 
               Container(
                 child: TextFormField(
                   decoration: InputDecoration(
@@ -63,24 +70,45 @@ class EditCharacterPageState extends State<EditCharacterPage> {
                   },
                 ),
               ),
-            ScopedModelDescendant<CharacterListModel>(
+
+              Row(
+                children: <Widget>[
+                  Flexible(
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "Initiative",
+                      ),
+                      keyboardType: TextInputType.number,
+                      controller: initController,
+                      validator: (value){
+                        if(value.isEmpty || !isNumeric(value)){
+                          return "Please enter an integer number";
+                        }
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              ScopedModelDescendant<CharacterListModel>(
               builder: (context, child, model) => RaisedButton(
                 child: Text('Edit Character'),
                 onPressed: () {
                   if(_formKey.currentState.validate()){
-                    Character character = Character(nameController.text, int.parse(hpController.text));
+                    Character character = Character(nameController.text, int.parse(hpController.text), 
+                                                    initController.text != "" ? int.parse(initController.text) : null);
                     model.editCharacter(widget.item, character);
 
                     Navigator
                     .of(context)
                     .push(MaterialPageRoute(builder: (context) => HomeScreen()));
                   }
-                },
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
         )
-      )),
+      ),
     );
   }
 }

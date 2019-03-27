@@ -13,30 +13,14 @@ class AddCharacterPage extends StatefulWidget {
 class AddCharacterPageState extends State<AddCharacterPage> {
   TextEditingController nameController = TextEditingController();
   TextEditingController hpController = TextEditingController();
+  TextEditingController initController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
 
-  List<DropdownMenuItem<int>> _dropDownMenuItems;
-  int _currentMod;
-
   @override
   void initState() {
-    _dropDownMenuItems = getDropDownMenuItems();
-    _currentMod = _dropDownMenuItems[(_dropDownMenuItems.length~/2)].value;
     super.initState();
-  }
-  // here we are creating the list needed for the DropDownButton
-  List<DropdownMenuItem<int>> getDropDownMenuItems() {
-    List<DropdownMenuItem<int>> items = new List();
-    for (int i = -5; i <= 5; i++) {
-      // here we are creating the drop down menu items, you can customize the item right here
-      // but I'll just use a simple text for this
-      items.add(new DropdownMenuItem(
-          value: i,
-          child: new Text(i.toString())
-      ));
-    }
-    return items;
+
   }
 
   @override
@@ -49,20 +33,24 @@ class AddCharacterPageState extends State<AddCharacterPage> {
         key: _formKey,
           child: Column(
             children: <Widget>[
-              Container(
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: "Name",
+              Row(
+                children: <Widget>[
+                  Flexible(
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "Name",
+                      ),
+                      controller: nameController,
+                      validator: (value){
+                        if(value.isEmpty){
+                          return 'Please enter a name';
+                        }
+                      },
+                    ),
                   ),
-                  controller: nameController,
-                  validator: (value){
-                    if(value.isEmpty){
-                      return 'Please enter a name';
-                    }
-                  },
-                ),
-              ),
+                ],
+              ), 
               Container(
                 child: TextFormField(
                   decoration: InputDecoration(
@@ -78,19 +66,33 @@ class AddCharacterPageState extends State<AddCharacterPage> {
                   },
                 ),
               ),
-              // Container(
-              //   child: DropdownButton(
-              //     value: _currentMod,
-              //     items: _dropDownMenuItems,
-              //     onChanged: changedDropDownItem,
-              //   )
-              // ),
+
+              Row(
+                children: <Widget>[
+                  Flexible(
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "Initiative",
+                      ),
+                      keyboardType: TextInputType.number,
+                      controller: initController,
+                      validator: (value){
+                        if(value.isNotEmpty && !isNumeric(value)){
+                          return "Please enter an integer number";
+                        }
+                      },
+                    ),
+                  ),
+                ],
+              ),
               ScopedModelDescendant<CharacterListModel>(
                 builder: (context, child, model) => RaisedButton(
                   child: Text('Add Character'),
                   onPressed: () {
                     if(_formKey.currentState.validate()){
-                      Character character = Character(nameController.text, int.parse(hpController.text));
+                      Character character = Character(nameController.text, int.parse(hpController.text), 
+                                                      initController.text != "" ? int.parse(initController.text) : null);
                       model.addCharacter(character);
 
                       Scaffold
@@ -104,10 +106,5 @@ class AddCharacterPageState extends State<AddCharacterPage> {
         )
       ),
     );
-  }
-  void changedDropDownItem(int selectedMod) {
-    setState(() {
-      _currentMod = selectedMod;
-    });
   }
 }
