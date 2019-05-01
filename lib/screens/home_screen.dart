@@ -13,12 +13,14 @@ class HomeScreen extends StatefulWidget {
 }
 
 class HomeScreenState extends State<HomeScreen>{
+  var titleText = "Round 1";
 
   @override
   Widget build(BuildContext context){
+    
     return Scaffold(
       appBar: AppBar(
-        title: Text("Characters"),
+        title: Text(titleText),
       ),
       body: Container(
         child: ScopedModelDescendant<CharacterListModel>(
@@ -38,14 +40,55 @@ class HomeScreenState extends State<HomeScreen>{
                 .toList()),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed:  () {
-                Navigator
-                    .of(context)
-                    .push(MaterialPageRoute(builder: (context) => AddCharacterPage()));
-              },
-        child: Icon(Icons.add),
-      ),
+      floatingActionButton: new Container(
+          height: 140.0,
+          child: new Stack(
+            children: <Widget>[
+              Align(
+                alignment: Alignment.bottomRight,
+                child: new Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: <Widget>[
+                    Container(
+                      height: 60.0,
+                      child: new FloatingActionButton(
+                        heroTag: "addCharacter",
+                         onPressed: () {
+                            Navigator
+                                .of(context)
+                                .push(MaterialPageRoute(builder: (context) => AddCharacterPage()));
+                        },
+                        tooltip: 'Add Character',
+                        child: new Icon(Icons.add),
+                      ),
+                    ),
+                    new Container(
+                      height: 20.0,
+                    ), // a space
+                    ScopedModelDescendant<CharacterListModel>(
+                      builder: (context, child, model) => Container(
+                        height: 60.0,
+                        child: new FloatingActionButton(
+                          heroTag: "nextRound",
+                          onPressed: (){
+                            model.nextRound();
+                            this.setState(() {
+                              var round = model.round;
+                              titleText = "Round " + round.toString();
+                            });
+                          },
+                          backgroundColor: Colors.blue,
+                          tooltip: 'Next Round',
+                          child: new Icon(Icons.navigate_next),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ) // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
