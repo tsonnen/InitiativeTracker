@@ -19,6 +19,7 @@ class Character{
       : this._name = name ?? "TEST", this._hp = hp ?? 123, this._id = Uuid().generateV4(), this._initiative = initiative ?? rollDice(1, 20);
 
   bool operator==(o)=> this.name==o.name && this.hp ==o.hp && this.initiative==o.initiative;
+  int get hashCode => name.hashCode^initiative.hashCode;
 }
 
 class CharacterListModel extends Model{
