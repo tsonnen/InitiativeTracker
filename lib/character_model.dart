@@ -24,8 +24,14 @@ class Character{
 
 class CharacterListModel extends Model{
   List<Character> get characters => _characters.toList();
-  
+
   List<Character> _characters = [];
+  int round = 1;
+
+  void nextRound(){
+    round++;
+    notifyListeners();
+  }
 
   void addCharacter(Character character){
     _characters.add(character);
