@@ -77,7 +77,10 @@ class CharacterListModel extends Model{
     notifyListeners();
   }
 
-
+  void prevRound() {
+    round == 1 ? round = 1 : round--;
+    notifyListeners();
+  }
 }
 
 

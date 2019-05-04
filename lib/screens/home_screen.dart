@@ -43,6 +43,7 @@ class HomeScreenState extends State<HomeScreen>{
                         child: Text(
                           item.hp.toString(),
                           textAlign: TextAlign.center,
+                          style: TextStyle(color: item.hp < 0 ? Colors.red : Colors.white),
                         )
                       ),
                       new Expanded(
@@ -68,7 +69,7 @@ class HomeScreenState extends State<HomeScreen>{
         ),
       ),
       floatingActionButton: new Container(
-          height: 140.0,
+          height: 220.0,
           child: new Stack(
             children: <Widget>[
               Align(
@@ -107,6 +108,27 @@ class HomeScreenState extends State<HomeScreen>{
                           backgroundColor: Colors.blue,
                           tooltip: 'Next Round',
                           child: new Icon(Icons.navigate_next),
+                        ),
+                      ),
+                    ),
+                    new Container(
+                      height: 20.0,
+                    ),
+                    ScopedModelDescendant<CharacterListModel>(
+                      builder: (context, child, model) => Container(
+                        height: 60.0,
+                        child: new FloatingActionButton(
+                          heroTag: "prevRound",
+                          onPressed: (){
+                            model.prevRound();
+                            this.setState(() {
+                              var round = model.round;
+                              titleText = "Round " + round.toString();
+                            });
+                          },
+                          backgroundColor: Colors.blue,
+                          tooltip: 'Previous Round',
+                          child: new Icon(Icons.navigate_before),
                         ),
                       ),
                     ),
