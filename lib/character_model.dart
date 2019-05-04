@@ -20,7 +20,7 @@ class Character{
   Character([String name, int hp, int initiative])
       : this._name = name ?? "TEST", this._hp = hp ?? 123, this._id = Uuid().generateV4(), this._initiative = initiative ?? rollDice(1, 20), this._active = false;
 
-  bool operator==(o)=> this.name==o.name && this.hp ==o.hp && this.initiative==o.initiative;
+  bool operator==(o)=> this.id == o.id;
   int get hashCode => name.hashCode^initiative.hashCode;
 
   bool isActive(){
