@@ -32,17 +32,19 @@ class HomeScreenState extends State<HomeScreen>{
                   width: 75.0,
                   child: new Row(
                     mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       new Expanded(
                         child: new IconButton(
                           icon: new Icon(Icons.remove),
+                          alignment: Alignment.center,
                           onPressed: () { model.reduceHP(item);},
                         ),
                       ),
                       new Expanded(
                         child: Text(
                           item.hp.toString(),
-                          textAlign: TextAlign.center,
+                          textAlign: TextAlign.right,
                           style: TextStyle(color: item.hp < 0 ? Colors.red : Colors.white),
                         )
                       ),
