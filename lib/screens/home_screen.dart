@@ -27,7 +27,36 @@ class HomeScreenState extends State<HomeScreen>{
           builder: (context, child, model) => ListView(
             children: model.characters
               .map((item) => ListTile(
-                title: Text(item.name),
+                title: new Text(item.name),
+                trailing:new Container(
+                  width: 75.0,
+                  child: new Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      new Expanded(
+                        child: new IconButton(
+                          icon: new Icon(Icons.remove),
+                          alignment: Alignment.center,
+                          onPressed: () { model.reduceHP(item);},
+                        ),
+                      ),
+                      new Expanded(
+                        child: Text(
+                          item.hp.toString(),
+                          textAlign: TextAlign.right,
+                          style: TextStyle(color: item.hp < 0 ? Colors.red : Colors.white),
+                        )
+                      ),
+                      new Expanded(
+                        child: new IconButton(
+                          icon: new Icon(Icons.add),
+                          onPressed: () { model.increaseHP(item);},
+                        ),
+                      )
+                    ],
+                  ),
+                ), 
                 onTap: (){
                   Navigator
                     .of(context)
@@ -36,12 +65,13 @@ class HomeScreenState extends State<HomeScreen>{
                 onLongPress: () {
                   model.removeCharacter(item);
                 },
-              ))
+              )
+              )
                 .toList()),
         ),
       ),
       floatingActionButton: new Container(
-          height: 140.0,
+          height: 220.0,
           child: new Stack(
             children: <Widget>[
               Align(
@@ -80,6 +110,27 @@ class HomeScreenState extends State<HomeScreen>{
                           backgroundColor: Colors.blue,
                           tooltip: 'Next Round',
                           child: new Icon(Icons.navigate_next),
+                        ),
+                      ),
+                    ),
+                    new Container(
+                      height: 20.0,
+                    ),
+                    ScopedModelDescendant<CharacterListModel>(
+                      builder: (context, child, model) => Container(
+                        height: 60.0,
+                        child: new FloatingActionButton(
+                          heroTag: "prevRound",
+                          onPressed: (){
+                            model.prevRound();
+                            this.setState(() {
+                              var round = model.round;
+                              titleText = "Round " + round.toString();
+                            });
+                          },
+                          backgroundColor: Colors.blue,
+                          tooltip: 'Previous Round',
+                          child: new Icon(Icons.navigate_before),
                         ),
                       ),
                     ),

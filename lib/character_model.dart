@@ -8,18 +8,28 @@ class Character{
   int _initiative;
   int _hp;
   String _notes;
+  bool _active;
 
   String get id => _id;
   String get name => _name;
   int get initiative => _initiative;
   String get notes => _notes;
   int get hp => _hp;
+  bool get active => _active;
   
   Character([String name, int hp, int initiative])
-      : this._name = name ?? "TEST", this._hp = hp ?? 123, this._id = Uuid().generateV4(), this._initiative = initiative ?? rollDice(1, 20);
+      : this._name = name ?? "TEST", this._hp = hp ?? 123, this._id = Uuid().generateV4(), this._initiative = initiative ?? rollDice(1, 20), this._active = false;
 
-  bool operator==(o)=> this.name==o.name && this.hp ==o.hp && this.initiative==o.initiative;
+  bool operator==(o)=> this.id == o.id;
   int get hashCode => name.hashCode^initiative.hashCode;
+
+  bool isActive(){
+    return _active;
+  }
+
+  void makeActive(){
+    _active = true;
+  }
 }
 
 class CharacterListModel extends Model{
@@ -34,6 +44,8 @@ class CharacterListModel extends Model{
   }
 
   void addCharacter(Character character){
+    character._active = _characters.isEmpty;
+
     _characters.add(character);
     _characters.sort((a, b) => b.initiative.compareTo(a.initiative));
 
@@ -41,6 +53,9 @@ class CharacterListModel extends Model{
   }
 
   void removeCharacter(Character character){
+    if(character.isActive()){
+      _characters[_characters.indexOf(character) + 1].makeActive();
+    }
     _characters.remove(character);
     notifyListeners();
   }
@@ -52,6 +67,20 @@ class CharacterListModel extends Model{
     }
   }
 
+  reduceHP(Character item) {
+    _characters[_characters.indexOf(item)]._hp--;
+    notifyListeners();
+  }
+
+  increaseHP(Character item) {
+    _characters[_characters.indexOf(item)]._hp++;
+    notifyListeners();
+  }
+
+  void prevRound() {
+    round == 1 ? round = 1 : round--;
+    notifyListeners();
+  }
 }
 
 
