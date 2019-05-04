@@ -27,7 +27,33 @@ class HomeScreenState extends State<HomeScreen>{
           builder: (context, child, model) => ListView(
             children: model.characters
               .map((item) => ListTile(
-                title: Text(item.name),
+                title: new Text(item.name),
+                trailing:new Container(
+                  width: 75.0,
+                  child: new Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      new Expanded(
+                        child: new IconButton(
+                          icon: new Icon(Icons.remove),
+                          onPressed: () { model.reduceHP(item);},
+                        ),
+                      ),
+                      new Expanded(
+                        child: Text(
+                          item.hp.toString(),
+                          textAlign: TextAlign.center,
+                        )
+                      ),
+                      new Expanded(
+                        child: new IconButton(
+                          icon: new Icon(Icons.add),
+                          onPressed: () { model.increaseHP(item);},
+                        ),
+                      )
+                    ],
+                  ),
+                ), 
                 onTap: (){
                   Navigator
                     .of(context)
@@ -36,7 +62,8 @@ class HomeScreenState extends State<HomeScreen>{
                 onLongPress: () {
                   model.removeCharacter(item);
                 },
-              ))
+              )
+              )
                 .toList()),
         ),
       ),
