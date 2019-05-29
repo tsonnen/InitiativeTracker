@@ -70,76 +70,48 @@ class HomeScreenState extends State<HomeScreen>{
                 .toList()),
         ),
       ),
-      floatingActionButton: new Container(
-          height: 220.0,
-          child: new Stack(
-            children: <Widget>[
-              Align(
-                alignment: Alignment.bottomRight,
-                child: new Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: <Widget>[
-                    Container(
-                      height: 60.0,
-                      child: new FloatingActionButton(
-                        heroTag: "addCharacter",
-                         onPressed: () {
-                            Navigator
-                                .of(context)
-                                .push(MaterialPageRoute(builder: (context) => AddCharacterPage()));
-                        },
-                        tooltip: 'Add Character',
-                        child: new Icon(Icons.add),
-                      ),
-                    ),
-                    new Container(
-                      height: 20.0,
-                    ), // a space
-                    ScopedModelDescendant<CharacterListModel>(
-                      builder: (context, child, model) => Container(
-                        height: 60.0,
-                        child: new FloatingActionButton(
-                          heroTag: "nextRound",
-                          onPressed: (){
-                            model.nextRound();
-                            this.setState(() {
-                              var round = model.round;
-                              titleText = "Round " + round.toString();
-                            });
-                          },
-                          backgroundColor: Colors.blue,
-                          tooltip: 'Next Round',
-                          child: new Icon(Icons.navigate_next),
-                        ),
-                      ),
-                    ),
-                    new Container(
-                      height: 20.0,
-                    ),
-                    ScopedModelDescendant<CharacterListModel>(
-                      builder: (context, child, model) => Container(
-                        height: 60.0,
-                        child: new FloatingActionButton(
-                          heroTag: "prevRound",
-                          onPressed: (){
-                            model.prevRound();
-                            this.setState(() {
-                              var round = model.round;
-                              titleText = "Round " + round.toString();
-                            });
-                          },
-                          backgroundColor: Colors.blue,
-                          tooltip: 'Previous Round',
-                          child: new Icon(Icons.navigate_before),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              )
-            ],
-          ),
-        ) // This trailing comma makes auto-formatting nicer for build methods.
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.add), 
+        onPressed: () {
+            Navigator
+                .of(context)
+                .push(MaterialPageRoute(builder: (context) => AddCharacterPage()));
+        },
+        tooltip: 'Add Character',
+      ),
+      bottomNavigationBar: BottomAppBar(
+        child: new Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+             ScopedModelDescendant<CharacterListModel>(
+              builder: (context, child, model) => IconButton(
+                icon: Icon(Icons.navigate_before), 
+                onPressed: () {
+                  model.prevRound();
+                  this.setState(() {
+                  var round = model.round;
+                    titleText = "Round " + round.toString();
+                  });
+                },
+              ),
+            ),
+            ScopedModelDescendant<CharacterListModel>(
+              builder: (context, child, model) => IconButton(
+                icon: Icon(Icons.navigate_next), 
+                onPressed: () {
+                  model.nextRound();
+                  this.setState(() {
+                  var round = model.round;
+                    titleText = "Round " + round.toString();
+                  });
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
