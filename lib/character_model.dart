@@ -81,6 +81,12 @@ class CharacterListModel extends Model{
     round == 1 ? round = 1 : round--;
     notifyListeners();
   }
+
+  clear() {
+    round = 1;
+    _characters = [];
+    notifyListeners();
+  }
 }
 
 
