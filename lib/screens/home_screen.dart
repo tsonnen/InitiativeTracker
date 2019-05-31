@@ -3,6 +3,7 @@ import 'package:initiative_tracker/character_model.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:initiative_tracker/screens/add_character.dart';
 import 'package:initiative_tracker/screens/edit_character.dart';
+import 'package:initiative_tracker/screens/settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   static final String route = "Home-Screen";
@@ -38,6 +39,15 @@ class HomeScreenState extends State<HomeScreen>{
                 updateTitle(model);
               },
             ),
+            IconButton(
+              icon: Icon(Icons.settings),
+              onPressed: (){
+                Navigator
+                  .of(context)
+                  .push(MaterialPageRoute(builder: (context) => SettingsPage()));
+              },
+            )
+
           ],
         ),
         body: Container(
