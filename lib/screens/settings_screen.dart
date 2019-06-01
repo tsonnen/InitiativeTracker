@@ -14,34 +14,30 @@ class SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context){
     return Scaffold(
       appBar: AppBar(
-        title: Text('Preferences Demo'),
+        title: Text('Preferences'),
       ),
-      body: PreferencePage([
-        PreferenceTitle('General'),
-        SwitchPreference(
-          'Auto Increment', 
-          'auto_increment', 
-          defaultVal: true,
-        ),
-        PreferenceTitle('Personalization'),
-        RadioPreference(
-          'Light Theme',
-          'light',
-          'ui_theme',
-          onSelect: (){
-            DynamicTheme.of(context).setBrightness(Brightness.light);
-          },
-        ),
-        RadioPreference(
-          'Dark Theme',
-          'dark',
-          'ui_theme',
-          onSelect: (){
-            DynamicTheme.of(context).setBrightness(Brightness.dark);
-          },
-          isDefault: true,
-        ),
-      ]),
+      body: PreferencePage(
+          [
+          PreferenceTitle('Theme'),
+          RadioPreference(
+            'Light Theme',
+            'light',
+            'ui_theme',
+            onSelect: (){
+              DynamicTheme.of(context).setBrightness(Brightness.light);
+            },
+          ),
+          RadioPreference(
+            'Dark Theme',
+            'dark',
+            'ui_theme',
+            onSelect: (){
+              DynamicTheme.of(context).setBrightness(Brightness.dark);
+            },
+            isDefault: true,
+          ),
+        ],
+      ),
     );
   }
 }

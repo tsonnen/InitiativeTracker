@@ -87,6 +87,10 @@ class CharacterListModel extends Model{
     _characters = [];
     notifyListeners();
   }
+
+  bool containsBase(String name) {
+    
+  }
 }
 
 

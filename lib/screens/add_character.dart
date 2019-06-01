@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:initiative_tracker/character_model.dart';
 import 'package:initiative_tracker/validators.dart';
+import 'package:preferences/preferences.dart';
 
 class AddCharacterPage extends StatefulWidget {
   static final String route = "Add-Page";
@@ -11,16 +12,16 @@ class AddCharacterPage extends StatefulWidget {
 }
 
 class AddCharacterPageState extends State<AddCharacterPage> {
-  TextEditingController nameController = TextEditingController();
-  TextEditingController hpController = TextEditingController();
-  TextEditingController initController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController hpController = TextEditingController();
+  final TextEditingController initController = TextEditingController();
+  int _number = 1;
 
   final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
-
   }
 
   @override
@@ -46,6 +47,18 @@ class AddCharacterPageState extends State<AddCharacterPage> {
                         if(value.isEmpty){
                           return 'Please enter a name';
                         }
+                      },
+                    ),
+
+                  ),
+                  Flexible(
+                    child: DropdownButton(
+                      value: _number,
+                      items: new List<DropdownMenuItem<int>>.generate(20, (i) => new DropdownMenuItem(value: i + 1, child: Text((i + 1).toString()))),
+                      onChanged: (int value) {
+                        setState(() {
+                          _number = value;
+                        });
                       },
                     ),
                   ),
@@ -91,9 +104,11 @@ class AddCharacterPageState extends State<AddCharacterPage> {
                   child: Text('Add Character'),
                   onPressed: () {
                     if(_formKey.currentState.validate()){
-                      Character character = Character(nameController.text, int.parse(hpController.text), 
-                                                      initController.text != "" ? int.parse(initController.text) : null);
-                      model.addCharacter(character);
+                      for(int i = 1; i <= _number; i++){
+                        Character character = Character(nameController.text + (_number > 1 ? " " + i.toString(): ""), int.parse(hpController.text), 
+                                                        initController.text != "" ? int.parse(initController.text) : null);
+                        model.addCharacter(character);
+                      }
 
                       Scaffold
                         .of(context)
