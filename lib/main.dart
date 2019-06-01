@@ -18,9 +18,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new DynamicTheme(
-        defaultBrightness: Brightness.light,
+        defaultBrightness: Brightness.dark,
         data: (brightness) =>
-            new ThemeData(brightness: brightness, accentColor: Colors.green),
+            new ThemeData(brightness: brightness),
         themedWidgetBuilder: (context, theme) {
           return new ScopedModel<CharacterListModel>(
             model: CharacterListModel(),
