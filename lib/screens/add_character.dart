@@ -99,7 +99,7 @@ class AddCharacterPageState extends State<AddCharacterPage> {
                   ),
                 ],
               ),
-              ScopedModelDescendant<CharacterListModel>(
+              new ScopedModelDescendant<CharacterListModel>(
                 builder: (context, child, model) => RaisedButton(
                   child: Text('Add Character'),
                   onPressed: () {

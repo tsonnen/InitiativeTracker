@@ -11,6 +11,7 @@ void main() async{
 }
 
 class MyApp extends StatelessWidget {
+  final CharacterListModel model = new CharacterListModel();
   final routes = <String, WidgetBuilder>{
     HomeScreen.route: (BuildContext context) => HomeScreen(),
   };
@@ -23,7 +24,7 @@ class MyApp extends StatelessWidget {
             new ThemeData(brightness: brightness),
         themedWidgetBuilder: (context, theme) {
           return new ScopedModel<CharacterListModel>(
-            model: CharacterListModel(),
+            model: model,
             child: MaterialApp(
               title: 'Initiative Tracker',
               theme: theme,

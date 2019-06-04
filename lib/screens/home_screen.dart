@@ -26,7 +26,7 @@ class HomeScreenState extends State<HomeScreen>{
   @override
   Widget build(BuildContext context){
     
-    return ScopedModelDescendant<CharacterListModel>(
+    return new ScopedModelDescendant<CharacterListModel>(
       builder: (context, child, model) => Scaffold(
         appBar: AppBar(
           title: Text(titleText),
@@ -51,48 +51,7 @@ class HomeScreenState extends State<HomeScreen>{
           ],
         ),
         body: Container(
-          child: ListView(
-            children: model.characters.map((item) => ListTile(
-              title: new Text(item.name),
-              trailing: new Container(
-                width: 75.0,
-                child: new Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    new Expanded(
-                      child: new IconButton(
-                        icon: new Icon(Icons.remove),
-                        alignment: Alignment.center,
-                        onPressed: () { model.reduceHP(item);},
-                      ),
-                    ),
-                    new Expanded(
-                      child: Text(
-                        item.hp.toString(),
-                        textAlign: TextAlign.right,
-                        style: TextStyle(color: item.hp < 0 ? Colors.red : Colors.white),
-                      )
-                    ),
-                    new Expanded(
-                      child: new IconButton(
-                        icon: new Icon(Icons.add),
-                        onPressed: () { model.increaseHP(item);},
-                      ),
-                    )
-                  ],
-                ),
-              ), 
-              onTap: (){
-                Navigator
-                  .of(context)
-                  .push(MaterialPageRoute(builder: (context) => EditCharacterPage(item: item)));
-              },
-              onLongPress: () {
-                model.removeCharacter(item);
-              },
-            )
-          ).toList()),
+          child: createCharacterList(context, model),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: FloatingActionButton(
@@ -128,5 +87,50 @@ class HomeScreenState extends State<HomeScreen>{
           ),
       ),
     );
+  }
+
+  ListView createCharacterList(BuildContext context, CharacterListModel model){
+    return ListView(
+      children: model.characters.map((item) => ListTile(
+        title: new Text(item.name),
+        trailing: new Container(
+          width: 75.0,
+          child: new Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              new Expanded(
+                child: new IconButton(
+                  icon: new Icon(Icons.remove),
+                  alignment: Alignment.center,
+                  onPressed: () { model.reduceHP(item);},
+                ),
+              ),
+              new Expanded(
+                child: Text(
+                  item.hp.toString(),
+                  textAlign: TextAlign.right,
+                  style: TextStyle(color: item.hp < 0 ? Colors.red : Colors.white),
+                )
+              ),
+              new Expanded(
+                child: new IconButton(
+                  icon: new Icon(Icons.add),
+                  onPressed: () { model.increaseHP(item);},
+                ),
+              )
+            ],
+          ),
+        ), 
+        onTap: (){
+          Navigator
+            .of(context)
+            .push(MaterialPageRoute(builder: (context) => EditCharacterPage(item: item)));
+        },
+        onLongPress: () {
+          model.removeCharacter(item);
+        },
+      )
+    ).toList());
   }
 }

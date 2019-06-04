@@ -88,7 +88,7 @@ class EditCharacterPageState extends State<EditCharacterPage> {
                   ),
                 ],
               ),
-              ScopedModelDescendant<CharacterListModel>(
+              new ScopedModelDescendant<CharacterListModel>(
               builder: (context, child, model) => RaisedButton(
                 child: Text('Edit Character'),
                 onPressed: () {
