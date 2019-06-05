@@ -3,3 +3,5 @@
 # Initiative Tracker
 
 An App to help in tracking initiative and battles in tabletop RPGs
+
+[Play Store](https://play.google.com/store/apps/details?id=com.tsonnen.initiativetracker)
