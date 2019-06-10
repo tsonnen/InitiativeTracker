@@ -25,7 +25,6 @@ class HomeScreenState extends State<HomeScreen>{
 
   @override
   Widget build(BuildContext context){
-    
     return new ScopedModelDescendant<CharacterListModel>(
       builder: (context, child, model) => Scaffold(
         appBar: AppBar(
@@ -47,7 +46,6 @@ class HomeScreenState extends State<HomeScreen>{
                   .push(MaterialPageRoute(builder: (context) => SettingsPage()));
               },
             )
-
           ],
         ),
         body: Container(

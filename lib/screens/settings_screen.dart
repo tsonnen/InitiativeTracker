@@ -19,8 +19,7 @@ class SettingsPageState extends State<SettingsPage> {
         appBar: AppBar(
           title: Text('Preferences'),
         ),
-        body: PreferencePage(
-            [
+        body: PreferencePage([
             PreferenceTitle('Theme'),
             RadioPreference(
               'Light Theme',
@@ -38,6 +37,19 @@ class SettingsPageState extends State<SettingsPage> {
                 DynamicTheme.of(context).setBrightness(Brightness.dark);
               },
               isDefault: true,
+            ),
+            PreferenceTitle('Auto Roll Initiative'),
+            DropdownPreference(
+              'Number of Dice',
+              'num_dice',
+              defaultVal: '1',
+              values: new List<String>.generate(10, (i) => (i + 1).toString()),
+            ),
+            DropdownPreference(
+              'Number of Sides',
+              'num_sides',
+              defaultVal: '20',
+              values: ['2','3','4','6','8','10','12','20'],
             ),
           ],
         ),

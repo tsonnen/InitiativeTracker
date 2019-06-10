@@ -1,6 +1,7 @@
 import 'package:initiative_tracker/uuid.dart';
 import 'package:initiative_tracker/randomGenerator.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:initiative_tracker/preference_manger.dart';
 
 class Character{
   String _id;
@@ -18,7 +19,8 @@ class Character{
   bool get active => _active;
   
   Character([String name, int hp, int initiative])
-      : this._name = name ?? "TEST", this._hp = hp ?? 123, this._id = Uuid().generateV4(), this._initiative = initiative ?? rollDice(1, 20), this._active = false;
+      : this._name = name ?? "TEST", this._hp = hp ?? 123, this._id = Uuid().generateV4(), 
+        this._initiative = initiative ?? rollDice(PreferenceManger.getNumberDice(), PreferenceManger.getNumberSides()), this._active = false;
 
   bool operator==(o)=> this.id == o.id;
   int get hashCode => name.hashCode^initiative.hashCode;
@@ -86,10 +88,6 @@ class CharacterListModel extends Model{
     round = 1;
     _characters = [];
     notifyListeners();
-  }
-
-  bool containsBase(String name) {
-    
   }
 }
 

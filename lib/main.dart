@@ -4,6 +4,7 @@ import 'package:initiative_tracker/character_model.dart';
 import 'package:initiative_tracker/screens/home_screen.dart';
 import 'package:preferences/preferences.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
+import 'package:initiative_tracker/preference_manger.dart';
 
 void main() async{
   await PrefService.init(prefix: "pref_");
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    PreferenceManger.getPreferences();
     return new DynamicTheme(
         defaultBrightness: Brightness.dark,
         data: (brightness) =>
