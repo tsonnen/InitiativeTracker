@@ -100,7 +100,7 @@ class HomeScreenState extends State<HomeScreen>{
           children: <Widget>[
             new IconButton(
               icon: new Icon(Icons.remove),
-              alignment: Alignment.center,
+              color: Colors.red,
               onPressed: () { model.reduceHP(item);},
             ),
             new Text(
@@ -111,6 +111,7 @@ class HomeScreenState extends State<HomeScreen>{
             new IconButton(
               icon: new Icon(Icons.add),
               onPressed: () { model.increaseHP(item);},
+              color: Colors.green,
             )
           ],
         ), 
