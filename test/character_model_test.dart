@@ -1,8 +1,11 @@
 import 'package:initiative_tracker/character_model.dart';
 import 'package:test/test.dart';
+import 'package:initiative_tracker/preference_manger.dart';
+
 
 void main(){
   group('Character Model', () {
+    PreferenceManger.getPreferences();
     Character testChar = new Character();
     Character testChar2 = new Character();
     CharacterListModel charList = new CharacterListModel();
