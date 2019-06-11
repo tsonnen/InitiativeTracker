@@ -18,7 +18,7 @@ void main(){
     });
 
     test('First Element should have a higher initiative', (){
-      expect((charList.characters[0].initiative.compareTo(charList.characters[1].initiative)), 1);
+      expect((charList.characters[0].initiative >= charList.characters[1].initiative), true);
     });
   });
 }
