@@ -3,7 +3,7 @@ import 'package:initiative_tracker/random_generator.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:initiative_tracker/preference_manger.dart';
 
-class Character {
+class Character extends Model{
   String _id;
   String _name;
   int _initiative;
@@ -25,6 +25,28 @@ class Character {
         this._initiative = initiative ??
             rollDice(1,20),
         this._active = false;
+
+  void setName(String name){
+    this._name = name;
+    notifyListeners();
+  }
+
+  void setHP(int hp){
+    this._hp = hp;
+    notifyListeners();
+  }
+
+  void setInitiative(int initiative){
+    this._initiative = initiative;
+    notifyListeners();
+  }
+
+  void edit(String name, int hp, int initiative){
+    this._name = name;
+    this._hp = hp;
+    this._initiative = initiative;
+    notifyListeners();
+  }
 
   bool operator ==(o) => this.id == o.id;
   int get hashCode => name.hashCode ^ initiative.hashCode;
@@ -53,7 +75,7 @@ class CharacterListModel extends Model {
     character._active = _characters.isEmpty;
 
     _characters.add(character);
-    _characters.sort((a, b) => b.initiative.compareTo(a.initiative));
+    sort();
 
     notifyListeners();
   }
@@ -69,8 +91,14 @@ class CharacterListModel extends Model {
   void editCharacter(Character character, Character editCharacter) {
     if (character != editCharacter) {
       _characters[_characters.indexOf(character)] = editCharacter;
+      sort();
       notifyListeners();
     }
+  }
+
+  void sort(){
+    _characters.sort((a, b) => b.initiative.compareTo(a.initiative));
+    notifyListeners();
   }
 
   reduceHP(Character item) {

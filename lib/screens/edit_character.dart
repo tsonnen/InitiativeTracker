@@ -23,7 +23,7 @@ class EditCharacterPageState extends State<EditCharacterPage> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: Find why nameController not working with this method
+    nameController.text = widget.item.name.toString();
     hpController.text = widget.item.hp.toString();
     initController.text = widget.item.initiative.toString();
 
@@ -91,14 +91,11 @@ class EditCharacterPageState extends State<EditCharacterPage> {
                       child: Text('Edit Character'),
                       onPressed: () {
                         if (_formKey.currentState.validate()) {
-                          Character character = Character(
-                              nameController.text,
-                              int.parse(hpController.text),
-                              initController.text != ""
+                          widget.item.edit( nameController.text, int.parse(hpController.text),  initController.text != ""
                                   ? int.parse(initController.text)
                                   : null);
-                          model.editCharacter(widget.item, character);
-
+  
+                          model.sort();
                           Navigator.of(context).pop();
                         }
                       },
