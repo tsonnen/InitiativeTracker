@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import "package:flutter_hsvcolor_picker/flutter_hsvcolor_picker.dart";
 
 enum DialogAction { yes, abort }
 
@@ -83,30 +82,4 @@ class Dialogs {
         : null;
   }
 
-  static Future<Color> colorDialog(
-    BuildContext context,
-    Color curr,
-  ) async {
-    final action = await showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return SimpleDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            title: Text("Choose Color"),
-            children: <Widget>[
-              new ColorPicker(
-                color: curr,
-                onChanged: (value) {
-                  curr = value;
-                },
-              )
-            ],
-          );
-        });
-
-    return curr;
-  }
 }
