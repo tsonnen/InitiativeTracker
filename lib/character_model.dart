@@ -1,9 +1,9 @@
 import 'package:initiative_tracker/uuid.dart';
-import 'package:initiative_tracker/randomGenerator.dart';
+import 'package:initiative_tracker/random_generator.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:initiative_tracker/preference_manger.dart';
 
-class Character{
+class Character {
   String _id;
   String _name;
   int _initiative;
@@ -17,35 +17,39 @@ class Character{
   String get notes => _notes;
   int get hp => _hp;
   bool get active => _active;
-  
+
   Character([String name, int hp, int initiative])
-      : this._name = name ?? "TEST", this._hp = hp ?? 123, this._id = Uuid().generateV4(), 
-        this._initiative = initiative ?? rollDice(PreferenceManger.getNumberDice(), PreferenceManger.getNumberSides()), this._active = false;
+      : this._name = name ?? "TEST",
+        this._hp = hp ?? 123,
+        this._id = Uuid().generateV4(),
+        this._initiative = initiative ??
+            rollDice(1,20),
+        this._active = false;
 
-  bool operator==(o)=> this.id == o.id;
-  int get hashCode => name.hashCode^initiative.hashCode;
+  bool operator ==(o) => this.id == o.id;
+  int get hashCode => name.hashCode ^ initiative.hashCode;
 
-  bool isActive(){
+  bool isActive() {
     return _active;
   }
 
-  void makeActive(){
+  void makeActive() {
     _active = true;
   }
 }
 
-class CharacterListModel extends Model{
+class CharacterListModel extends Model {
   List<Character> get characters => _characters.toList();
 
   List<Character> _characters = [];
   int round = 1;
 
-  void nextRound(){
+  void nextRound() {
     round++;
     notifyListeners();
   }
 
-  void addCharacter(Character character){
+  void addCharacter(Character character) {
     character._active = _characters.isEmpty;
 
     _characters.add(character);
@@ -54,16 +58,16 @@ class CharacterListModel extends Model{
     notifyListeners();
   }
 
-  void removeCharacter(Character character){
-    if(character.isActive()){
+  void removeCharacter(Character character) {
+    if (character.isActive()) {
       _characters[_characters.indexOf(character) + 1].makeActive();
     }
     _characters.remove(character);
     notifyListeners();
   }
 
-  void editCharacter(Character character, Character editCharacter){
-    if(character!=editCharacter){
+  void editCharacter(Character character, Character editCharacter) {
+    if (character != editCharacter) {
       _characters[_characters.indexOf(character)] = editCharacter;
       notifyListeners();
     }
@@ -90,5 +94,3 @@ class CharacterListModel extends Model{
     notifyListeners();
   }
 }
-
-

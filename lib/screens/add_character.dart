@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:initiative_tracker/character_model.dart';
+import 'package:initiative_tracker/preference_manger.dart';
+import 'package:initiative_tracker/random_generator.dart';
 import 'package:initiative_tracker/validators.dart';
-import 'package:preferences/preferences.dart';
 
 class AddCharacterPage extends StatefulWidget {
   static final String route = "Add-Page";
@@ -31,7 +32,7 @@ class AddCharacterPageState extends State<AddCharacterPage> {
         title: Text('Add Character'),
       ),
       body: Form(
-        key: _formKey,
+          key: _formKey,
           child: Column(
             children: <Widget>[
               Row(
@@ -43,18 +44,20 @@ class AddCharacterPageState extends State<AddCharacterPage> {
                         hintText: "Name",
                       ),
                       controller: nameController,
-                      validator: (value){
-                        if(value.isEmpty){
+                      validator: (value) {
+                        if (value.isEmpty) {
                           return 'Please enter a name';
                         }
                       },
                     ),
-
                   ),
                   Flexible(
                     child: DropdownButton(
                       value: _number,
-                      items: new List<DropdownMenuItem<int>>.generate(20, (i) => new DropdownMenuItem(value: i + 1, child: Text((i + 1).toString()))),
+                      items: new List<DropdownMenuItem<int>>.generate(
+                          20,
+                          (i) => new DropdownMenuItem(
+                              value: i + 1, child: Text((i + 1).toString()))),
                       onChanged: (int value) {
                         setState(() {
                           _number = value;
@@ -63,7 +66,7 @@ class AddCharacterPageState extends State<AddCharacterPage> {
                     ),
                   ),
                 ],
-              ), 
+              ),
               Container(
                 child: TextFormField(
                   decoration: InputDecoration(
@@ -72,14 +75,13 @@ class AddCharacterPageState extends State<AddCharacterPage> {
                   ),
                   keyboardType: TextInputType.number,
                   controller: hpController,
-                  validator: (value){
-                    if(value.isEmpty || !isNumeric(value)){
+                  validator: (value) {
+                    if (value.isEmpty || !isNumeric(value)) {
                       return "Please enter an integer number";
                     }
                   },
                 ),
               ),
-
               Row(
                 children: <Widget>[
                   Flexible(
@@ -90,8 +92,8 @@ class AddCharacterPageState extends State<AddCharacterPage> {
                       ),
                       keyboardType: TextInputType.number,
                       controller: initController,
-                      validator: (value){
-                        if(value.isNotEmpty && !isNumeric(value)){
+                      validator: (value) {
+                        if (value.isNotEmpty && !isNumeric(value)) {
                           return "Please enter an integer number";
                         }
                       },
@@ -101,25 +103,29 @@ class AddCharacterPageState extends State<AddCharacterPage> {
               ),
               new ScopedModelDescendant<CharacterListModel>(
                 builder: (context, child, model) => RaisedButton(
-                  child: Text('Add Character'),
-                  onPressed: () {
-                    if(_formKey.currentState.validate()){
-                      for(int i = 1; i <= _number; i++){
-                        Character character = Character(nameController.text + (_number > 1 ? " " + i.toString(): ""), int.parse(hpController.text), 
-                                                        initController.text != "" ? int.parse(initController.text) : null);
-                        model.addCharacter(character);
-                      }
+                      child: Text('Add Character'),
+                      onPressed: () {
+                        if (_formKey.currentState.validate()) {
+                          for (int i = 1; i <= _number; i++) {
+                            Character character = Character(
+                                nameController.text +
+                                    (_number > 1 ? " " + i.toString() : ""),
+                                int.parse(hpController.text),
+                                initController.text != ""
+                                    ? int.parse(initController.text)
+                                    : rollDice(PreferenceManger.getNumberDice(),
+                                               PreferenceManger.getNumberSides()));
+                            model.addCharacter(character);
+                          }
 
-                      Scaffold
-                        .of(context)
-                        .showSnackBar(SnackBar(content: Text('Added Character')));
-                    }
-                  },
-                ),
+                          Scaffold.of(context).showSnackBar(
+                              SnackBar(content: Text('Added Character')));
+                        }
+                      },
+                    ),
               ),
             ],
-        )
-      ),
+          )),
     );
   }
 }
