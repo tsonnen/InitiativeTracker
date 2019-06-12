@@ -1,3 +1,4 @@
+import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:initiative_tracker/character_model.dart';
@@ -111,7 +112,7 @@ class HomeScreenState extends State<HomeScreen> {
                                 style: TextStyle(
                                     color: item.hp < 0
                                         ? Colors.red
-                                        : Colors.white),
+                                        : DynamicTheme.of(context).data.textTheme.body1.color),
                               ),
                               new IconButton(
                                 icon: new Icon(Icons.add),
