@@ -8,7 +8,7 @@ class EditCharacterPage extends StatefulWidget {
 
   final Character item;
 
-  const EditCharacterPage({Key key, this.item}): super(key: key);
+  const EditCharacterPage({Key key, this.item}) : super(key: key);
 
   @override
   EditCharacterPageState createState() => EditCharacterPageState();
@@ -19,12 +19,11 @@ class EditCharacterPageState extends State<EditCharacterPage> {
   final TextEditingController hpController = new TextEditingController();
   final TextEditingController initController = new TextEditingController();
 
-
   final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    // TODO: Find why nameController not working with this method
+    nameController.text = widget.item.name.toString();
     hpController.text = widget.item.hp.toString();
     initController.text = widget.item.initiative.toString();
 
@@ -33,7 +32,7 @@ class EditCharacterPageState extends State<EditCharacterPage> {
         title: Text('Edit Character'),
       ),
       body: Form(
-        key: _formKey,
+          key: _formKey,
           child: Column(
             children: <Widget>[
               Container(
@@ -43,11 +42,11 @@ class EditCharacterPageState extends State<EditCharacterPage> {
                     hintText: "Name",
                   ),
                   initialValue: widget.item.name,
-                  validator: (value){
-                    if(value.isEmpty){
+                  validator: (value) {
+                    if (value.isEmpty) {
                       nameController.text = "";
                       return 'Please enter a name';
-                    }else{
+                    } else {
                       nameController.text = value;
                     }
                   },
@@ -61,14 +60,13 @@ class EditCharacterPageState extends State<EditCharacterPage> {
                   ),
                   keyboardType: TextInputType.number,
                   controller: hpController,
-                  validator: (value){
-                    if(value.isEmpty || !isNumeric(value)){
+                  validator: (value) {
+                    if (value.isEmpty || !isNumeric(value)) {
                       return "Please enter an integer number";
                     }
                   },
                 ),
               ),
-
               Row(
                 children: <Widget>[
                   Flexible(
@@ -79,8 +77,8 @@ class EditCharacterPageState extends State<EditCharacterPage> {
                       ),
                       keyboardType: TextInputType.number,
                       controller: initController,
-                      validator: (value){
-                        if(value.isEmpty || !isNumeric(value)){
+                      validator: (value) {
+                        if (value.isEmpty || !isNumeric(value)) {
                           return "Please enter an integer number";
                         }
                       },
@@ -89,24 +87,22 @@ class EditCharacterPageState extends State<EditCharacterPage> {
                 ],
               ),
               new ScopedModelDescendant<CharacterListModel>(
-              builder: (context, child, model) => RaisedButton(
-                child: Text('Edit Character'),
-                onPressed: () {
-                  if(_formKey.currentState.validate()){
-                    Character character = Character(nameController.text, int.parse(hpController.text), 
-                                                    initController.text != "" ? int.parse(initController.text) : null);
-                    model.editCharacter(widget.item, character);
-
-                    Navigator
-                    .of(context)
-                    .pop();
-                  }
-                  },
-                ),
+                builder: (context, child, model) => RaisedButton(
+                      child: Text('Edit Character'),
+                      onPressed: () {
+                        if (_formKey.currentState.validate()) {
+                          widget.item.edit( nameController.text, int.parse(hpController.text),  initController.text != ""
+                                  ? int.parse(initController.text)
+                                  : null);
+  
+                          model.sort();
+                          Navigator.of(context).pop();
+                        }
+                      },
+                    ),
               ),
             ],
-        )
-      ),
+          )),
     );
   }
 }
