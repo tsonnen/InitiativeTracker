@@ -24,24 +24,23 @@ class Character extends Model{
 
   void setName(String name){
     this._name = name;
-    notifyListeners();
+    
   }
 
   void setHP(int hp){
     this._hp = hp;
-    notifyListeners();
+    
   }
 
   void setInitiative(int initiative){
     this._initiative = initiative;
-    notifyListeners();
+    
   }
 
   void edit(String name, int hp, int initiative){
     this._name = name;
     this._hp = hp;
     this._initiative = initiative;
-    notifyListeners();
   }
 
   bool operator ==(o) => this.id == o.id;
@@ -54,63 +53,51 @@ class CharacterListModel extends Model {
 
   List<Character> _characters = [];
   int round = 1;
+  String encounterName;
 
   void nextRound() {
     round++;
-    notifyListeners();
   }
 
   void addCharacter(Character character) {
     _characters.add(character);
     sort();
+  }
 
-    notifyListeners();
-  
+  void add(Character character){
+    this._characters.add(character);
   }
 
   bool containsCharacter(Character find){
-    for (Character character in this.characters) {
-      if (character.id == find.id) return true;
-    }
-    return false;
+    return characters.contains(find);
   }
 
   void removeCharacter(Character character) {
-    _characters.remove(character);
-    notifyListeners();
-  }
-
-  void editCharacter(Character character, Character editCharacter) {
-    if (character != editCharacter) {
-      _characters[_characters.indexOf(character)] = editCharacter;
-      sort();
-      notifyListeners();
-    }
+    characters.remove(character);
   }
 
   void sort(){
     _characters.sort((a, b) => b.initiative.compareTo(a.initiative));
-    notifyListeners();
   }
 
   reduceHP(Character item) {
     _characters[_characters.indexOf(item)]._hp--;
-    notifyListeners();
   }
 
   increaseHP(Character item) {
     _characters[_characters.indexOf(item)]._hp++;
-    notifyListeners();
   }
 
   void prevRound() {
     round == 1 ? round = 1 : round--;
-    notifyListeners();
   }
 
   clear() {
     round = 1;
     _characters = [];
-    notifyListeners();
+  }
+
+  void outputToJSON(){
+
   }
 }

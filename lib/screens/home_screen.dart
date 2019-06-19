@@ -4,6 +4,7 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:initiative_tracker/character_model.dart';
 import 'package:initiative_tracker/screens/add_character.dart';
 import 'package:initiative_tracker/screens/edit_character.dart';
+import 'package:initiative_tracker/screens/help_screen.dart';
 import 'package:initiative_tracker/screens/settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -44,6 +45,13 @@ class HomeScreenState extends State<HomeScreen> {
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => SettingsPage()));
+                  },
+                ),
+                IconButton(
+                  icon: Icon(Icons.help_outline),
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => HelpPage()));
                   },
                 )
               ],
