@@ -10,18 +10,31 @@ class HelpPage extends StatefulWidget {
 }
 
 class HelpPageState extends State<HelpPage> {
+
+  String markdown = '';
+
+  @override
+  void initState(){
+    super.initState();
+
+    loadHelpFile().then((value){
+      setState(() {
+        markdown = value;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: AppBar(
         title: Text('Help'),
       ),
-      body: FutureBuilder(
-          future:
-              DefaultAssetBundle.of(context).loadString('assets/data/help.md'),
-          builder: (context, snapshot) {
-            return Markdown(data: snapshot.data);
-          }),
+      body: new Markdown(data: markdown),
     );
+  }
+
+  Future<String> loadHelpFile() async {
+    return await rootBundle.loadString('assets/data/help.md');
   }
 }
