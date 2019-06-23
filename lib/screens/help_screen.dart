@@ -9,6 +9,7 @@ class HelpPage extends StatefulWidget {
   HelpPageState createState() => HelpPageState();
 }
 
+//TODO: Add in navigation buttons to allow users to go back to their previous page
 class HelpPageState extends State<HelpPage> {
 
   String markdown = '';
@@ -17,11 +18,7 @@ class HelpPageState extends State<HelpPage> {
   void initState(){
     super.initState();
 
-    loadHelpFile().then((value){
-      setState(() {
-        markdown = value;
-      });
-    });
+    showHelp("table_contents");
   }
 
   @override
@@ -30,11 +27,24 @@ class HelpPageState extends State<HelpPage> {
       appBar: AppBar(
         title: Text('Help'),
       ),
-      body: new Markdown(data: markdown),
+      body: new Markdown(
+        data: markdown,
+        onTapLink: (value){
+          showHelp(value);
+        },
+      ),
     );
   }
 
-  Future<String> loadHelpFile() async {
-    return await rootBundle.loadString('assets/data/help.md');
+  void showHelp(String file){
+    loadHelpFile(file).then((value){
+      setState(() {
+        markdown = value;
+      });
+    });
+  }
+
+  Future<String> loadHelpFile(String file) async {
+    return await rootBundle.loadString('assets/helpx/' + file + '.md');
   }
 }
