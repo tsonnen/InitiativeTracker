@@ -3,44 +3,49 @@ import 'package:initiative_tracker/random_generator.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class Character extends Model{
-  String _id;
-  String _name;
-  int _initiative;
-  int _hp;
-  String _notes;
-  
-  String get id => _id;
-  String get name => _name;
-  int get initiative => _initiative;
-  String get notes => _notes;
-  int get hp => _hp;
+  String id;
+  String name;
+  int initiative;
+  String notes;
+  int hp;
 
   Character([String name, int hp, int initiative])
-      : this._name = name ?? "TEST",
-        this._hp = hp ?? 123,
-        this._id = Uuid().generateV4(),
-        this._initiative = initiative ??
+      : this.name = name ?? "TEST",
+        this.hp = hp ?? 123,
+        this.id = Uuid().generateV4(),
+        this.initiative = initiative ??
             rollDice(1,20);
 
+  Character.json({this.name, this.hp, this.initiative, this.id});
+
   void setName(String name){
-    this._name = name;
+    this.name = name;
     
   }
 
   void setHP(int hp){
-    this._hp = hp;
+    this.hp = hp;
     
   }
 
   void setInitiative(int initiative){
-    this._initiative = initiative;
+    this.initiative = initiative;
     
   }
 
   void edit(String name, int hp, int initiative){
-    this._name = name;
-    this._hp = hp;
-    this._initiative = initiative;
+    this.name = name;
+    this.hp = hp;
+    this.initiative = initiative;
+  }
+
+  factory Character.fromJson(Map<String, dynamic> json){
+    return new Character.json(
+      name: json['name'],
+      initiative: json['initiative'],
+      hp: json['hp'],
+      id: json['id']
+    );
   }
 
   bool operator ==(o) => this.id == o.id;
@@ -49,23 +54,24 @@ class Character extends Model{
 }
 
 class CharacterListModel extends Model {
-  List<Character> get characters => _characters.toList();
+  List<Character> characters;
 
-  List<Character> _characters = [];
   int round = 1;
   String encounterName;
+
+  CharacterListModel({this.characters});
 
   void nextRound() {
     round++;
   }
 
   void addCharacter(Character character) {
-    _characters.add(character);
+    characters.add(character);
     sort();
   }
 
   void add(Character character){
-    this._characters.add(character);
+    this.characters.add(character);
   }
 
   bool containsCharacter(Character find){
@@ -77,15 +83,15 @@ class CharacterListModel extends Model {
   }
 
   void sort(){
-    _characters.sort((a, b) => b.initiative.compareTo(a.initiative));
+    characters.sort((a, b) => b.initiative.compareTo(a.initiative));
   }
 
   reduceHP(Character item) {
-    _characters[_characters.indexOf(item)]._hp--;
+    characters[characters.indexOf(item)].hp--;
   }
 
   increaseHP(Character item) {
-    _characters[_characters.indexOf(item)]._hp++;
+    characters[characters.indexOf(item)].hp++;
   }
 
   void prevRound() {
@@ -94,10 +100,16 @@ class CharacterListModel extends Model {
 
   clear() {
     round = 1;
-    _characters = [];
+    characters = [];
   }
 
   void outputToJSON(){
 
+  }
+
+  factory CharacterListModel.fromJson(List<dynamic> parsedJson){
+    return new CharacterListModel(
+      characters: parsedJson.map((i)=>Character.fromJson(i)).toList(),
+    );
   }
 }
