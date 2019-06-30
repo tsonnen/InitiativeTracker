@@ -31,7 +31,6 @@ class HomeScreenState extends State<HomeScreen> {
         appBar: AppBar(
           title: Text(titleText),
           actions: <Widget>[
-            //Add the dropdown widget to the `Action` part of our appBar. it can also be among the `leading` part
             IconButton(
               icon: Icon(Icons.refresh),
               onPressed: () {
@@ -39,20 +38,32 @@ class HomeScreenState extends State<HomeScreen> {
                 updateTitle(model);
               },
             ),
-            IconButton(
-              icon: Icon(Icons.settings),
-              onPressed: () {
-                Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => SettingsPage()));
+            PopupMenuButton(
+              itemBuilder: (BuildContext context) {
+                return [
+                  PopupMenuItem(
+                    child: FlatButton.icon(
+                      label: new Text("Settings"),
+                      icon: Icon(Icons.settings),
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => SettingsPage()));
+                      },
+                    ),
+                  ),
+                  PopupMenuItem(
+                    child: FlatButton.icon(
+                      label: new Text("Help"),
+                      icon: Icon(Icons.help_outline),
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => HelpPage()));
+                      },
+                    ),
+                  ),
+                ];
               },
             ),
-            IconButton(
-              icon: Icon(Icons.help_outline),
-              onPressed: () {
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (context) => HelpPage()));
-              },
-            )
           ],
         ),
         body: Container(
