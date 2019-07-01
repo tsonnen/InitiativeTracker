@@ -6,7 +6,7 @@ class PreferenceManger {
   static int getNumberDice() {
     if (prefs != null) {
       String numDice = prefs.getString("pref_num_dice");
-      return int.parse(numDice) ?? 1;
+      return numDice != null ? int.parse(numDice) : 1;
     }
     return 1;
   }
@@ -14,7 +14,7 @@ class PreferenceManger {
   static int getNumberSides() {
     if (prefs != null) {
       String numSides = prefs.getString("pref_num_sides");
-      return int.parse(numSides) ?? 20;
+      return numSides != null ? int.parse(numSides) : 20;
     }
     return 20;
   }

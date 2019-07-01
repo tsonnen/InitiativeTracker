@@ -46,9 +46,9 @@ class EditCharacterPageState extends State<EditCharacterPage> {
                     if (value.isEmpty) {
                       nameController.text = "";
                       return 'Please enter a name';
-                    } else {
-                      nameController.text = value;
                     }
+                      nameController.text = value;
+                      return null;
                   },
                 ),
               ),
@@ -64,6 +64,7 @@ class EditCharacterPageState extends State<EditCharacterPage> {
                     if (value.isEmpty || !isNumeric(value)) {
                       return "Please enter an integer number";
                     }
+                    return null;
                   },
                 ),
               ),
@@ -81,6 +82,7 @@ class EditCharacterPageState extends State<EditCharacterPage> {
                         if (value.isEmpty || !isNumeric(value)) {
                           return "Please enter an integer number";
                         }
+                        return null;
                       },
                     ),
                   ),
