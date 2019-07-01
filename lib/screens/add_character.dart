@@ -16,8 +16,10 @@ class AddCharacterPageState extends State<AddCharacterPage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController hpController = TextEditingController();
   final TextEditingController initController = TextEditingController();
-  int _number = 1;
-  int _initMod = 0;
+  final TextEditingController noteController = TextEditingController();
+
+  int _number;
+  int _initMod;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -28,8 +30,6 @@ class AddCharacterPageState extends State<AddCharacterPage> {
 
   @override
   Widget build(BuildContext context) {
-    bool _rollInit = true;
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Add Character'),
@@ -58,6 +58,7 @@ class AddCharacterPageState extends State<AddCharacterPage> {
                   Flexible(
                     child: DropdownButton(
                       value: _number,
+                      hint: new Text("# Units"),
                       items: new List<DropdownMenuItem<int>>.generate(
                           20,
                           (i) => new DropdownMenuItem(
@@ -97,9 +98,6 @@ class AddCharacterPageState extends State<AddCharacterPage> {
                       ),
                       keyboardType: TextInputType.number,
                       controller: initController,
-                      onFieldSubmitted: (value) {
-                        _rollInit = !value.isNotEmpty;
-                      },
                       validator: (value) {
                         if (value.isNotEmpty && !isNumeric(value)) {
                           return "Please enter an integer number";
@@ -111,8 +109,7 @@ class AddCharacterPageState extends State<AddCharacterPage> {
                   Flexible(
                     child: DropdownButton(
                       value: _initMod,
-                      disabledHint:
-                          new Text("To Auto roll initiative, leave text blank"),
+                      hint: new Text("Initiative Modifier"),
                       items: new List<DropdownMenuItem<int>>.generate(
                           11,
                           (i) => new DropdownMenuItem(
@@ -126,20 +123,22 @@ class AddCharacterPageState extends State<AddCharacterPage> {
                   ),
                 ],
               ),
+              Row(),
               new ScopedModelDescendant<CharacterListModel>(
                 builder: (context, child, model) => RaisedButton(
                   child: Text('Add Character'),
                   onPressed: () {
                     if (_formKey.currentState.validate()) {
-                      for (int i = 1; i <= _number; i++) {
+                      for (int i = 1; i <= (_number ?? 1); i++) {
                         Character character = Character(
                             nameController.text +
-                                (_number > 1 ? " " + i.toString() : ""),
+                                ((_number ?? 1) > 1 ? " " + i.toString() : ""),
                             int.parse(hpController.text),
                             initController.text != ""
                                 ? int.parse(initController.text)
                                 : rollDice(PreferenceManger.getNumberDice(),
-                                    PreferenceManger.getNumberSides()) + _initMod);
+                                            PreferenceManger.getNumberSides()) +
+                                        (_initMod ?? 0));
                         model.addCharacter(character);
                       }
 
