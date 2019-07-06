@@ -108,48 +108,51 @@ class HomeScreenState extends State<HomeScreen> {
         builder: (context, child, model) => ListView(
             children: model.characters
                 .map(
-                  (item) => ListTile(
-                    title: new Text(item.name),
-                    isThreeLine: true,
-                    subtitle: new Text(item.notes ?? ""),
-                    trailing: new Container(
-                      child: new Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: <Widget>[
-                          new IconButton(
-                            icon: new Icon(Icons.remove),
-                            color: Colors.red,
-                            onPressed: () {
-                              model.reduceHP(item);
-                            },
-                          ),
-                          new Text(
-                            item.hp.toString(),
-                            textAlign: TextAlign.right,
-                            style: TextStyle(
-                              color: item.hp < 0
-                                  ? Colors.red
-                                  : Theme.of(context).textTheme.body1.color,
+                  (item) => Card(
+                    child: ListTile(
+                      title: new Text(item.name),
+                      isThreeLine: true,
+                      subtitle: new Text(item.notes ?? ""),
+                      trailing: new Container(
+                        child: new Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            new IconButton(
+                              icon: new Icon(Icons.remove),
+                              color: Colors.red,
+                              onPressed: () {
+                                model.reduceHP(item);
+                              },
                             ),
-                          ),
-                          new IconButton(
-                            icon: new Icon(Icons.add),
-                            onPressed: () {
-                              model.increaseHP(item);
-                            },
-                            color: Colors.green,
-                          )
-                        ],
+                            new Text(
+                              item.hp.toString(),
+                              textAlign: TextAlign.right,
+                              style: TextStyle(
+                                color: item.hp < 0
+                                    ? Colors.red
+                                    : Theme.of(context).textTheme.body1.color,
+                              ),
+                            ),
+                            new IconButton(
+                              icon: new Icon(Icons.add),
+                              onPressed: () {
+                                model.increaseHP(item);
+                              },
+                              color: Colors.green,
+                            )
+                          ],
+                        ),
                       ),
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) =>
+                                EditCharacterPage(item: item)));
+                      },
+                      onLongPress: () {
+                        model.removeCharacter(item);
+                      },
                     ),
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => EditCharacterPage(item: item)));
-                    },
-                    onLongPress: () {
-                      model.removeCharacter(item);
-                    },
                   ),
                 )
                 .toList()));
