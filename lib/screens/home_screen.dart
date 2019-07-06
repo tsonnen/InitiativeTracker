@@ -108,13 +108,14 @@ class HomeScreenState extends State<HomeScreen> {
         builder: (context, child, model) => ListView(
             children: model.characters
                 .map(
-                  (item) => Card(
-                    child: ListTile(
-                      title: new Text(item.name),
-                      isThreeLine: true,
-                      subtitle: new Row(
+                  (item) => ListTile(
+                    title: new Text(item.name),
+                    isThreeLine: true,
+                    subtitle: new Text(item.notes ?? ""),
+                    trailing: new Container(
+                      child: new Row(
+                        mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
                           new IconButton(
                             icon: new Icon(Icons.remove),
@@ -141,15 +142,14 @@ class HomeScreenState extends State<HomeScreen> {
                           )
                         ],
                       ),
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) =>
-                                EditCharacterPage(item: item)));
-                      },
-                      onLongPress: () {
-                        model.removeCharacter(item);
-                      },
                     ),
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => EditCharacterPage(item: item)));
+                    },
+                    onLongPress: () {
+                      model.removeCharacter(item);
+                    },
                   ),
                 )
                 .toList()));

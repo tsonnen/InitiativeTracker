@@ -123,7 +123,16 @@ class AddCharacterPageState extends State<AddCharacterPage> {
                   ),
                 ],
               ),
-              Row(),
+              Flexible(
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: "Notes",
+                  ),
+                  keyboardType: TextInputType.number,
+                  controller: noteController,
+                ),
+              ),
               new ScopedModelDescendant<CharacterListModel>(
                 builder: (context, child, model) => RaisedButton(
                   child: Text('Add Character'),
@@ -137,8 +146,9 @@ class AddCharacterPageState extends State<AddCharacterPage> {
                             initController.text != ""
                                 ? int.parse(initController.text)
                                 : rollDice(PreferenceManger.getNumberDice(),
-                                            PreferenceManger.getNumberSides()) +
-                                        (_initMod ?? 0));
+                                        PreferenceManger.getNumberSides()) +
+                                    (_initMod ?? 0),
+                            noteController.text);
                         model.addCharacter(character);
                       }
 
