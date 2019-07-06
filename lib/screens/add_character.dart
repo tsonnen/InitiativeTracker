@@ -16,7 +16,10 @@ class AddCharacterPageState extends State<AddCharacterPage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController hpController = TextEditingController();
   final TextEditingController initController = TextEditingController();
-  int _number = 1;
+  final TextEditingController noteController = TextEditingController();
+
+  int _number;
+  int _initMod;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -48,12 +51,14 @@ class AddCharacterPageState extends State<AddCharacterPage> {
                         if (value.isEmpty) {
                           return 'Please enter a name';
                         }
+                        return null;
                       },
                     ),
                   ),
                   Flexible(
                     child: DropdownButton(
                       value: _number,
+                      hint: new Text("# Units"),
                       items: new List<DropdownMenuItem<int>>.generate(
                           20,
                           (i) => new DropdownMenuItem(
@@ -79,6 +84,7 @@ class AddCharacterPageState extends State<AddCharacterPage> {
                     if (value.isEmpty || !isNumeric(value)) {
                       return "Please enter an integer number";
                     }
+                    return null;
                   },
                 ),
               ),
@@ -96,33 +102,62 @@ class AddCharacterPageState extends State<AddCharacterPage> {
                         if (value.isNotEmpty && !isNumeric(value)) {
                           return "Please enter an integer number";
                         }
+                        return null;
+                      },
+                    ),
+                  ),
+                  Flexible(
+                    child: DropdownButton(
+                      value: _initMod,
+                      hint: new Text("Initiative Modifier"),
+                      items: new List<DropdownMenuItem<int>>.generate(
+                          11,
+                          (i) => new DropdownMenuItem(
+                              value: i - 5, child: Text((i - 5).toString()))),
+                      onChanged: (int value) {
+                        setState(() {
+                          _initMod = value;
+                        });
                       },
                     ),
                   ),
                 ],
               ),
+              Flexible(
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: "Notes",
+                  ),
+                  keyboardType: TextInputType.multiline,
+                  maxLines: null,
+                  controller: noteController,
+                ),
+              ),
               new ScopedModelDescendant<CharacterListModel>(
                 builder: (context, child, model) => RaisedButton(
-                      child: Text('Add Character'),
-                      onPressed: () {
-                        if (_formKey.currentState.validate()) {
-                          for (int i = 1; i <= _number; i++) {
-                            Character character = Character(
-                                nameController.text +
-                                    (_number > 1 ? " " + i.toString() : ""),
-                                int.parse(hpController.text),
-                                initController.text != ""
-                                    ? int.parse(initController.text)
-                                    : rollDice(PreferenceManger.getNumberDice(),
-                                               PreferenceManger.getNumberSides()));
-                            model.addCharacter(character);
-                          }
+                  child: Text('Add Character'),
+                  onPressed: () {
+                    if (_formKey.currentState.validate()) {
+                      for (int i = 1; i <= (_number ?? 1); i++) {
+                        Character character = Character(
+                            nameController.text +
+                                ((_number ?? 1) > 1 ? " " + i.toString() : ""),
+                            int.parse(hpController.text),
+                            initController.text != ""
+                                ? int.parse(initController.text)
+                                : rollDice(PreferenceManger.getNumberDice(),
+                                        PreferenceManger.getNumberSides()) +
+                                    (_initMod ?? 0),
+                            noteController.text);
+                        model.addCharacter(character);
+                      }
 
-                          Scaffold.of(context).showSnackBar(
-                              SnackBar(content: Text('Added Character')));
-                        }
-                      },
-                    ),
+                      Scaffold.of(context).showSnackBar(
+                          SnackBar(content: Text('Added Character')));
+                    }
+                  },
+                ),
               ),
             ],
           )),

@@ -10,7 +10,7 @@ description: A battle tracker for tabletop RPGs.
 version: 1.1.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.2.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -22,7 +22,7 @@ dependencies:
   scoped_model: ^1.0.1
   preferences: ^3.0.0
   dynamic_theme: ^1.0.1
-  flutter_hsvcolor_picker: any
+  flutter_markdown: any
 
 dev_dependencies:
   flutter_test:
@@ -34,6 +34,8 @@ dev_dependencies:
 
 # The following section is specific to Flutter.
 flutter:
+  assets:
+    - assets/help/
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
