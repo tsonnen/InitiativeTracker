@@ -30,10 +30,13 @@ class Character extends Model {
     this.initiative = initiative;
   }
 
-  void edit(String name, int hp, int initiative) {
+  void edit(String name, int hp, int initiative, String notes) {
     this.name = name;
     this.hp = hp;
     this.initiative = initiative;
+    this.notes = notes;
+
+    notifyListeners();
   }
 
   factory Character.fromJson(Map<String, dynamic> json) {
