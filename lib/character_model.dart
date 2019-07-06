@@ -9,11 +9,12 @@ class Character extends Model {
   String notes;
   int hp;
 
-  Character([String name, int hp, int initiative])
+  Character([String name, int hp, int initiative, String notes])
       : this.name = name ?? "TEST",
         this.hp = hp ?? 123,
         this.id = Uuid().generateV4(),
-        this.initiative = initiative ?? rollDice(1, 20);
+        this.initiative = initiative ?? rollDice(1, 20),
+        this.notes = notes;
 
   Character.json({this.name, this.hp, this.initiative, this.id});
 
@@ -64,6 +65,7 @@ class CharacterListModel extends Model {
 
   void nextRound() {
     round++;
+    notifyListeners();
   }
 
   void addCharacter(Character character) {
@@ -81,6 +83,7 @@ class CharacterListModel extends Model {
 
   void removeCharacter(Character character) {
     characters.remove(character);
+    notifyListeners();
   }
 
   void sort() {
@@ -89,19 +92,23 @@ class CharacterListModel extends Model {
 
   reduceHP(Character item) {
     characters[characters.indexOf(item)].hp--;
+    notifyListeners();
   }
 
   increaseHP(Character item) {
     characters[characters.indexOf(item)].hp++;
+    notifyListeners();
   }
 
   void prevRound() {
     round == 1 ? round = 1 : round--;
+    notifyListeners();
   }
 
   clear() {
     round = 1;
     characters = [];
+    notifyListeners();
   }
 
   void outputToJSON() {}
