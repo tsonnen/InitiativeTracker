@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 import 'package:initiative_tracker/character_model.dart';
 import 'package:initiative_tracker/screens/add_character.dart';
 import 'package:initiative_tracker/screens/edit_character.dart';
@@ -61,6 +63,20 @@ class HomeScreenState extends State<HomeScreen> {
                       },
                     ),
                   ),
+                  PopupMenuItem(
+                    child: FlatButton.icon(
+                      label: new Text("Rate and Review"),
+                      icon: Icon(Icons.rate_review),
+                      onPressed: () async{
+                        const url = 'https://play.google.com/store/apps/details?id=com.tsonnen.initiativetracker';
+                        if (await canLaunch(url)) {
+                          await launch(url);
+                        } else {
+                          throw 'Could not launch $url';
+                        }
+                      },
+                    ),
+                  )
                 ];
               },
             ),
