@@ -2,9 +2,9 @@ import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:preferences/preferences.dart';
 import 'package:scoped_model/scoped_model.dart';
-import 'package:initiative_tracker/character_model.dart';
-import 'package:initiative_tracker/screens/home_screen.dart';
 
+import 'package:initiative_tracker/screens/home_screen.dart';
+import 'package:initiative_tracker/party_model.dart';
 import 'package:initiative_tracker/preference_manger.dart';
 
 void main() async {
@@ -13,7 +13,7 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  final CharacterListModel model = new CharacterListModel();
+  final PartyModel model = new PartyModel();
   final routes = <String, WidgetBuilder>{
     HomeScreen.route: (BuildContext context) => HomeScreen(),
   };
@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
         defaultBrightness: Brightness.dark,
         data: (brightness) => new ThemeData(brightness: brightness),
         themedWidgetBuilder: (context, theme) {
-          return new ScopedModel<CharacterListModel>(
+          return new ScopedModel<PartyModel>(
               model: model,
               child: MaterialApp(
                 title: 'Initiative Tracker',

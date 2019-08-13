@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
-import 'package:initiative_tracker/character_model.dart';
+import 'package:initiative_tracker/character.dart';
+import 'package:initiative_tracker/party_model.dart';
 import 'package:initiative_tracker/preference_manger.dart';
 import 'package:initiative_tracker/random_generator.dart';
 import 'package:initiative_tracker/validators.dart';
@@ -134,7 +135,7 @@ class AddCharacterPageState extends State<AddCharacterPage> {
                   controller: noteController,
                 ),
               ),
-              new ScopedModelDescendant<CharacterListModel>(
+              new ScopedModelDescendant<PartyModel>(
                 builder: (context, child, model) => RaisedButton(
                   child: Text('Add Character'),
                   onPressed: () {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
-import 'package:initiative_tracker/character_model.dart';
+import 'package:initiative_tracker/character.dart';
+import 'package:initiative_tracker/party_model.dart';
 import 'package:initiative_tracker/validators.dart';
 
 class EditCharacterPage extends StatefulWidget {
@@ -101,7 +102,7 @@ class EditCharacterPageState extends State<EditCharacterPage> {
                   controller: noteController,
                 ),
               ),
-              new ScopedModelDescendant<CharacterListModel>(
+              new ScopedModelDescendant<PartyModel>(
                 builder: (context, child, model) => RaisedButton(
                   child: Text('Edit Character'),
                   onPressed: () {
@@ -114,7 +115,7 @@ class EditCharacterPageState extends State<EditCharacterPage> {
                               : null,
                           noteController.text);
 
-                      model.sort();
+                      model.characterList.sort();
                       Navigator.of(context).pop();
                     }
                   },

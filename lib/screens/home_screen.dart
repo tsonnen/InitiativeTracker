@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:initiative_tracker/party_model.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'package:initiative_tracker/character_model.dart';
 import 'package:initiative_tracker/screens/add_character.dart';
 import 'package:initiative_tracker/screens/edit_character.dart';
 import 'package:initiative_tracker/screens/help_screen.dart';
@@ -19,7 +19,7 @@ class HomeScreen extends StatefulWidget {
 class HomeScreenState extends State<HomeScreen> {
   var titleText = "Round 1";
 
-  void updateTitle(CharacterListModel model) {
+  void updateTitle(PartyModel model) {
     this.setState(() {
       var round = model.round;
       titleText = "Round " + round.toString();
@@ -28,7 +28,7 @@ class HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return new ScopedModelDescendant<CharacterListModel>(
+    return new ScopedModelDescendant<PartyModel>(
       builder: (context, child, model) => Scaffold(
         appBar: AppBar(
           title: Text(titleText),
@@ -43,6 +43,25 @@ class HomeScreenState extends State<HomeScreen> {
             PopupMenuButton(
               itemBuilder: (BuildContext context) {
                 return [
+                  PopupMenuItem(
+                    child: FlatButton.icon(
+                      label: new Text("Save Party"),
+                      icon: Icon(Icons.save),
+                      onPressed: () {
+                        
+                      },
+                    ),
+                  ),
+                  PopupMenuItem(
+                    child: FlatButton.icon(
+                      label: new Text("Manage Saved Parties"),
+                      icon: Icon(Icons.view_list),
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => SettingsPage()));
+                      },
+                    ),
+                  ),
                   PopupMenuItem(
                     child: FlatButton.icon(
                       label: new Text("Settings"),
@@ -76,7 +95,7 @@ class HomeScreenState extends State<HomeScreen> {
                         }
                       },
                     ),
-                  )
+                  ),
                 ];
               },
             ),
@@ -120,9 +139,9 @@ class HomeScreenState extends State<HomeScreen> {
   }
 
   Widget createCharacterList() {
-    return ScopedModelDescendant<CharacterListModel>(
+    return ScopedModelDescendant<PartyModel>(
         builder: (context, child, model) => ListView(
-            children: model.characters
+            children: model.getCharacterList()
                 .map(
                   (item) => Card(
                     child: ListTile(

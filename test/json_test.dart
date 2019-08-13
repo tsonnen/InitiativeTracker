@@ -10,7 +10,7 @@ void main() {
       var jsonData =
           '[{"name":"test","characters":[{"name":"john","initiative":12,"hp":12,"id":"abcd"},{"name":"jo","initiative":11,"hp":11,"id":"efg"}]}]';
       var parsedJson = json.decode(jsonData);
-      PartyList partyList = PartyList.fromJson(parsedJson);
+      PartyListModel partyList = PartyListModel.fromJson(parsedJson);
 
       expect(partyList.parties.length, 1);
     });
@@ -19,7 +19,7 @@ void main() {
       var jsonData =
           '[{"name":"test","characters":[{"name":"john","initiative":12,"hp":12,"id":"abcd"},{"name":"jo","initiative":11,"hp":11,"id":"efg"}]}]';
       var parsedJson = json.decode(jsonData);
-      PartyList partyList = PartyList.fromJson(parsedJson);
+      PartyListModel partyList = PartyListModel.fromJson(parsedJson);
 
       var string = json.encode(partyList.toJson());
       expect(string == jsonData, true);

@@ -1,17 +1,18 @@
-import 'package:initiative_tracker/party.dart';
+import 'package:initiative_tracker/party_model.dart';
+import 'package:scoped_model/scoped_model.dart';
 
-class PartyList {
-  List<Party> parties;
+class PartyListModel extends Model {
+  List<PartyModel> parties;
 
-  PartyList.json({this.parties});
+  PartyListModel.json({this.parties});
 
-  PartyList() {
-    parties = new List<Party>();
+  PartyListModel() {
+    parties = new List<PartyModel>();
   }
 
-  factory PartyList.fromJson(List<dynamic> parsedJson) {
-    return new PartyList.json(
-      parties: parsedJson.map((i) => Party.fromJson(i)).toList(),
+  factory PartyListModel.fromJson(List<dynamic> parsedJson) {
+    return new PartyListModel.json(
+      parties: parsedJson.map((i) => PartyModel.fromJson(i)).toList(),
     );
   }
 

@@ -1,8 +1,7 @@
 import 'package:initiative_tracker/uuid.dart';
 import 'package:initiative_tracker/random_generator.dart';
-import 'package:scoped_model/scoped_model.dart';
 
-class Character extends Model {
+class Character{
   String id;
   String name;
   int initiative;
@@ -35,8 +34,6 @@ class Character extends Model {
     this.hp = hp;
     this.initiative = initiative;
     this.notes = notes;
-
-    notifyListeners();
   }
 
   factory Character.fromJson(Map<String, dynamic> json) {
@@ -54,21 +51,13 @@ class Character extends Model {
   int get hashCode => name.hashCode ^ initiative.hashCode;
 }
 
-class CharacterListModel extends Model {
+class CharacterList{
   List<Character> characters;
 
-  int round = 1;
-  String encounterName;
+  CharacterList.json({this.characters});
 
-  CharacterListModel.json({this.characters});
-
-  CharacterListModel() {
+  CharacterList() {
     characters = new List<Character>();
-  }
-
-  void nextRound() {
-    round++;
-    notifyListeners();
   }
 
   void addCharacter(Character character) {
@@ -86,7 +75,6 @@ class CharacterListModel extends Model {
 
   void removeCharacter(Character character) {
     characters.remove(character);
-    notifyListeners();
   }
 
   void sort() {
@@ -94,30 +82,21 @@ class CharacterListModel extends Model {
   }
 
   reduceHP(Character item) {
-    characters[characters.indexOf(item)].hp--;
-    notifyListeners();
+    item.setHP(item.hp--);
   }
 
   increaseHP(Character item) {
     characters[characters.indexOf(item)].hp++;
-    notifyListeners();
   }
 
-  void prevRound() {
-    round == 1 ? round = 1 : round--;
-    notifyListeners();
-  }
-
-  clear() {
-    round = 1;
+  empty(){
     characters = [];
-    notifyListeners();
   }
 
   void outputToJSON() {}
 
-  factory CharacterListModel.fromJson(List<dynamic> parsedJson) {
-    return new CharacterListModel.json(
+  factory CharacterList.fromJson(List<dynamic> parsedJson) {
+    return new CharacterList.json(
       characters: parsedJson.map((i) => Character.fromJson(i)).toList(),
     );
   }
