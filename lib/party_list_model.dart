@@ -22,6 +22,10 @@ class PartyListModel extends Model {
     return jsonList;
   }
 
+  bool containsParty(PartyModel partyModel){
+    return this.parties.where((party) => party.id == partyModel.id).length > 0;
+  }
+
   void addParty(party) {
     parties.add(party);
   }

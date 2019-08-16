@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:test/test.dart';
-import 'package:initiative_tracker/party_list.dart';
+import 'package:initiative_tracker/party_list_model.dart';
 
 void main() {
   group('Json', () {

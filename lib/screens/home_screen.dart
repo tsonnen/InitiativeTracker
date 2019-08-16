@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:initiative_tracker/party_list_model.dart';
 import 'package:initiative_tracker/party_model.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -28,112 +29,117 @@ class HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return new ScopedModelDescendant<PartyModel>(
-      builder: (context, child, model) => Scaffold(
-        appBar: AppBar(
-          title: Text(titleText),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.refresh),
-              onPressed: () {
-                model.clear();
-                updateTitle(model);
-              },
-            ),
-            PopupMenuButton(
-              itemBuilder: (BuildContext context) {
-                return [
-                  PopupMenuItem(
-                    child: FlatButton.icon(
-                      label: new Text("Save Party"),
-                      icon: Icon(Icons.save),
-                      onPressed: () {
-                        
-                      },
-                    ),
+    final PartyModel partyModel = ScopedModel.of<PartyModel>(context);
+    final PartyListModel partyListModel =
+        ScopedModel.of<PartyListModel>(context);
+
+    return new Scaffold(
+      appBar: AppBar(
+        title: Text(titleText),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.refresh),
+            onPressed: () {
+              partyModel.clear();
+              updateTitle(partyModel);
+            },
+          ),
+          PopupMenuButton(
+            itemBuilder: (BuildContext context) {
+              return [
+                PopupMenuItem(
+                  child: FlatButton.icon(
+                    label: new Text("Save Party"),
+                    icon: Icon(Icons.save),
+                    onPressed: () {
+                      if (!partyListModel.containsParty(partyModel)) {
+                        _showNameDialog();
+                      }
+                    },
                   ),
-                  PopupMenuItem(
-                    child: FlatButton.icon(
-                      label: new Text("Manage Saved Parties"),
-                      icon: Icon(Icons.view_list),
-                      onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => SettingsPage()));
-                      },
-                    ),
-                  ),
-                  PopupMenuItem(
-                    child: FlatButton.icon(
-                      label: new Text("Settings"),
-                      icon: Icon(Icons.settings),
-                      onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => SettingsPage()));
-                      },
-                    ),
-                  ),
-                  PopupMenuItem(
-                    child: FlatButton.icon(
-                      label: new Text("Help"),
-                      icon: Icon(Icons.help_outline),
-                      onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => HelpPage()));
-                      },
-                    ),
-                  ),
-                  PopupMenuItem(
-                    child: FlatButton.icon(
-                      label: new Text("Rate and Review"),
-                      icon: Icon(Icons.rate_review),
-                      onPressed: () async{
-                        const url = 'https://play.google.com/store/apps/details?id=com.tsonnen.initiativetracker';
-                        if (await canLaunch(url)) {
-                          await launch(url);
-                        } else {
-                          throw 'Could not launch $url';
-                        }
-                      },
-                    ),
-                  ),
-                ];
-              },
-            ),
-          ],
-        ),
-        body: Container(
-          child: createCharacterList(),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: FloatingActionButton(
-          child: const Icon(Icons.add),
-          onPressed: () {
-            Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => AddCharacterPage()));
-          },
-          tooltip: 'Add Character',
-        ),
-        bottomNavigationBar: BottomAppBar(
-          child: new Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.navigate_before),
-                  onPressed: () {
-                    model.prevRound();
-                    updateTitle(model);
-                  },
                 ),
-                IconButton(
-                  icon: Icon(Icons.navigate_next),
-                  onPressed: () {
-                    model.nextRound();
-                    updateTitle(model);
-                  },
+                PopupMenuItem(
+                  child: FlatButton.icon(
+                    label: new Text("Manage Saved Parties"),
+                    icon: Icon(Icons.view_list),
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => SettingsPage()));
+                    },
+                  ),
                 ),
-              ]),
-        ),
+                PopupMenuItem(
+                  child: FlatButton.icon(
+                    label: new Text("Settings"),
+                    icon: Icon(Icons.settings),
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => SettingsPage()));
+                    },
+                  ),
+                ),
+                PopupMenuItem(
+                  child: FlatButton.icon(
+                    label: new Text("Help"),
+                    icon: Icon(Icons.help_outline),
+                    onPressed: () {
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => HelpPage()));
+                    },
+                  ),
+                ),
+                PopupMenuItem(
+                  child: FlatButton.icon(
+                    label: new Text("Rate and Review"),
+                    icon: Icon(Icons.rate_review),
+                    onPressed: () async {
+                      const url =
+                          'https://play.google.com/store/apps/details?id=com.tsonnen.initiativetracker';
+                      if (await canLaunch(url)) {
+                        await launch(url);
+                      } else {
+                        throw 'Could not launch $url';
+                      }
+                    },
+                  ),
+                ),
+              ];
+            },
+          ),
+        ],
+      ),
+      body: Container(
+        child: createCharacterList(),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.add),
+        onPressed: () {
+          Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => AddCharacterPage()));
+        },
+        tooltip: 'Add Character',
+      ),
+      bottomNavigationBar: BottomAppBar(
+        child: new Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              IconButton(
+                icon: Icon(Icons.navigate_before),
+                onPressed: () {
+                  partyModel.prevRound();
+                  updateTitle(partyModel);
+                },
+              ),
+              IconButton(
+                icon: Icon(Icons.navigate_next),
+                onPressed: () {
+                  partyModel.nextRound();
+                  updateTitle(partyModel);
+                },
+              ),
+            ]),
       ),
     );
   }
@@ -141,7 +147,8 @@ class HomeScreenState extends State<HomeScreen> {
   Widget createCharacterList() {
     return ScopedModelDescendant<PartyModel>(
         builder: (context, child, model) => ListView(
-            children: model.getCharacterList()
+            children: model
+                .getCharacterList()
                 .map(
                   (item) => Card(
                     child: ListTile(
@@ -191,5 +198,42 @@ class HomeScreenState extends State<HomeScreen> {
                   ),
                 )
                 .toList()));
+  }
+
+  void _showNameDialog() {
+    final TextEditingController nameController = TextEditingController();
+    final PartyModel partyModel = ScopedModel.of<PartyModel>(context);
+    final PartyListModel partyListModel =
+        ScopedModel.of<PartyListModel>(context);
+    // flutter defined function
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: new Text("Enter a Name"),
+          content: new TextField(
+            controller: nameController,
+          ),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            new FlatButton(
+              child: new Text("Cancel"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            new FlatButton(
+              child: new Text("Save"),
+              onPressed: () {
+                partyModel.setName(nameController.text);
+                partyListModel.addParty(partyModel);
+                Navigator.of(context).pop();
+              },
+            )
+          ],
+        );
+      },
+    );
   }
 }
