@@ -49,6 +49,17 @@ class Character{
 
   bool operator ==(o) => this.id == o.id;
   int get hashCode => name.hashCode ^ initiative.hashCode;
+
+  clone() {
+    var cloned = new Character();
+    cloned.hp = this.hp;
+    cloned.id = this.id;
+    cloned.initiative = this.initiative;
+    cloned.name = this.name;
+    cloned.notes = this.notes;
+
+    return cloned;
+  }
 }
 
 class CharacterList{

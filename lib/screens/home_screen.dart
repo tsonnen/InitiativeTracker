@@ -54,6 +54,8 @@ class HomeScreenState extends State<HomeScreen> {
                     onPressed: () {
                       if (!partyListModel.containsParty(partyModel)) {
                         _showNameDialog();
+                      } else {
+                        _showOverWriteDialog();
                       }
                     },
                   ),
@@ -63,8 +65,7 @@ class HomeScreenState extends State<HomeScreen> {
                     label: new Text("Manage Saved Parties"),
                     icon: Icon(Icons.view_list),
                     onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => SettingsPage()));
+                      _showPartiesDialog();
                     },
                   ),
                 ),
@@ -233,6 +234,93 @@ class HomeScreenState extends State<HomeScreen> {
             )
           ],
         );
+      },
+    );
+  }
+
+  void _showOverWriteDialog() {
+    final PartyModel partyModel = ScopedModel.of<PartyModel>(context);
+    final PartyListModel partyListModel =
+        ScopedModel.of<PartyListModel>(context);
+    // flutter defined function
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: new Text("Overwrite"),
+            content: new Text(
+                "This party is already saved\nWould you like to overwrite it?"),
+            actions: <Widget>[
+              // usually buttons at the bottom of the dialog
+              new FlatButton(
+                child: new Text("Yes"),
+                onPressed: () {
+                  partyListModel.editParty(partyModel);
+                  Navigator.of(context).pop();
+                },
+              ),
+              new FlatButton(
+                child: new Text("No"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  partyModel.generateUUID();
+                  _showNameDialog();
+                },
+              ),
+              new FlatButton(
+                child: new Text("Cancel"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        });
+  }
+
+  void _showPartiesDialog() {
+    final PartyModel partyModel = ScopedModel.of<PartyModel>(context);
+    final PartyListModel partyListModel =
+        ScopedModel.of<PartyListModel>(context);
+    // flutter defined function
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return new ScopedModelDescendant<PartyListModel>(
+            builder: (context, child, model) => AlertDialog(
+                  title: new Text("Manage Parties"),
+                  content: model.parties.length == 0
+                      ? new Text("No Saved Parties")
+                      : Container(
+                          width: double.maxFinite,
+                          child: ListView(
+                            children: model.parties
+                                .map(
+                                  (item) => ListTile(
+                                    title: new Text(item.name),
+                                    onLongPress: () {
+                                      partyListModel.remove(item);
+                                    },
+                                    onTap: (){
+                                      partyModel.from(item);
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        ),
+                  actions: <Widget>[
+                    // usually buttons at the bottom of the dialog
+                    new FlatButton(
+                      child: new Text("Done"),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ));
       },
     );
   }

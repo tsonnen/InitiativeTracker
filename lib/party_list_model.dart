@@ -23,10 +23,23 @@ class PartyListModel extends Model {
   }
 
   bool containsParty(PartyModel partyModel){
-    return this.parties.where((party) => party.id == partyModel.id).length > 0;
+    var matches = this.parties.where((party) => party.id == partyModel.id);
+    return matches.length > 0;
   }
 
-  void addParty(party) {
-    parties.add(party);
+  void addParty(PartyModel party) {
+    assert(!containsParty(party), "Specified party is a duplicate. Use editParty instead");
+    parties.add(party.clone());
+    notifyListeners();
+  }
+
+  void editParty(PartyModel partyModel){
+    this.parties.remove(this.parties.firstWhere((party) => party.id == partyModel.id));
+    addParty(partyModel);
+  }
+
+  void remove(PartyModel item) {
+    this.parties.remove(item);
+    notifyListeners();
   }
 }
