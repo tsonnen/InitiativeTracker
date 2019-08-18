@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:initiative_tracker/party_list_model.dart';
 import 'package:initiative_tracker/party_model.dart';
+import 'package:initiative_tracker/preference_manger.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -54,8 +55,11 @@ class HomeScreenState extends State<HomeScreen> {
                     onPressed: () {
                       if (!partyListModel.containsParty(partyModel)) {
                         _showNameDialog();
-                      } else {
+                      } else if (PreferenceManger.getConfirmOverwrite()) {
                         _showOverWriteDialog();
+                      }else{
+                        partyListModel.remove(partyModel);
+                        partyListModel.addParty(partyModel);
                       }
                     },
                   ),
@@ -279,7 +283,6 @@ class HomeScreenState extends State<HomeScreen> {
   }
 
   void _showPartiesDialog() {
-    final PartyModel partyModel = ScopedModel.of<PartyModel>(context);
     final PartyListModel partyListModel =
         ScopedModel.of<PartyListModel>(context);
     // flutter defined function
@@ -300,10 +303,20 @@ class HomeScreenState extends State<HomeScreen> {
                                   (item) => ListTile(
                                     title: new Text(item.name),
                                     onLongPress: () {
-                                      partyListModel.remove(item);
+                                      if (!PreferenceManger
+                                          .getConfirmDelete()) {
+                                        partyListModel.remove(item);
+                                      } else {
+                                        _showDeleteDialog(item);
+                                      }
                                     },
-                                    onTap: (){
-                                      partyModel.from(item);
+                                    onTap: () {
+                                      if (!PreferenceManger.getConfirmLoad()) {
+                                        loadParty(item);
+                                      } else {
+                                        _showLoadDialog(item);
+                                      }
+
                                       Navigator.of(context).pop();
                                     },
                                   ),
@@ -323,5 +336,72 @@ class HomeScreenState extends State<HomeScreen> {
                 ));
       },
     );
+  }
+
+  void loadParty(PartyModel item) {
+    final PartyModel partyModel = ScopedModel.of<PartyModel>(context);
+    partyModel.from(item);
+    partyModel.round = 1;
+    updateTitle(partyModel);
+  }
+
+  void _showDeleteDialog(PartyModel partyModel) {
+    String name = partyModel.name;
+    final PartyListModel partyListModel =
+        ScopedModel.of<PartyListModel>(context);
+    // flutter defined function
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: new Text("Delete"),
+            content: new Text("Would you like to delete $name?"),
+            actions: <Widget>[
+              // usually buttons at the bottom of the dialog
+              new FlatButton(
+                child: new Text("Yes"),
+                onPressed: () {
+                  partyListModel.remove(partyModel);
+                  Navigator.of(context).pop();
+                },
+              ),
+              new FlatButton(
+                child: new Text("No"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  void _showLoadDialog(PartyModel partyModel) {
+    String name = partyModel.name;
+    // flutter defined function
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: new Text("Delete"),
+            content: new Text("Would you like to load $name?"),
+            actions: <Widget>[
+              // usually buttons at the bottom of the dialog
+              new FlatButton(
+                child: new Text("Yes"),
+                onPressed: () {
+                  loadParty(partyModel);
+                  Navigator.of(context).pop();
+                },
+              ),
+              new FlatButton(
+                child: new Text("No"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
   }
 }
