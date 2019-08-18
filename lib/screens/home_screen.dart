@@ -57,9 +57,11 @@ class HomeScreenState extends State<HomeScreen> {
                         _showNameDialog();
                       } else if (PreferenceManger.getConfirmOverwrite()) {
                         _showOverWriteDialog();
-                      }else{
+                      } else {
                         partyListModel.remove(partyModel);
                         partyListModel.addParty(partyModel);
+                        partyListModel
+                            .write();
                       }
                     },
                   ),
@@ -210,6 +212,7 @@ class HomeScreenState extends State<HomeScreen> {
     final PartyModel partyModel = ScopedModel.of<PartyModel>(context);
     final PartyListModel partyListModel =
         ScopedModel.of<PartyListModel>(context);
+
     // flutter defined function
     showDialog(
       context: context,
@@ -233,6 +236,7 @@ class HomeScreenState extends State<HomeScreen> {
               onPressed: () {
                 partyModel.setName(nameController.text);
                 partyListModel.addParty(partyModel);
+                partyListModel.write();
                 Navigator.of(context).pop();
               },
             )
@@ -285,6 +289,8 @@ class HomeScreenState extends State<HomeScreen> {
   void _showPartiesDialog() {
     final PartyListModel partyListModel =
         ScopedModel.of<PartyListModel>(context);
+
+    bool edit = false;
     // flutter defined function
     showDialog(
       context: context,
@@ -303,6 +309,7 @@ class HomeScreenState extends State<HomeScreen> {
                                   (item) => ListTile(
                                     title: new Text(item.name),
                                     onLongPress: () {
+                                      edit = true;
                                       if (!PreferenceManger
                                           .getConfirmDelete()) {
                                         partyListModel.remove(item);
@@ -316,8 +323,6 @@ class HomeScreenState extends State<HomeScreen> {
                                       } else {
                                         _showLoadDialog(item);
                                       }
-
-                                      Navigator.of(context).pop();
                                     },
                                   ),
                                 )
@@ -329,6 +334,10 @@ class HomeScreenState extends State<HomeScreen> {
                     new FlatButton(
                       child: new Text("Done"),
                       onPressed: () {
+                        if (edit) {
+                          partyListModel
+                              .write();
+                        }
                         Navigator.of(context).pop();
                       },
                     ),
@@ -378,12 +387,13 @@ class HomeScreenState extends State<HomeScreen> {
 
   void _showLoadDialog(PartyModel partyModel) {
     String name = partyModel.name;
+
     // flutter defined function
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: new Text("Delete"),
+            title: new Text("Load"),
             content: new Text("Would you like to load $name?"),
             actions: <Widget>[
               // usually buttons at the bottom of the dialog

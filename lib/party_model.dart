@@ -31,17 +31,17 @@ class PartyModel extends Model {
     notifyListeners();
   }
 
-  reduceHP(Character item) {
+  void reduceHP(Character item) {
     item.setHP(--item.hp);
     notifyListeners();
   }
 
-  increaseHP(Character item) {
+  void increaseHP(Character item) {
     item.setHP(++item.hp);
     notifyListeners();
   }
 
-  setName(String name) {
+  void setName(String name) {
     this.name = name;
     notifyListeners();
   }
@@ -51,7 +51,7 @@ class PartyModel extends Model {
     notifyListeners();
   }
 
-  clone() {
+  PartyModel clone() {
     var cloned = new PartyModel();
     cloned.name = this.name;
     cloned.id = this.id;
@@ -69,7 +69,7 @@ class PartyModel extends Model {
     notifyListeners();
   }
 
-  clear() {
+  void clear() {
     round = 1;
     characterList.empty();
     generateUUID();

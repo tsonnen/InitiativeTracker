@@ -23,6 +23,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     PreferenceManger.getPreferences();
+    PartyListModel.readSavedParties()
+        .then((value) => {partyListModel.from(value)});
     return new DynamicTheme(
         defaultBrightness: Brightness.dark,
         data: (brightness) => new ThemeData(brightness: brightness),

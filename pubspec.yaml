@@ -24,6 +24,7 @@ dependencies:
   dynamic_theme: ^1.0.1
   flutter_markdown: any
   url_launcher: ^5.0.2
+  path_provider: any
 
 dev_dependencies:
   flutter_test:
