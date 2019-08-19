@@ -1,4 +1,4 @@
-[![Codemagic build status](https://api.codemagic.io/apps/5c9b195f7c277e7411bbf45a/5c9b195f7c277e7411bbf459/status_badge.svg)](https://codemagic.io/apps/5c9b195f7c277e7411bbf45a/5c9b195f7c277e7411bbf459/latest_build) [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=tsonnen67%40gmail.com&currency_code=USD&source=url)
+[![Codemagic build status](https://api.codemagic.io/apps/5c9b195f7c277e7411bbf45a/5c9b195f7c277e7411bbf459/status_badge.svg)](https://codemagic.io/apps/5c9b195f7c277e7411bbf45a/5c9b195f7c277e7411bbf459/latest_build)
 
 ![](https://github.com/tsonnen/InitiativeTracker/raw/master/images/Initiative%20Tracker-feature-graphic.png)
 
@@ -12,7 +12,10 @@ on releasing an iOS version once I have an Apple device.
 
 
 # Support and Contributing
-Any and all code contributions are greatly appreciated! If you feel like you would like to support me monetarily, there is a link for PayPal at the top.
+Any and all code contributions are greatly appreciated! If you have 
+any recommendations, or feature requests, please do not hesitate to 
+send me an [email](mailto:tsonnenapps@gmail.com) or to create an issue 
+in the repo.
 
 # License
 
