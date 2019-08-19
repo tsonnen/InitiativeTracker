@@ -17,7 +17,7 @@ void main() {
 
     test('Check to JSON', (){
       var jsonData =
-          '[{"name":"test","characters":[{"name":"john","initiative":12,"hp":12,"id":"abcd"},{"name":"jo","initiative":11,"hp":11,"id":"efg"}]}]';
+          '[{"name":"test","id":"abcd","characters":[{"name":"john","initiative":12,"hp":12,"id":"abcd","notes":"hi"},{"name":"jo","initiative":11,"hp":11,"id":"efg","notes":"bye"}]}]';
       var parsedJson = json.decode(jsonData);
       PartyListModel partyList = PartyListModel.fromJson(parsedJson);
 
