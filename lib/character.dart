@@ -1,7 +1,7 @@
 import 'package:initiative_tracker/uuid.dart';
 import 'package:initiative_tracker/random_generator.dart';
 
-class Character{
+class Character {
   String id;
   String name;
   int initiative;
@@ -15,7 +15,7 @@ class Character{
         this.initiative = initiative ?? rollDice(1, 20),
         this.notes = notes;
 
-  Character.json({this.name, this.hp, this.initiative, this.id});
+  Character.json({this.name, this.hp, this.initiative, this.id, this.notes});
 
   void setName(String name) {
     this.name = name;
@@ -38,14 +38,21 @@ class Character{
 
   factory Character.fromJson(Map<String, dynamic> json) {
     return new Character.json(
-        name: json['name'],
-        initiative: json['initiative'],
-        hp: json['hp'],
-        id: json['id']);
+      name: json['name'],
+      initiative: json['initiative'],
+      hp: json['hp'],
+      id: json['id'],
+      notes: json['notes'],
+    );
   }
 
-  Map<String, dynamic> toJson() =>
-      {'name': name, 'initiative': initiative, 'hp': hp, 'id': id};
+  Map<String, dynamic> toJson() => {
+    'name': name, 
+    'initiative': initiative, 
+    'hp': hp, 
+    'id': id,
+    'notes': notes
+  };
 
   bool operator ==(o) => this.id == o.id;
   int get hashCode => name.hashCode ^ initiative.hashCode;
@@ -62,7 +69,7 @@ class Character{
   }
 }
 
-class CharacterList{
+class CharacterList {
   List<Character> characters;
 
   CharacterList.json({this.characters});
@@ -100,7 +107,7 @@ class CharacterList{
     characters[characters.indexOf(item)].hp++;
   }
 
-  empty(){
+  empty() {
     characters = [];
   }
 

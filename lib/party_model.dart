@@ -14,7 +14,7 @@ class PartyModel extends Model {
     generateUUID();
   }
 
-  PartyModel.json({this.name, this.characterList});
+  PartyModel.json({this.name, this.id, this.characterList});
 
   void nextRound() {
     round++;
@@ -83,11 +83,13 @@ class PartyModel extends Model {
   factory PartyModel.fromJson(Map<String, dynamic> json) {
     return new PartyModel.json(
         name: json['name'],
+        id: json['id'],
         characterList: CharacterList.fromJson(json['characters']));
   }
 
   Map<String, dynamic> toJson() => {
         'name': name,
+        'id': id,
         'characters': characterList.toJson(),
       };
 
