@@ -1,0 +1,2 @@
+# Home Screen
+This is the main screen of the applicaton. From here, you can manage the characters (tap to edit them, long press to delete), [manage saved parties](help:party_management), save your current party, or [add a character](help:adding_a_character).
