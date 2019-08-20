@@ -49,6 +49,22 @@ class SettingsPageState extends State<SettingsPage> {
             defaultVal: '20',
             values: ['2', '3', '4', '6', '8', '10', '12', '20'],
           ),
+          PreferenceTitle("Party Management"),
+          CheckboxPreference(
+            "Confirm Overwrite",
+            "confirm_overwrite",
+            defaultVal: true,
+          ),
+          CheckboxPreference(
+            "Confirm Load",
+            "confirm_load",
+            defaultVal: true,
+          ),
+          CheckboxPreference(
+            "Confirm Delete",
+            "confirm_delete",
+            defaultVal: true,
+          ),
         ],
       ),
     );

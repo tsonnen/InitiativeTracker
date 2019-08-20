@@ -19,6 +19,27 @@ class PreferenceManger {
     return 20;
   }
 
+  static bool getConfirmDelete(){
+    if (prefs != null) {
+      return prefs.getBool("pref_confirm_delete") ?? true;
+    }
+    return true;
+  }
+
+  static bool getConfirmOverwrite(){
+    if (prefs != null) {
+      return prefs.getBool("pref_confirm_overwrite") ?? true;
+    }
+    return true;
+  }
+
+  static bool getConfirmLoad(){
+    if (prefs != null) {
+      return prefs.getBool("pref_confirm_load") ?? true;
+    }
+    return true;
+  }
+
   static void getPreferences() async {
     prefs = await SharedPreferences.getInstance();
   }

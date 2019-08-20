@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import 'package:initiative_tracker/character_model.dart';
+import 'package:initiative_tracker/character.dart';
 
 
 void main(){
@@ -7,7 +7,7 @@ void main(){
     test('Should be able to find item in list', (){
         Character testChar = new Character();
         Character testChar2 = new Character();
-        CharacterListModel charList = new CharacterListModel();
+        CharacterList charList = new CharacterList();
 
         charList.addCharacter(testChar);
         charList.addCharacter(testChar2);
@@ -17,7 +17,7 @@ void main(){
     test('ID should be different', (){
       Character testChar = new Character();
       Character testChar2 = new Character();
-      CharacterListModel charList = new CharacterListModel();
+      CharacterList charList = new CharacterList();
 
       charList.addCharacter(testChar);
       charList.addCharacter(testChar2);
@@ -27,7 +27,7 @@ void main(){
     test('First Element should have a higher initiative', (){
       Character testChar = new Character();
       Character testChar2 = new Character();
-      CharacterListModel charList = new CharacterListModel();
+      CharacterList charList = new CharacterList();
 
       charList.addCharacter(testChar);
       charList.addCharacter(testChar2);
@@ -37,7 +37,7 @@ void main(){
     test('Charcter should have been removed', (){
       Character testChar = new Character();
       Character testChar2 = new Character();
-      CharacterListModel charList = new CharacterListModel();
+      CharacterList charList = new CharacterList();
 
       charList.addCharacter(testChar);
       charList.addCharacter(testChar2);

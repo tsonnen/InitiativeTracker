@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HelpPage extends StatefulWidget {
   static final String route = "Help-Page";
@@ -19,13 +20,12 @@ class HelpPageState extends State<HelpPage> {
   @override
   void initState() {
     super.initState();
-  
+
     showHelp("table_contents");
   }
 
   @override
   Widget build(BuildContext context) {
-
     return new Scaffold(
       appBar: AppBar(
         title: Text('Help'),
@@ -33,9 +33,22 @@ class HelpPageState extends State<HelpPage> {
       body: new Markdown(
         data: markdown,
         onTapLink: (value) {
-          backStack.addLast(_currentPage);
-          forwardStack.clear();
-          showHelp(value);
+          if (value.contains("help:")) {
+            value = value.replaceAll("help:", "");
+            backStack.addLast(_currentPage);
+            forwardStack.clear();
+            showHelp(value);
+          } else if (value.contains("url:")) {
+            value = value.replaceAll("url:", "");
+            String url = value;
+            canLaunch(url).then((ableLaunch) {
+              if (ableLaunch) {
+                launch(url);
+              } else {
+                throw 'Could not launch $url';
+              }
+            });
+          }
         },
       ),
       bottomNavigationBar: BottomAppBar(
@@ -46,7 +59,7 @@ class HelpPageState extends State<HelpPage> {
               IconButton(
                 icon: Icon(Icons.navigate_before),
                 onPressed: () {
-                  if (backStack.isNotEmpty){
+                  if (backStack.isNotEmpty) {
                     forwardStack.addLast(_currentPage);
                     showHelp(backStack.removeLast());
                   }
@@ -58,7 +71,7 @@ class HelpPageState extends State<HelpPage> {
               IconButton(
                 icon: Icon(Icons.navigate_next),
                 onPressed: () {
-                  if (forwardStack.isNotEmpty){
+                  if (forwardStack.isNotEmpty) {
                     backStack.addLast(_currentPage);
                     showHelp(forwardStack.removeLast());
                   }
