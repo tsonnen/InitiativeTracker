@@ -9,6 +9,7 @@ import 'package:initiative_tracker/party_model.dart';
 import 'package:initiative_tracker/preference_manger.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await PrefService.init(prefix: "pref_");
   runApp(new MyApp());
 }
