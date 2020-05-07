@@ -8,8 +8,6 @@ import 'package:initiative_tracker/preference_manger.dart';
 import 'package:initiative_tracker/screens/home_screen.dart';
 import 'package:scoped_model/scoped_model.dart';
 
-import '../testHelpers.dart';
-
 void main() {
   group("Home Screen Tests", () {
     PartyListModel partyListModel;
