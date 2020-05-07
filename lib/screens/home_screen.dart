@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:initiative_tracker/party_list_model.dart';
 import 'package:initiative_tracker/party_model.dart';
 import 'package:initiative_tracker/preference_manger.dart';
+import 'package:initiative_tracker/widgets/menu_items.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -34,6 +35,8 @@ class HomeScreenState extends State<HomeScreen> {
     final PartyListModel partyListModel =
         ScopedModel.of<PartyListModel>(context);
 
+    updateTitle(partyModel);
+
     return new Scaffold(
       appBar: AppBar(
         title: Text(titleText),
@@ -45,68 +48,52 @@ class HomeScreenState extends State<HomeScreen> {
               updateTitle(partyModel);
             },
           ),
+          // TODO: Split into seperate widget class #6
           PopupMenuButton(
             itemBuilder: (BuildContext context) {
               return [
                 PopupMenuItem(
-                  child: FlatButton.icon(
-                    label: new Text("Save Party"),
-                    icon: Icon(Icons.save),
-                    onPressed: () {
-                      if (!partyListModel.containsParty(partyModel)) {
-                        _showNameDialog();
-                      } else if (PreferenceManger.getConfirmOverwrite()) {
-                        _showOverWriteDialog();
-                      } else {
-                        partyListModel.remove(partyModel);
-                        partyListModel.addParty(partyModel);
-                        partyListModel
-                            .write();
-                      }
-                    },
-                  ),
+                  child: MenuItem(
+                      label: "Save Party",
+                      icon: Icons.save,
+                      onTap: () {
+                        if (!partyListModel.containsParty(partyModel)) {
+                          _showNameDialog();
+                        } else if (PreferenceManger.getConfirmOverwrite()) {
+                          _showOverWriteDialog();
+                        } else {
+                          partyListModel.remove(partyModel);
+                          partyListModel.addParty(partyModel);
+                          partyListModel.write();
+                        }
+                      }),
                 ),
                 PopupMenuItem(
-                  child: FlatButton.icon(
-                    label: new Text("Manage Saved Parties"),
-                    icon: Icon(Icons.view_list),
-                    onPressed: () {
+                  child: MenuItem(
+                    icon: Icons.view_list,
+                    label: "Manage Saved Parties",
+                    onTap: () {
                       _showPartiesDialog();
                     },
                   ),
                 ),
                 PopupMenuItem(
-                  child: FlatButton.icon(
-                    label: new Text("Settings"),
-                    icon: Icon(Icons.settings),
-                    onPressed: () {
+                  child: MenuItem(
+                    label: "Settings",
+                    icon: Icons.settings,
+                    onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => SettingsPage()));
                     },
                   ),
                 ),
                 PopupMenuItem(
-                  child: FlatButton.icon(
-                    label: new Text("Help"),
-                    icon: Icon(Icons.help_outline),
-                    onPressed: () {
+                  child: MenuItem(
+                    label: "Help",
+                    icon: Icons.help_outline,
+                    onTap: () {
                       Navigator.of(context).push(
                           MaterialPageRoute(builder: (context) => HelpPage()));
-                    },
-                  ),
-                ),
-                PopupMenuItem(
-                  child: FlatButton.icon(
-                    label: new Text("Rate and Review"),
-                    icon: Icon(Icons.rate_review),
-                    onPressed: () async {
-                      const url =
-                          'https://play.google.com/store/apps/details?id=com.tsonnen.initiativetracker';
-                      if (await canLaunch(url)) {
-                        await launch(url);
-                      } else {
-                        throw 'Could not launch $url';
-                      }
                     },
                   ),
                 ),
@@ -335,8 +322,7 @@ class HomeScreenState extends State<HomeScreen> {
                       child: new Text("Done"),
                       onPressed: () {
                         if (edit) {
-                          partyListModel
-                              .write();
+                          partyListModel.write();
                         }
                         Navigator.of(context).pop();
                       },
