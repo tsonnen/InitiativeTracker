@@ -12,8 +12,6 @@ void main() {
   group("Home Screen Tests", () {
     PartyListModel partyListModel;
     PartyModel partyModel;
-    final TestWidgetsFlutterBinding binding =
-        TestWidgetsFlutterBinding.ensureInitialized();
 
     setUp(() {
       partyModel = partyListModel = null;
@@ -131,7 +129,7 @@ void main() {
       checkTitleText(partyModel);
       expect(
           find.widgetWithText(
-              ListTile, partyModel.characterList.characters.first.hp.toString(),
+              ListTile, partyModel.characterList.first.hp.toString(),
               skipOffstage: false),
           findsOneWidget);
 
@@ -139,19 +137,19 @@ void main() {
       await tester.pumpAndSettle();
       expect(
           find.widgetWithText(
-              ListTile, partyModel.characterList.characters.first.hp.toString(),
+              ListTile, partyModel.characterList.first.hp.toString(),
               skipOffstage: false),
           findsOneWidget);
-      expect(partyModel.characterList.characters.first.hp, 5);
+      expect(partyModel.characterList.first.hp, 5);
 
       await tester.tap(find.widgetWithIcon(IconButton, Icons.add));
       await tester.pumpAndSettle();
       expect(
           find.widgetWithText(
-              ListTile, partyModel.characterList.characters.first.hp.toString(),
+              ListTile, partyModel.characterList.first.hp.toString(),
               skipOffstage: false),
           findsOneWidget);
-      expect(partyModel.characterList.characters.first.hp, 6);
+      expect(partyModel.characterList.first.hp, 6);
     });
 
     testWidgets("Test Save Party", (WidgetTester tester) async {

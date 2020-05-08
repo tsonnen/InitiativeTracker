@@ -21,6 +21,14 @@ class Character {
     this.name = name;
   }
 
+  void increaseHP() {
+    setHP(++this.hp);
+  }
+
+  void reduceHP() {
+    setHP(--this.hp);
+  }
+
   void setHP(int hp) {
     this.hp = hp;
   }
@@ -47,12 +55,19 @@ class Character {
   }
 
   Map<String, dynamic> toJson() => {
-    'name': name, 
-    'initiative': initiative, 
-    'hp': hp, 
-    'id': id,
-    'notes': notes
-  };
+        'name': name,
+        'initiative': initiative,
+        'hp': hp,
+        'id': id,
+        'notes': notes
+      };
+
+  bool compare(Character rhs) {
+    return this.name == rhs.name &&
+        this.initiative == rhs.initiative &&
+        this.notes == rhs.notes &&
+        this.hp == rhs.hp;
+  }
 
   bool operator ==(o) => this.id == o.id;
   int get hashCode => name.hashCode ^ initiative.hashCode;
@@ -66,63 +81,5 @@ class Character {
     cloned.notes = this.notes;
 
     return cloned;
-  }
-}
-
-class CharacterList {
-  List<Character> characters;
-
-  CharacterList.json({this.characters});
-
-  CharacterList() {
-    characters = new List<Character>();
-  }
-
-  void addCharacter(Character character) {
-    characters.add(character);
-    sort();
-  }
-
-  void add(Character character) {
-    this.characters.add(character);
-  }
-
-  bool containsCharacter(Character find) {
-    return characters.contains(find);
-  }
-
-  void removeCharacter(Character character) {
-    characters.remove(character);
-  }
-
-  void sort() {
-    characters.sort((a, b) => b.initiative.compareTo(a.initiative));
-  }
-
-  reduceHP(Character item) {
-    item.setHP(item.hp--);
-  }
-
-  increaseHP(Character item) {
-    characters[characters.indexOf(item)].hp++;
-  }
-
-  empty() {
-    characters = [];
-  }
-
-  void outputToJSON() {}
-
-  factory CharacterList.fromJson(List<dynamic> parsedJson) {
-    return new CharacterList.json(
-      characters: parsedJson.map((i) => Character.fromJson(i)).toList(),
-    );
-  }
-
-  List<dynamic> toJson() {
-    List jsonList = List();
-    characters.map((i) => jsonList.add(i.toJson())).toList();
-
-    return jsonList;
   }
 }

@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:initiative_tracker/party_list_model.dart';
 import 'package:initiative_tracker/party_model.dart';
 import 'package:initiative_tracker/preference_manger.dart';
+import 'package:initiative_tracker/screens/character_screen.dart';
+import 'package:initiative_tracker/widgets/character_list.dart';
 import 'package:initiative_tracker/widgets/menu_items.dart';
 import 'package:scoped_model/scoped_model.dart';
-import 'package:url_launcher/url_launcher.dart';
 
-import 'package:initiative_tracker/screens/add_character.dart';
-import 'package:initiative_tracker/screens/edit_character.dart';
 import 'package:initiative_tracker/screens/help_screen.dart';
 import 'package:initiative_tracker/screens/settings_screen.dart';
 
@@ -48,7 +47,6 @@ class HomeScreenState extends State<HomeScreen> {
               updateTitle(partyModel);
             },
           ),
-          // TODO: Split into seperate widget class #6
           PopupMenuButton(
             itemBuilder: (BuildContext context) {
               return [
@@ -103,14 +101,16 @@ class HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: Container(
-        child: createCharacterList(),
+        child: ScopedModelDescendant<PartyModel>(
+            builder: (context, child, model) =>
+                CharacterList(partyModel: model)),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
           Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => AddCharacterPage()));
+              MaterialPageRoute(builder: (context) => CharacterScreen()));
         },
         tooltip: 'Add Character',
       ),
@@ -136,62 +136,6 @@ class HomeScreenState extends State<HomeScreen> {
             ]),
       ),
     );
-  }
-
-  Widget createCharacterList() {
-    return ScopedModelDescendant<PartyModel>(
-        builder: (context, child, model) => ListView(
-            children: model
-                .getCharacterList()
-                .map(
-                  (item) => Card(
-                    child: ListTile(
-                      title: new Text(item.name),
-                      isThreeLine: true,
-                      subtitle: new Text(item.notes ?? ""),
-                      trailing: new Container(
-                        child: new Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: <Widget>[
-                            new IconButton(
-                              icon: new Icon(Icons.remove),
-                              color: Colors.red,
-                              onPressed: () {
-                                model.reduceHP(item);
-                              },
-                            ),
-                            new Text(
-                              item.hp.toString(),
-                              textAlign: TextAlign.right,
-                              style: TextStyle(
-                                color: item.hp < 0
-                                    ? Colors.red
-                                    : Theme.of(context).textTheme.body1.color,
-                              ),
-                            ),
-                            new IconButton(
-                              icon: new Icon(Icons.add),
-                              onPressed: () {
-                                model.increaseHP(item);
-                              },
-                              color: Colors.green,
-                            )
-                          ],
-                        ),
-                      ),
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) =>
-                                EditCharacterPage(item: item)));
-                      },
-                      onLongPress: () {
-                        model.removeCharacter(item);
-                      },
-                    ),
-                  ),
-                )
-                .toList()));
   }
 
   void _showNameDialog() {
