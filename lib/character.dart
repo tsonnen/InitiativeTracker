@@ -7,6 +7,7 @@ class Character {
   int initiative;
   String notes;
   int hp;
+  bool isExpanded = false;
 
   Character([String name, int hp, int initiative, String notes])
       : this.name = name ?? "TEST",
