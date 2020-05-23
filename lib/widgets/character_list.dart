@@ -97,7 +97,7 @@ class CharacterListState extends State<CharacterList> {
 
     return new ListView(
       children: [
-      ExpansionPanelList.radio(
+      ExpansionPanelList(
           expandedHeaderPadding: EdgeInsets.symmetric(vertical: 0.0), 
           expansionCallback: (int index, bool isExpanded) {
             setState(() {
