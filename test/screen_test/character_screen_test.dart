@@ -42,7 +42,7 @@ void main() {
       await tester.pumpAndSettle();
 
       await tester.enterText(
-          find.widgetWithText(TextFormField, "Name"), charToAdd.name);
+          find.widgetWithText(TextFormField, "Name"), charToAdd.characterName);
       await tester.pumpAndSettle();
 
       await tester.enterText(
@@ -60,8 +60,8 @@ void main() {
       await tapButton(tester);
       await tester.pumpAndSettle();
 
-      expect(partyModel.characterList.length, 1);
-      expect(partyModel.characterList.first.compare(charToAdd), true);
+      expect(partyModel.characters.length, 1);
+      expect(partyModel.characters.first.compare(charToAdd), true);
     });
 
     testWidgets("Add Character-Gen", (WidgetTester tester) async {
@@ -73,7 +73,7 @@ void main() {
       await tester.pumpAndSettle();
 
       await tester.enterText(
-          find.widgetWithText(TextFormField, "Name"), charToAdd.name);
+          find.widgetWithText(TextFormField, "Name"), charToAdd.characterName);
       await tester.pumpAndSettle();
 
       await tester.enterText(
@@ -90,7 +90,7 @@ void main() {
       await tapButton(tester);
       await tester.pumpAndSettle();
 
-      expect(partyModel.characterList.length, numCharacters);
+      expect(partyModel.characters.length, numCharacters);
     });
   });
 
@@ -113,7 +113,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.text(charToEdit.name), findsOneWidget);
+      expect(find.text(charToEdit.characterName), findsOneWidget);
       expect(find.text(charToEdit.notes), findsOneWidget);
       expect(find.text(charToEdit.hp.toString()), findsOneWidget);
       expect(find.text(charToEdit.initiative.toString()), findsOneWidget);
@@ -126,8 +126,8 @@ void main() {
       await tapButton(tester, character: charToEdit);
       await tester.pumpAndSettle();
 
-      expect(partyModel.characterList.length, 1);
-      expect(partyModel.characterList.first.hp, editedChar.hp);
+      expect(partyModel.characters.length, 1);
+      expect(partyModel.characters.first.hp, editedChar.hp);
     });
   });
 }

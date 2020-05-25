@@ -238,7 +238,7 @@ class HomeScreenState extends State<HomeScreen> {
                             children: model.parties
                                 .map(
                                   (item) => ListTile(
-                                    title: new Text(item.name),
+                                    title: new Text(item.partyName),
                                     onLongPress: () {
                                       edit = true;
                                       if (!PreferenceManger
@@ -285,7 +285,7 @@ class HomeScreenState extends State<HomeScreen> {
   }
 
   void _showDeleteDialog(PartyModel partyModel) {
-    String name = partyModel.name;
+    String name = partyModel.partyName;
     final PartyListModel partyListModel =
         ScopedModel.of<PartyListModel>(context);
     // flutter defined function
@@ -316,7 +316,7 @@ class HomeScreenState extends State<HomeScreen> {
   }
 
   void _showLoadDialog(PartyModel partyModel) {
-    String name = partyModel.name;
+    String name = partyModel.partyName;
 
     // flutter defined function
     showDialog(

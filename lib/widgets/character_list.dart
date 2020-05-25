@@ -23,7 +23,7 @@ class CharacterCardHeaderState extends State<CharacterCardHeader> {
     Character item = widget.item;
     return Container(
         child: ListTile(
-      title: new Text(item.name),
+      title: new Text(item.characterName),
       trailing: new Container(
         child: new Row(
           mainAxisSize: MainAxisSize.min,
@@ -101,7 +101,7 @@ class CharacterListState extends State<CharacterList> {
           expandedHeaderPadding: EdgeInsets.symmetric(vertical: 0.0), 
           expansionCallback: (int index, bool isExpanded) {
             setState(() {
-              partyModel.characterList[index].isExpanded = !isExpanded;
+              partyModel.characters[index].isExpanded = !isExpanded;
             });
           },
           children: partyModel

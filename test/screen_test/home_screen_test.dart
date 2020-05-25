@@ -129,7 +129,7 @@ void main() {
       checkTitleText(partyModel);
       expect(
           find.widgetWithText(
-              ListTile, partyModel.characterList.first.hp.toString(),
+              ListTile, partyModel.characters.first.hp.toString(),
               skipOffstage: false),
           findsOneWidget);
 
@@ -137,19 +137,19 @@ void main() {
       await tester.pumpAndSettle();
       expect(
           find.widgetWithText(
-              ListTile, partyModel.characterList.first.hp.toString(),
+              ListTile, partyModel.characters.first.hp.toString(),
               skipOffstage: false),
           findsOneWidget);
-      expect(partyModel.characterList.first.hp, 5);
+      expect(partyModel.characters.first.hp, 5);
 
       await tester.tap(find.widgetWithIcon(IconButton, Icons.add));
       await tester.pumpAndSettle();
       expect(
           find.widgetWithText(
-              ListTile, partyModel.characterList.first.hp.toString(),
+              ListTile, partyModel.characters.first.hp.toString(),
               skipOffstage: false),
           findsOneWidget);
-      expect(partyModel.characterList.first.hp, 6);
+      expect(partyModel.characters.first.hp, 6);
     });
 
     testWidgets("Test Save Party", (WidgetTester tester) async {
@@ -192,21 +192,21 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(AlertDialog), findsOneWidget);
-      expect(find.text(partyModel.name), findsOneWidget);
+      expect(find.text(partyModel.partyName), findsOneWidget);
 
-      await tester.longPress(find.text(partyModel.name));
+      await tester.longPress(find.text(partyModel.partyName));
       await tester.pumpAndSettle();
 
       if (PreferenceManger.getConfirmDelete()) {
         expect(
             find.widgetWithText(
-                AlertDialog, "Would you like to delete ${partyModel.name}?"),
+                AlertDialog, "Would you like to delete ${partyModel.partyName}?"),
             findsOneWidget);
         await tester.tap(find.text("Yes"));
         await tester.pumpAndSettle();
       }
 
-      expect(find.text(partyModel.name), findsNothing);
+      expect(find.text(partyModel.partyName), findsNothing);
       expect(find.text("No Saved Parties"), findsOneWidget);
 
       await tester.tap(find.widgetWithText(FlatButton, "Done"));

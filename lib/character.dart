@@ -2,24 +2,33 @@ import 'package:initiative_tracker/uuid.dart';
 import 'package:initiative_tracker/random_generator.dart';
 
 class Character {
-  String id;
-  String name;
+  String characterUUID;
+  String characterName;
   int initiative;
   String notes;
   int hp;
   bool isExpanded = false;
+  Map<String, int> attributes;
+  String systemUUID;
 
   Character([String name, int hp, int initiative, String notes])
-      : this.name = name ?? "TEST",
+      : this.characterName = name ?? "TEST",
         this.hp = hp ?? 123,
-        this.id = Uuid().generateV4(),
+        this.characterUUID = Uuid().generateV4(),
         this.initiative = initiative ?? rollDice(1, 20),
         this.notes = notes;
 
-  Character.json({this.name, this.hp, this.initiative, this.id, this.notes});
+  Character.map(
+      {this.characterName,
+      this.hp,
+      this.initiative,
+      this.characterUUID,
+      this.notes,
+      this.systemUUID,
+      this.attributes});
 
   void setName(String name) {
-    this.name = name;
+    this.characterName = name;
   }
 
   void increaseHP() {
@@ -39,46 +48,53 @@ class Character {
   }
 
   void edit(String name, int hp, int initiative, String notes) {
-    this.name = name;
+    this.characterName = name;
     this.hp = hp;
     this.initiative = initiative;
     this.notes = notes;
   }
 
-  factory Character.fromJson(Map<String, dynamic> json) {
-    return new Character.json(
-      name: json['name'],
-      initiative: json['initiative'],
-      hp: json['hp'],
-      id: json['id'],
-      notes: json['notes'],
-    );
+  factory Character.fromMap(Map<String, dynamic> json,
+      {bool legacyRead = false}) {
+    return new Character.map(
+        characterName: json[legacyRead ? 'name' : 'characterName'],
+        initiative: json['initiative'],
+        hp: json['hp'],
+        characterUUID: json[legacyRead ? 'id' : 'characterUUID'],
+        notes: json['notes'],
+        systemUUID: json['systemUUID'],
+        attributes: json['attributes']);
   }
 
-  Map<String, dynamic> toJson() => {
-        'name': name,
+  Map<String, dynamic> toMap() => {
+        'characterName': characterName,
         'initiative': initiative,
         'hp': hp,
-        'id': id,
-        'notes': notes
+        'characterUUID': characterUUID,
+        'notes': notes,
+        'attributes': attributes,
+        'systemUUID': systemUUID
       };
 
   bool compare(Character rhs) {
-    return this.name == rhs.name &&
+    return this.characterName == rhs.characterName &&
         this.initiative == rhs.initiative &&
         this.notes == rhs.notes &&
         this.hp == rhs.hp;
   }
 
-  bool operator ==(o) => this.id == o.id;
-  int get hashCode => name.hashCode ^ initiative.hashCode;
+  bool operator ==(rhs) {
+    return this.characterUUID == rhs.characterUUID;
+  }
+
+  int get hashCode => characterName.hashCode ^ initiative.hashCode;
 
   clone() {
     var cloned = new Character();
     cloned.hp = this.hp;
-    cloned.id = this.id;
+    cloned.characterUUID = this.characterUUID;
     cloned.initiative = this.initiative;
-    cloned.name = this.name;
+    cloned.characterName = this.characterName;
     cloned.notes = this.notes;
 
     return cloned;

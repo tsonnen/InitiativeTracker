@@ -1,20 +1,26 @@
 import 'package:initiative_tracker/character.dart';
 import 'package:initiative_tracker/uuid.dart';
-
+import 'package:collection/collection.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class PartyModel extends Model {
-  List<Character> characterList;
-  String name;
-  String id;
+  List<Character> characters;
+  String partyName;
+  String partyUUID;
+  String systemUUID;
   int round = 1;
 
   PartyModel() {
-    characterList = new List<Character>();
+    characters = new List<Character>();
     generateUUID();
   }
 
-  PartyModel.json({this.name, this.id, this.characterList});
+  PartyModel.map(
+      {this.partyName,
+      this.partyUUID,
+      this.characters,
+      this.round,
+      this.systemUUID});
 
   void nextRound() {
     round++;
@@ -22,17 +28,17 @@ class PartyModel extends Model {
   }
 
   void addCharacter(Character character) {
-    characterList.add(character);
+    characters.add(character);
     sortCharacters();
     notifyListeners();
   }
 
   void sortCharacters() {
-    characterList.sort((a, b) => b.initiative.compareTo(a.initiative));
+    characters.sort((a, b) => b.initiative.compareTo(a.initiative));
   }
 
   void removeCharacter(Character character) {
-    characterList.remove(character);
+    characters.remove(character);
     notifyListeners();
   }
 
@@ -47,7 +53,7 @@ class PartyModel extends Model {
   }
 
   void setName(String name) {
-    this.name = name;
+    this.partyName = name;
     notifyListeners();
   }
 
@@ -58,50 +64,70 @@ class PartyModel extends Model {
 
   PartyModel clone() {
     var cloned = new PartyModel();
-    cloned.name = this.name;
-    cloned.id = this.id;
-    cloned.characterList = new List<Character>.from(
-        this.characterList.map((character) => character.clone()));
+    cloned.partyName = this.partyName;
+    cloned.partyUUID = this.partyUUID;
+    cloned.characters = new List<Character>.from(
+        this.characters.map((character) => character.clone()));
     return cloned;
   }
 
   void from(PartyModel partyModel) {
     var cloned = partyModel.clone();
-    this.name = cloned.name;
-    this.id = cloned.id;
-    this.characterList = new List<Character>.from(
-        cloned.characterList.map((character) => character.clone()));
+    this.partyName = cloned.partyName;
+    this.partyUUID = cloned.partyUUID;
+    this.characters = new List<Character>.from(
+        cloned.characters.map((character) => character.clone()));
     notifyListeners();
   }
 
   void clear() {
     round = 1;
-    characterList = null;
-    characterList = new List<Character>();
+    characters = null;
+    characters = new List<Character>();
     generateUUID();
     notifyListeners();
   }
 
   List<Character> getCharacterList() {
-    return characterList;
+    return characters;
   }
 
-  factory PartyModel.fromJson(Map<String, dynamic> json) {
-    return new PartyModel.json(
-        name: json['name'],
-        id: json['id'],
-        characterList: json['characters']
-            .map<Character>((i) => Character.fromJson(i))
+  factory PartyModel.fromMap(Map<String, dynamic> json,
+      {bool legacyRead = false}) {
+    return new PartyModel.map(
+        partyName: json[legacyRead ? 'name' : 'partyName'],
+        partyUUID: json[legacyRead ? 'id' : 'partyUUID'],
+        systemUUID: json['systemUUID'],
+        round: json['round'],
+        characters: json['characters']
+            .map<Character>((i) => Character.fromMap(i, legacyRead: legacyRead))
             .toList());
   }
 
-  Map<String, dynamic> toJson() => {
-        'name': name,
-        'id': id,
-        'characters': characterList.map((i) => i.toJson()).toList(),
+  Map<String, dynamic> toMap() => {
+        'partyName': partyName,
+        'partyUUID': partyUUID,
+        'systemUUID': systemUUID,
+        'round': round,
+        'characters': characters.map((i) => i.toMap()).toList(),
       };
 
   void generateUUID() {
-    this.id = Uuid().generateV4();
+    this.partyUUID = Uuid().generateV4();
   }
+
+  @override
+  bool operator ==(rhs) {
+    return this.partyName == rhs.partyName &&
+        this.partyUUID == rhs.partyUUID &&
+        this.round == rhs.round &&
+        this.systemUUID == rhs.systemUUID &&
+        ListEquality().equals(this.characters, rhs.characters);
+  }
+
+  int get hashCode =>
+      partyName.hashCode ^
+      partyUUID.hashCode ^
+      round.hashCode ^
+      systemUUID.hashCode;
 }

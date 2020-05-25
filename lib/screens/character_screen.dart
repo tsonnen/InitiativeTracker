@@ -32,7 +32,7 @@ class CharacterScreenState extends State<CharacterScreen> {
     character = widget.character;
 
     if (character != null) {
-      nameController.text = character.name.toString();
+      nameController.text = character.characterName.toString();
       hpController.text = character.hp.toString();
       initController.text = character.initiative.toString();
       noteController.text = (character.notes ?? "").toString();
