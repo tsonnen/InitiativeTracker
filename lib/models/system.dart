@@ -3,9 +3,9 @@ import 'package:initiative_tracker/uuid.dart';
 class System {
   String systemUUID;
   String systemName;
-  Map<String, String> attributeRules;
+  Map<String, String> systemAttributes;
 
-  System(this.systemName , {this.attributeRules}){
+  System(this.systemName , {this.systemAttributes}){
     this.systemUUID = Uuid().generateV4();
   }
 
@@ -13,14 +13,14 @@ class System {
     return new System.json(
         systemUUID: json['systemUUID'],
         systemName: json['systemName'],
-        attributeRules: json['attributeRules']);
+        systemAttributes: json['systemAttributes']);
   }
 
-  System.json({this.systemUUID, this.systemName, this.attributeRules});
+  System.json({this.systemUUID, this.systemName, this.systemAttributes});
 
   Map<String, dynamic> toMap() => {
         'systemUUID': systemUUID,
         'systemName': systemName,
-        'attributeRules': attributeRules,
+        'systemAttributes': systemAttributes,
       };
 }

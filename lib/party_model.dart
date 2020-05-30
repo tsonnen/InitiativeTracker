@@ -112,6 +112,14 @@ class PartyModel extends Model {
         'characters': characters.map((i) => i.toMap()).toList(),
       };
 
+  Map<String, dynamic> toSQLiteMap() => {
+        'partyName': partyName,
+        'partyUUID': partyUUID,
+        'systemUUID': systemUUID,
+        'round': round,
+        'characters': (characters.map((i) => i.toMap()).toList()).toString(),
+      };
+
   void generateUUID() {
     this.partyUUID = Uuid().generateV4();
   }

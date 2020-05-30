@@ -76,6 +76,17 @@ class Character {
         'systemUUID': systemUUID
       };
 
+      Map<String, dynamic> toSQLMap() => {
+        'characterName': characterName,
+        'initiative': initiative,
+        'hp': hp,
+        'characterUUID': characterUUID,
+        'notes': notes,
+        'attributes': attributes.toString(),
+        'systemUUID': systemUUID
+      };
+
+
   bool compare(Character rhs) {
     return this.characterName == rhs.characterName &&
         this.initiative == rhs.initiative &&

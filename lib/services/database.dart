@@ -9,6 +9,9 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DBProvider {
+  final characterTable = "Character";
+  final sytemTable = "System";
+
   DBProvider._();
   static final DBProvider db = DBProvider._();
 
@@ -24,31 +27,33 @@ class DBProvider {
   }
 
   Future<Database> initDB() async {
-    Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, "data.db");
+    print("Making bd0");
+    String path = join(await getDatabasesPath(), "data.db");
     return await openDatabase(path, version: 1, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE System ("
           "systemUUID TEXT PRIMARY KEY,"
           "systemName TEXT,"
           "systemBase TEXT,"
-          "systemAttributes TEXT,"
+          "systemAttributes TEXT"
           ")");
-      await db.execute("CREATE TABLE Charcter ("
-          "systemUUID String FOREIGN KEY,"
+      await db.execute("CREATE TABLE Character ("
+          "systemUUID String KEY,"
           "characterUUID TEXT PRIMARY KEY,"
           "characterName TEXT,"
           "initiative INT,"
           "hp INT,"
-          "notes TEXT"
+          "notes TEXT,"
           "attributes BLOB,"
+          "FOREIGN KEY(systemUUID) REFERENCES systemUUID(System)"
           ")");
       await db.execute("CREATE TABLE Party ("
-          "systemUUID String FOREIGN KEY,"
+          "systemUUID String KEY,"
           "partyUUID TEXT PRIMARY KEY,"
           "partyName TEXT,"
           "round INT,"
           "characters BLOB,"
+          "FOREIGN KEY(systemUUID) REFERENCES systemUUID(System)"
           ")");
     });
   }
@@ -101,20 +106,20 @@ class DBProvider {
   Future<System> addSystem(System system) async {
     Database db = await database;
 
-    int result = await db.insert("System", system.toMap());
+    await db.insert("System", system.toMap());
     return system;
   }
 
   Future<Character> addCharacter(Character character) async {
     Database db = await database;
 
-    await db.insert("Character", character.toMap());
+    await db.insert("Character", character.toSQLMap());
     return character;
   }
 
   Future<PartyModel> addParty(PartyModel party, {bool addChar = false}) async {
     Database db = await database;
-    await db.insert("Party", party.toMap());
+    await db.insert("Party", party.toSQLiteMap());
     if (addChar) {
       party.characters.forEach((character) async {
         if (character.systemUUID != party.systemUUID) {

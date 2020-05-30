@@ -1,29 +1,4 @@
-@Skip("sqflite cannot run on the machine.")
-
-import 'dart:convert';
-import 'dart:io';
-
-import 'package:flutter/services.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:initiative_tracker/character.dart';
-import 'package:initiative_tracker/models/system.dart';
-import 'package:initiative_tracker/party_list_model.dart';
-import 'package:initiative_tracker/services/database.dart';
-import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
-
-void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
-
-   setUp(() async {
-      print("Delete the db");
-      await deleteDatabase(join(await getDatabasesPath(), "data.db"));
-  });
-
-  group('Legacy JSON to sqlite', () {
-    test("Should load JSON file into database", () async {
-      DBProvider dbProvider = DBProvider.db;
-      PartyListModel partyListModel = PartyListModel.fromMap(jsonDecode('''[
+[
     {
         "name": null,
         "id": "ef70a121-0888-4970-8108-1e782537f31d",
@@ -160,12 +135,4 @@ void main() {
             }
         ]
     }
-]'''));
-      await partyListModel.write();
-
-      await dbProvider.addInitialValues();
-      List<System> systems = await dbProvider.getAllSystems();
-      expect(dbProvider, dbProvider);
-    });
-  });
-}
+]
