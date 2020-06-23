@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:initiative_tracker/uuid.dart';
 import 'package:initiative_tracker/random_generator.dart';
 
@@ -66,26 +68,25 @@ class Character {
         attributes: json['attributes']);
   }
 
-  Map<String, dynamic> toMap() => {
-        'characterName': characterName,
+  Map<String, dynamic> toMap({bool legacy = false}) => {
+        legacy ? 'name' : 'characterName': characterName,
         'initiative': initiative,
         'hp': hp,
-        'characterUUID': characterUUID,
+        legacy ? 'id' : 'characterUUID': characterUUID,
         'notes': notes,
         'attributes': attributes,
         'systemUUID': systemUUID
       };
 
-      Map<String, dynamic> toSQLMap() => {
+  Map<String, dynamic> toSQLMap() => {
         'characterName': characterName,
         'initiative': initiative,
         'hp': hp,
         'characterUUID': characterUUID,
         'notes': notes,
-        'attributes': attributes.toString(),
+        'attributes': jsonEncode(attributes),
         'systemUUID': systemUUID
       };
-
 
   bool compare(Character rhs) {
     return this.characterName == rhs.characterName &&

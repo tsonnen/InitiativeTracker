@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:initiative_tracker/character.dart';
 import 'package:initiative_tracker/models/system.dart';
 import 'package:initiative_tracker/party_list_model.dart';
-import 'package:initiative_tracker/party_model.dart';
+import 'package:initiative_tracker/models/party_model.dart';
 import 'package:initiative_tracker/uuid.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
@@ -27,7 +27,6 @@ class DBProvider {
   }
 
   Future<Database> initDB() async {
-    print("Making bd0");
     String path = join(await getDatabasesPath(), "data.db");
     return await openDatabase(path, version: 1, onOpen: (db) {},
         onCreate: (Database db, int version) async {

@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:scoped_model/scoped_model.dart';
-import 'package:initiative_tracker/party_model.dart';
+import 'package:initiative_tracker/models/party_model.dart';
 
 class PartyListModel extends Model {
   List<PartyModel> parties;
@@ -20,9 +20,9 @@ class PartyListModel extends Model {
     );
   }
 
-  List<dynamic> toMap() {
+  List<dynamic> toMap({bool legacy = false}) {
     List jsonList = List();
-    parties.map((i) => jsonList.add(i.toMap())).toList();
+    parties.map((i) => jsonList.add(i.toMap(legacy:legacy))).toList();
     return jsonList;
   }
 
@@ -73,7 +73,7 @@ class PartyListModel extends Model {
     final file = await _localFile;
 
     // Write the file.
-    return file.writeAsString(json.encode(this.toMap()));
+    return file.writeAsString(json.encode(this.toMap(legacy: true)));
   }
 
   static Future<PartyListModel> readSavedParties() async {
@@ -83,7 +83,7 @@ class PartyListModel extends Model {
       // Read the file.
       String jsonData = await file.readAsString();
 
-      return new PartyListModel.fromMap(json.decode(jsonData), legacyRead :true);
+      return new PartyListModel.fromMap(json.decode(jsonData), legacyRead: true);
     } catch (e) {
       // If encountering an error, return 0.
       return new PartyListModel();

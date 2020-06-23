@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:initiative_tracker/character.dart';
+import 'package:initiative_tracker/models/party_model.dart';
 import 'package:initiative_tracker/models/system.dart';
 import 'package:initiative_tracker/party_list_model.dart';
 import 'package:initiative_tracker/services/database.dart';
@@ -15,9 +16,8 @@ import 'package:sqflite/sqflite.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-   setUp(() async {
-      print("Delete the db");
-      await deleteDatabase(join(await getDatabasesPath(), "data.db"));
+  setUp(() async {
+    await deleteDatabase(join(await getDatabasesPath(), "data.db"));
   });
 
   group('Legacy JSON to sqlite', () {
@@ -160,12 +160,24 @@ void main() {
             }
         ]
     }
-]'''));
+]'''), legacyRead:true);
+
+      partyListModel.parties.forEach((element) {
+        print("party:${element.partyUUID}");
+      });
+
       await partyListModel.write();
 
       await dbProvider.addInitialValues();
       List<System> systems = await dbProvider.getAllSystems();
-      expect(dbProvider, dbProvider);
+      expect(systems.length, 1);
+      System legacy = systems.first;
+      expect(legacy.systemName, "Legacy");
+      List<PartyModel> sysParty =
+          await dbProvider.getSystemParty(legacy.systemUUID);
+      sysParty.forEach((element) {
+        print("db:${element.partyUUID}");
+      });
     });
   });
 }

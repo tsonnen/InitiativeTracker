@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:initiative_tracker/character.dart';
-import 'package:initiative_tracker/party_model.dart';
+import 'package:initiative_tracker/models/party_model.dart';
 import 'package:initiative_tracker/screens/character_screen.dart';
 import 'package:scoped_model/scoped_model.dart';
 

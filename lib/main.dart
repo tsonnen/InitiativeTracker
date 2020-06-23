@@ -5,7 +5,7 @@ import 'package:preferences/preferences.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 import 'package:initiative_tracker/screens/home_screen.dart';
-import 'package:initiative_tracker/party_model.dart';
+import 'package:initiative_tracker/models/party_model.dart';
 import 'package:initiative_tracker/preference_manger.dart';
 
 void main() async {

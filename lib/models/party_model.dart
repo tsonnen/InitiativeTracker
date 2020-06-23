@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:initiative_tracker/character.dart';
 import 'package:initiative_tracker/uuid.dart';
 import 'package:collection/collection.dart';
@@ -94,22 +96,25 @@ class PartyModel extends Model {
 
   factory PartyModel.fromMap(Map<String, dynamic> json,
       {bool legacyRead = false}) {
+    List<dynamic> charJSON = json['characters'] is String
+        ? jsonDecode(json['characters'])
+        : json['characters'];
     return new PartyModel.map(
         partyName: json[legacyRead ? 'name' : 'partyName'],
         partyUUID: json[legacyRead ? 'id' : 'partyUUID'],
         systemUUID: json['systemUUID'],
         round: json['round'],
-        characters: json['characters']
+        characters: charJSON
             .map<Character>((i) => Character.fromMap(i, legacyRead: legacyRead))
             .toList());
   }
 
-  Map<String, dynamic> toMap() => {
-        'partyName': partyName,
-        'partyUUID': partyUUID,
+  Map<String, dynamic> toMap({bool legacy = false}) => {
+        legacy ? 'name' : 'partyName': partyName,
+        legacy ? 'id' : 'partyUUID': partyUUID,
         'systemUUID': systemUUID,
         'round': round,
-        'characters': characters.map((i) => i.toMap()).toList(),
+        'characters': characters.map((i) => i.toMap(legacy:legacy)).toList(),
       };
 
   Map<String, dynamic> toSQLiteMap() => {
@@ -117,7 +122,7 @@ class PartyModel extends Model {
         'partyUUID': partyUUID,
         'systemUUID': systemUUID,
         'round': round,
-        'characters': (characters.map((i) => i.toMap()).toList()).toString(),
+        'characters': jsonEncode(characters.map((i) => i.toMap()).toList()),
       };
 
   void generateUUID() {
