@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:initiative_tracker/character.dart';
+import 'package:initiative_tracker/models/character_model.dart';
 import 'package:initiative_tracker/models/party_model.dart';
 import 'package:test/test.dart';
 import 'package:initiative_tracker/party_list_model.dart';
@@ -21,7 +21,7 @@ void main() {
       for(var i = 0; i < 4; ++i){
         PartyModel partyModel = PartyModel();
         for(var j = 0; j < 4; ++j){
-          Character character = Character('test $i-$j', i*j, i*j);
+          CharacterModel character = CharacterModel(name:'test $i-$j', initiative:i*j, hp:i*j);
           partyModel.addCharacter(character);
         }
         partyList.addParty(partyModel);

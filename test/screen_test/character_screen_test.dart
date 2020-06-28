@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:initiative_tracker/character.dart';
+import 'package:initiative_tracker/models/character_model.dart';
 import 'package:initiative_tracker/models/party_model.dart';
 import 'package:initiative_tracker/screens/character_screen.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -35,7 +35,7 @@ void main() {
       partyModel = PartyModel();
     });
     testWidgets("Add Character-No Gen", (WidgetTester tester) async {
-      Character charToAdd = Character("Test Char", 12, 12, "None");
+      CharacterModel charToAdd = CharacterModel(name:"Test Char", initiative:12, hp:12, notes:"None");
 
       await tester.pumpWidget(createCharacterScreen(partyModel));
 
@@ -65,7 +65,7 @@ void main() {
     });
 
     testWidgets("Add Character-Gen", (WidgetTester tester) async {
-      Character charToAdd = Character("Test Char", 12);
+      CharacterModel charToAdd = CharacterModel(name:"Test Char", hp:12);
       int numCharacters = 4;
 
       await tester.pumpWidget(createCharacterScreen(partyModel));
@@ -102,10 +102,10 @@ void main() {
       partyModel = PartyModel();
     });
     testWidgets("Test Edit", (WidgetTester tester) async {
-      Character charToEdit = Character("Test Char", 12, 45, "My Notes");
+      CharacterModel charToEdit = CharacterModel(name:"Test Char", initiative:12, hp:45, notes:"My Notes");
       partyModel.addCharacter(charToEdit);
 
-      Character editedChar = charToEdit.clone();
+      CharacterModel editedChar = charToEdit.clone();
       editedChar.hp = 25;
 
       await tester
@@ -132,15 +132,14 @@ void main() {
   });
 }
 
-Future<void> tapButton(WidgetTester tester, {Character character}) async {
+Future<void> tapButton(WidgetTester tester, {CharacterModel character}) async {
   String btnText = character == null ? 'Add Character' : 'Edit Character';
-  await tester.tap(find.widgetWithText(
-      RaisedButton, btnText));
+  await tester.tap(find.widgetWithText(RaisedButton, btnText));
   await tester.pumpAndSettle();
 }
 
 ScopedModel createCharacterScreen(PartyModel partyModel,
-    {Character character}) {
+    {CharacterModel character}) {
   return new ScopedModel<PartyModel>(
       model: partyModel,
       child: MaterialApp(

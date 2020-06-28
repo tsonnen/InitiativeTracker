@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
-import 'package:initiative_tracker/character.dart';
+import 'package:initiative_tracker/models/character_model.dart';
 import 'package:initiative_tracker/models/party_model.dart';
 import 'package:initiative_tracker/preference_manger.dart';
 import 'package:initiative_tracker/random_generator.dart';
 
 class CharacterScreen extends StatefulWidget {
   static final String route = "Character-Screen";
-  final Character character;
+  final CharacterModel character;
+  final String partyUUID;
 
-  CharacterScreen({this.character});
+  CharacterScreen({this.character, this.partyUUID});
 
   @override
   CharacterScreenState createState() => CharacterScreenState();
@@ -23,7 +24,7 @@ class CharacterScreenState extends State<CharacterScreen> {
 
   int _number;
   int _initMod;
-  Character character;
+  CharacterModel character;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -163,18 +164,18 @@ class CharacterScreenState extends State<CharacterScreen> {
                         Navigator.of(context).pop();
                       } else {
                         for (int i = 1; i <= (_number ?? 1); i++) {
-                          character = Character(
-                              nameController.text +
+                          character = CharacterModel(
+                              name: nameController.text +
                                   ((_number ?? 1) > 1
                                       ? " " + i.toString()
                                       : ""),
-                              int.parse(hpController.text),
-                              initController.text != ""
+                              hp:int.parse(hpController.text),
+                              initiative: initController.text != ""
                                   ? int.parse(initController.text)
                                   : rollDice(PreferenceManger.getNumberDice(),
                                           PreferenceManger.getNumberSides()) +
                                       (_initMod ?? 0),
-                              noteController.text);
+                              notes: noteController.text);
                           model.addCharacter(character);
                         }
                         Scaffold.of(context).showSnackBar(

@@ -1,16 +1,20 @@
 import 'dart:io';
-import 'package:initiative_tracker/character.dart';
+import 'package:initiative_tracker/models/character_model.dart';
+import 'package:initiative_tracker/exceptions/data_exception.dart';
 import 'package:initiative_tracker/models/system.dart';
 import 'package:initiative_tracker/party_list_model.dart';
 import 'package:initiative_tracker/models/party_model.dart';
 import 'package:initiative_tracker/uuid.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common/sqlite_api.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class DBProvider {
   final characterTable = "Character";
-  final sytemTable = "System";
+  final systemTable = "System";
+  final partyTable = "Party";
+  final databaseFactory = databaseFactoryFfi;
 
   DBProvider._();
   static final DBProvider db = DBProvider._();
@@ -27,16 +31,17 @@ class DBProvider {
   }
 
   Future<Database> initDB() async {
-    String path = join(await getDatabasesPath(), "data.db");
-    return await openDatabase(path, version: 1, onOpen: (db) {},
+    sqfliteFfiInit();
+    String path = join(await databaseFactory.getDatabasesPath(), "data.db");
+    return await databaseFactory.openDatabase(path, options: OpenDatabaseOptions(version: 1, onOpen: (db) {},
         onCreate: (Database db, int version) async {
-      await db.execute("CREATE TABLE System ("
+      await db.execute("CREATE TABLE $systemTable ("
           "systemUUID TEXT PRIMARY KEY,"
           "systemName TEXT,"
           "systemBase TEXT,"
           "systemAttributes TEXT"
           ")");
-      await db.execute("CREATE TABLE Character ("
+      await db.execute("CREATE TABLE $characterTable ("
           "systemUUID String KEY,"
           "characterUUID TEXT PRIMARY KEY,"
           "characterName TEXT,"
@@ -46,7 +51,7 @@ class DBProvider {
           "attributes BLOB,"
           "FOREIGN KEY(systemUUID) REFERENCES systemUUID(System)"
           ")");
-      await db.execute("CREATE TABLE Party ("
+      await db.execute("CREATE TABLE $partyTable ("
           "systemUUID String KEY,"
           "partyUUID TEXT PRIMARY KEY,"
           "partyName TEXT,"
@@ -54,7 +59,7 @@ class DBProvider {
           "characters BLOB,"
           "FOREIGN KEY(systemUUID) REFERENCES systemUUID(System)"
           ")");
-    });
+    }));
   }
 
   Future<void> addInitialValues() async {
@@ -72,47 +77,87 @@ class DBProvider {
 
     final List<Map<String, dynamic>> maps = await db.query('System');
 
-    // Convert the List<Map<String, dynamic> into a List<Dog>.
     return List.generate(maps.length, (i) {
       return System.fromMap(maps[i]);
     });
+  }
+
+  Future<PartyModel> getParty(String partyUUID) async {
+    Database db = await database;
+
+    final List<Map<String, dynamic>> maps = await db
+        .query(partyTable, where: "partyUUID = ?", whereArgs: [partyUUID]);
+
+    if (maps.length > 1) {
+      throw DataException("${maps.length} parties with UUID $partyUUID");
+    }
+
+    return maps.length == 1 ? PartyModel.fromMap(maps.first) : null;
+  }
+
+   Future<System> getSystem(String systemUUID) async {
+    Database db = await database;
+
+    final List<Map<String, dynamic>> maps = await db.query(systemUUID,
+        where: "systemUUID = ?", whereArgs: [systemUUID]);
+
+    if (maps.length > 1) {
+      throw DataException("${maps.length} systems with UUID $systemUUID");
+    }
+
+    return maps.length == 1
+        ? System.fromMap(maps.first)
+        : null;
+  }
+
+  Future<CharacterModel> getCharacter(String charcterUUID) async {
+    Database db = await database;
+
+    final List<Map<String, dynamic>> maps = await db.query(characterTable,
+        where: "charcterUUID = ?", whereArgs: [charcterUUID]);
+
+    if (maps.length > 1) {
+      throw DataException("${maps.length} characters with UUID $charcterUUID");
+    }
+
+    return maps.length == 1
+        ? CharacterModel.fromMap(maps.first)
+        : null;
   }
 
   Future<List<PartyModel>> getSystemParty(String systemUUID) async {
     Database db = await database;
 
     final List<Map<String, dynamic>> maps = await db
-        .query('Party', where: "systemUUID = ?", whereArgs: [systemUUID]);
+        .query(partyTable, where: "systemUUID = ?", whereArgs: [systemUUID]);
 
-    // Convert the List<Map<String, dynamic> into a List<Dog>.
     return List.generate(maps.length, (i) {
       return PartyModel.fromMap(maps[i]);
     });
   }
 
-  Future<List<Character>> getSystemCharacter(String systemUUID) async {
+  Future<List<CharacterModel>> getSystemCharacter(String systemUUID) async {
     Database db = await database;
 
-    final List<Map<String, dynamic>> maps = await db
-        .query('Character', where: "systemUUID = ?", whereArgs: [systemUUID]);
+    final List<Map<String, dynamic>> maps = await db.query(characterTable,
+        where: "systemUUID = ?", whereArgs: [systemUUID]);
 
-    // Convert the List<Map<String, dynamic> into a List<Dog>.
     return List.generate(maps.length, (i) {
-      return Character.fromMap(maps[i]);
+      return CharacterModel.fromMap(maps[i]);
     });
   }
 
   Future<System> addSystem(System system) async {
     Database db = await database;
 
-    await db.insert("System", system.toMap());
+    await db.insert(systemTable, system.toMap());
     return system;
   }
 
-  Future<Character> addCharacter(Character character) async {
+  Future<CharacterModel> addCharacter(CharacterModel character) async {
     Database db = await database;
 
-    await db.insert("Character", character.toSQLMap());
+    await db.insert(characterTable, character.toSQLMap());
     return character;
   }
 
@@ -125,9 +170,54 @@ class DBProvider {
           character.systemUUID = party.systemUUID;
         }
 
-        await db.insert("Character", character.toMap());
+        await addCharacter(character);
       });
     }
     return party;
+  }
+
+  Future<void> deleteCharacter(String characterUUID) async {
+    Database db = await database;
+
+    await db.delete(characterTable,
+        where: 'characterUUID = ?', whereArgs: [characterUUID]);
+  }
+
+  Future<void> deleteParty(String partyUUID) async {
+    Database db = await database;
+
+    await db.delete(partyTable, where: 'partyUUID = ?', whereArgs: [partyUUID]);
+  }
+
+  Future<void> deleteSystemCharacters(String systemUUID) async {
+    Database db = await database;
+
+    await db.delete(characterTable,
+        where: 'systemUUID = ?', whereArgs: [systemUUID]);
+  }
+
+  Future<void> deleteSystemParties(String systemUUID) async {
+    Database db = await database;
+
+    await db
+        .delete(partyTable, where: 'systemUUID = ?', whereArgs: [systemUUID]);
+  }
+
+  Future<void> deleteSystem(String systemUUID,
+      {bool deleteChildren = true}) async {
+    Database db = await database;
+
+    await db
+        .delete(partyTable, where: 'systemUUID = ?', whereArgs: [systemUUID]);
+
+    if (deleteChildren) {
+      await deleteSystemCharacters(systemUUID);
+      await deleteSystemParties(systemUUID);
+    }
+  }
+
+  void close(){
+    _database.close();
+    _database = null;
   }
 }

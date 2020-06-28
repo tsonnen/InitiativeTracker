@@ -1,15 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:initiative_tracker/character.dart';
+import 'package:initiative_tracker/models/character_model.dart';
 import 'package:initiative_tracker/models/party_model.dart';
 import 'package:initiative_tracker/screens/character_screen.dart';
 
-class CharacterDisplay extends Character {
+class CharacterDisplay extends CharacterModel {
   bool expanded = false;
 }
 
 class CharacterCardHeader extends StatefulWidget {
-  final Character item;
+  final CharacterModel item;
 
   CharacterCardHeader(this.item);
 
@@ -20,7 +20,7 @@ class CharacterCardHeader extends StatefulWidget {
 class CharacterCardHeaderState extends State<CharacterCardHeader> {
   @override
   Widget build(BuildContext context) {
-    Character item = widget.item;
+    CharacterModel item = widget.item;
     return Container(
         child: ListTile(
       title: new Text(item.characterName),
@@ -64,7 +64,7 @@ class CharacterCardHeaderState extends State<CharacterCardHeader> {
 }
 
 class CharacterCardBody extends StatelessWidget {
-  final Character item;
+  final CharacterModel item;
 
   CharacterCardBody(this.item);
 

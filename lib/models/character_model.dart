@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:initiative_tracker/uuid.dart';
 import 'package:initiative_tracker/random_generator.dart';
 
-class Character {
+class CharacterModel {
   String characterUUID;
   String characterName;
   int initiative;
@@ -13,14 +13,14 @@ class Character {
   Map<String, int> attributes;
   String systemUUID;
 
-  Character([String name, int hp, int initiative, String notes])
+  CharacterModel({String name, int hp, int initiative, String notes})
       : this.characterName = name ?? "TEST",
         this.hp = hp ?? 123,
         this.characterUUID = Uuid().generateV4(),
         this.initiative = initiative ?? rollDice(1, 20),
         this.notes = notes;
 
-  Character.map(
+  CharacterModel.map(
       {this.characterName,
       this.hp,
       this.initiative,
@@ -56,9 +56,9 @@ class Character {
     this.notes = notes;
   }
 
-  factory Character.fromMap(Map<String, dynamic> json,
+  factory CharacterModel.fromMap(Map<String, dynamic> json,
       {bool legacyRead = false}) {
-    return new Character.map(
+    return new CharacterModel.map(
         characterName: json[legacyRead ? 'name' : 'characterName'],
         initiative: json['initiative'],
         hp: json['hp'],
@@ -88,7 +88,7 @@ class Character {
         'systemUUID': systemUUID
       };
 
-  bool compare(Character rhs) {
+  bool compare(CharacterModel rhs) {
     return this.characterName == rhs.characterName &&
         this.initiative == rhs.initiative &&
         this.notes == rhs.notes &&
@@ -102,7 +102,7 @@ class Character {
   int get hashCode => characterName.hashCode ^ initiative.hashCode;
 
   clone() {
-    var cloned = new Character();
+    var cloned = new CharacterModel();
     cloned.hp = this.hp;
     cloned.characterUUID = this.characterUUID;
     cloned.initiative = this.initiative;

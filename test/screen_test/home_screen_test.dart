@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:initiative_tracker/character.dart';
+import 'package:initiative_tracker/models/character_model.dart';
 import 'package:initiative_tracker/party_list_model.dart';
 import 'package:initiative_tracker/models/party_model.dart';
 import 'package:initiative_tracker/preference_manger.dart';
@@ -39,7 +39,8 @@ void main() {
 
     testWidgets("Should Route to Edit Character Screen",
         (WidgetTester tester) async {
-      partyModel.addCharacter(Character("Joe", 6, 7, ""));
+      partyModel.addCharacter(
+          CharacterModel(name: "Joe", hp: 6, initiative: 7, notes: ""));
       await tester.pumpWidget(createHomeScreen(partyListModel, partyModel));
 
       await tester.pumpAndSettle();
@@ -55,7 +56,8 @@ void main() {
     });
 
     testWidgets("Should Delete Character", (WidgetTester tester) async {
-      partyModel.addCharacter(Character("Joe", 6, 7, ""));
+      partyModel.addCharacter(
+          CharacterModel(name: "Joe", hp: 6, initiative: 7, notes: ""));
       await tester.pumpWidget(createHomeScreen(partyListModel, partyModel));
 
       await tester.pumpAndSettle();
@@ -99,7 +101,8 @@ void main() {
     });
 
     testWidgets("Test Party Reset", (WidgetTester tester) async {
-      partyModel.addCharacter(Character("Joe", 6, 7, ""));
+      partyModel.addCharacter(
+          CharacterModel(name: "Joe", hp: 6, initiative: 7, notes: ""));
       partyModel.round = 100;
 
       await tester.pumpWidget(createHomeScreen(partyListModel, partyModel));
@@ -120,8 +123,8 @@ void main() {
     });
 
     testWidgets("Test HP Changes", (WidgetTester tester) async {
-      partyModel.addCharacter(Character("Joe", 6, 7, ""));
-
+      partyModel.addCharacter(
+          CharacterModel(name: "Joe", hp: 6, initiative: 7, notes: ""));
       await tester.pumpWidget(createHomeScreen(partyListModel, partyModel));
 
       await tester.pumpAndSettle();
@@ -153,7 +156,8 @@ void main() {
     });
 
     testWidgets("Test Save Party", (WidgetTester tester) async {
-      partyModel.addCharacter(Character("Joe", 6, 7, ""));
+      partyModel.addCharacter(
+          CharacterModel(name: "Joe", hp: 6, initiative: 7, notes: ""));
 
       await tester.pumpWidget(createHomeScreen(partyListModel, partyModel));
 
@@ -176,7 +180,8 @@ void main() {
     });
 
     testWidgets("Test Party Management", (WidgetTester tester) async {
-      partyModel.addCharacter(Character("Joe", 6, 7, ""));
+      partyModel.addCharacter(
+          CharacterModel(name: "Joe", hp: 6, initiative: 7, notes: ""));
       partyModel.setName("Saved Party");
 
       partyListModel.addParty(partyModel);
@@ -199,8 +204,8 @@ void main() {
 
       if (PreferenceManger.getConfirmDelete()) {
         expect(
-            find.widgetWithText(
-                AlertDialog, "Would you like to delete ${partyModel.partyName}?"),
+            find.widgetWithText(AlertDialog,
+                "Would you like to delete ${partyModel.partyName}?"),
             findsOneWidget);
         await tester.tap(find.text("Yes"));
         await tester.pumpAndSettle();
