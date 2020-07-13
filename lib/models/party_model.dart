@@ -3,17 +3,16 @@ import 'dart:convert';
 import 'package:initiative_tracker/models/character_model.dart';
 import 'package:initiative_tracker/uuid.dart';
 import 'package:collection/collection.dart';
-import 'package:scoped_model/scoped_model.dart';
 
-class PartyModel extends Model {
+class PartyModel {
   List<CharacterModel> characters;
   String partyName;
   String partyUUID;
   String systemUUID;
   int round = 1;
 
-  PartyModel({this.characters}) {
-    if(characters == null){
+  PartyModel({this.characters, this.partyName}) {
+    if (characters == null) {
       characters = new List<CharacterModel>();
     }
     generateUUID();
@@ -28,42 +27,39 @@ class PartyModel extends Model {
 
   void nextRound() {
     round++;
-    notifyListeners();
   }
 
   void addCharacter(CharacterModel character) {
-    characters.add(character);
+    int index = characters.indexWhere(
+        (element) => element.characterUUID == character.characterUUID);
+
+    index != -1 ? characters[index] = character : characters.add(character);
+
     sortCharacters();
-    notifyListeners();
   }
 
   void sortCharacters() {
     characters.sort((a, b) => b.initiative.compareTo(a.initiative));
   }
 
-  void removeCharacter(CharacterModel character) {
-    characters.remove(character);
-    notifyListeners();
+  void removeCharacterByUUID(String characterUUID) {
+    characters.removeWhere((item)=> item.characterUUID == characterUUID);
   }
 
   void reduceHP(CharacterModel item) {
     item.setHP(--item.hp);
-    notifyListeners();
   }
 
   void increaseHP(CharacterModel item) {
     item.setHP(++item.hp);
-    notifyListeners();
   }
 
   void setName(String name) {
     this.partyName = name;
-    notifyListeners();
   }
 
   void prevRound() {
     round == 1 ? round = 1 : round--;
-    notifyListeners();
   }
 
   PartyModel clone() {
@@ -81,7 +77,6 @@ class PartyModel extends Model {
     this.partyUUID = cloned.partyUUID;
     this.characters = new List<CharacterModel>.from(
         cloned.characters.map((character) => character.clone()));
-    notifyListeners();
   }
 
   void clear() {
@@ -89,7 +84,6 @@ class PartyModel extends Model {
     characters = null;
     characters = new List<CharacterModel>();
     generateUUID();
-    notifyListeners();
   }
 
   List<CharacterModel> getCharacterList() {
@@ -102,7 +96,7 @@ class PartyModel extends Model {
         ? jsonDecode(json['characters'])
         : json['characters'];
     return new PartyModel.map(
-        partyName: json[legacyRead ? 'name' : 'partyName'],
+        partyName: json[legacyRead ? 'name' : 'partyName'] ?? "NONAME",
         partyUUID: json[legacyRead ? 'id' : 'partyUUID'],
         systemUUID: json['systemUUID'],
         round: json['round'],
@@ -132,6 +126,12 @@ class PartyModel extends Model {
     this.partyUUID = Uuid().generateV4();
   }
 
+  bool containsCharacter(CharacterModel characterModel) {
+    var matches = this.characters.where(
+        (character) => character.characterUUID == characterModel.characterUUID);
+    return matches.length > 0;
+  }
+
   @override
   bool operator ==(rhs) {
     return this.partyName == rhs.partyName &&
@@ -144,5 +144,6 @@ class PartyModel extends Model {
       partyName.hashCode ^
       partyUUID.hashCode ^
       round.hashCode ^
-      systemUUID.hashCode;
+      systemUUID.hashCode^
+      characters.hashCode;
 }

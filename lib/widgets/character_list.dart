@@ -4,80 +4,69 @@ import 'package:initiative_tracker/models/character_model.dart';
 import 'package:initiative_tracker/models/party_model.dart';
 import 'package:initiative_tracker/screens/character_screen.dart';
 
-class CharacterDisplay extends CharacterModel {
-  bool expanded = false;
-}
-
-class CharacterCardHeader extends StatefulWidget {
+class CharacterCard extends StatefulWidget {
   final CharacterModel item;
+  final VoidCallback onLongPress;
+  final VoidCallback onTap;
 
-  CharacterCardHeader(this.item);
+  CharacterCard({this.item, this.onTap, this.onLongPress});
 
-  @override
-  CharacterCardHeaderState createState() => new CharacterCardHeaderState();
+  State<StatefulWidget> createState() {
+    return CharacterCardState();
+  }
 }
 
-class CharacterCardHeaderState extends State<CharacterCardHeader> {
+class CharacterCardState extends State<CharacterCard> {
   @override
   Widget build(BuildContext context) {
     CharacterModel item = widget.item;
-    return Container(
-        child: ListTile(
-      title: new Text(item.characterName),
-      trailing: new Container(
-        child: new Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            new IconButton(
-              icon: new Icon(Icons.remove),
-              color: Colors.red,
-              onPressed: () {
-                setState(() {
-                  item.reduceHP();
-                });
-              },
+    return Card(
+      child: ListTile(
+          title: new Text(item.characterName),
+          isThreeLine: true,
+          subtitle: new Text(item.notes ?? ""),
+          trailing: new Container(
+            child: new Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                new IconButton(
+                  icon: new Icon(Icons.remove),
+                  color: Colors.red,
+                  onPressed: () {
+                    setState(() {
+                      item.reduceHP();
+                    });
+                  },
+                ),
+                new Text(
+                  item.hp.toString(),
+                  textAlign: TextAlign.right,
+                  style: TextStyle(
+                    color: item.hp < 0
+                        ? Colors.red
+                        : Theme.of(context).textTheme.bodyText2.color,
+                  ),
+                ),
+                new IconButton(
+                  icon: new Icon(Icons.add),
+                  onPressed: () {
+                    setState(() {
+                      item.increaseHP();
+                    });
+                  },
+                  color: Colors.green,
+                )
+              ],
             ),
-            new Text(
-              item.hp.toString(),
-              textAlign: TextAlign.right,
-              style: TextStyle(
-                color: item.hp < 0
-                    ? Colors.red
-                    : Theme.of(context).textTheme.body1.color,
-              ),
-            ),
-            new IconButton(
-              icon: new Icon(Icons.add),
-              onPressed: () {
-                setState(() {
-                  item.increaseHP();
-                });
-              },
-              color: Colors.green,
-            )
-          ],
-        ),
-      ),
-    ));
+          ),
+          onTap: widget.onTap,
+          onLongPress: widget.onLongPress),
+    );
   }
 }
 
-class CharacterCardBody extends StatelessWidget {
-  final CharacterModel item;
-
-  CharacterCardBody(this.item);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        child: ListTile(
-      title: Text("Notes : ${item.notes}"),
-    ));
-  }
-}
-
-class CharacterList extends StatefulWidget {
+class CharacterList extends StatelessWidget {
   final PartyModel partyModel;
   final Function(dynamic) onLongPress;
   final Function(dynamic) onTap;
@@ -85,36 +74,21 @@ class CharacterList extends StatefulWidget {
   CharacterList({this.partyModel, this.onTap, this.onLongPress});
 
   @override
-  CharacterListState createState() => new CharacterListState();
-}
-
-class CharacterListState extends State<CharacterList> {
-  @override
   Widget build(BuildContext context) {
-    final PartyModel partyModel = widget.partyModel;
-    final Function(dynamic) onLongPress = widget.onLongPress;
-    final Function(dynamic) onTap = widget.onLongPress;
-
-    return new ListView(
-      children: [
-      ExpansionPanelList(
-          expandedHeaderPadding: EdgeInsets.symmetric(vertical: 0.0), 
-          expansionCallback: (int index, bool isExpanded) {
-            setState(() {
-              partyModel.characters[index].isExpanded = !isExpanded;
-            });
-          },
-          children: partyModel
-              .getCharacterList()
-              .map((item) => ExpansionPanel(
-                    canTapOnHeader: true,
-                    headerBuilder: (BuildContext context, bool isExpanded) {
-                      return CharacterCardHeader(item);
-                    },
-                    body: CharacterCardBody(item),
-                    isExpanded: item.isExpanded,
-                  ))
-              .toList())
-    ]);
+    return ListView(
+        children: this
+            .partyModel
+            .getCharacterList()
+            .map((item) => CharacterCard(
+                  item: item,
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => CharacterScreen(character: item,)));
+                  },
+                  onLongPress: () {
+                    this.onLongPress(item);
+                  },
+                ))
+            .toList());
   }
 }

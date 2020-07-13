@@ -10,7 +10,7 @@ class CharacterModel {
   String notes;
   int hp;
   bool isExpanded = false;
-  Map<String, int> attributes;
+  Map<String, int> attributes = Map<String, int>();
   String systemUUID;
 
   CharacterModel({String name, int hp, int initiative, String notes})
@@ -59,13 +59,14 @@ class CharacterModel {
   factory CharacterModel.fromMap(Map<String, dynamic> json,
       {bool legacyRead = false}) {
     return new CharacterModel.map(
-        characterName: json[legacyRead ? 'name' : 'characterName'],
-        initiative: json['initiative'],
-        hp: json['hp'],
-        characterUUID: json[legacyRead ? 'id' : 'characterUUID'],
-        notes: json['notes'],
-        systemUUID: json['systemUUID'],
-        attributes: json['attributes']);
+      characterName: json[legacyRead ? 'name' : 'characterName'],
+      initiative: json['initiative'],
+      hp: json['hp'],
+      characterUUID: json[legacyRead ? 'id' : 'characterUUID'],
+      notes: json['notes'],
+      systemUUID: json['systemUUID'],
+      // attributes: json['attributes']
+    );
   }
 
   Map<String, dynamic> toMap({bool legacy = false}) => {
@@ -96,10 +97,20 @@ class CharacterModel {
   }
 
   bool operator ==(rhs) {
-    return this.characterUUID == rhs.characterUUID;
+    return this.characterUUID == rhs.characterUUID &&
+        this.characterName == rhs.characterUUID &&
+        this.initiative == rhs.initiative &&
+        this.notes == rhs.notes &&
+        this.hp == rhs.hp;
   }
 
-  int get hashCode => characterName.hashCode ^ initiative.hashCode;
+  int get hashCode =>
+      characterName.hashCode ^
+      initiative.hashCode ^
+      characterUUID.hashCode ^
+      hp.hashCode ^
+      initiative.hashCode ^
+      notes.hashCode;
 
   clone() {
     var cloned = new CharacterModel();

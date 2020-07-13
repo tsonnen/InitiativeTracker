@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:scoped_model/scoped_model.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:initiative_tracker/bloc/party/party_bloc.dart';
 import 'package:initiative_tracker/models/character_model.dart';
-import 'package:initiative_tracker/models/party_model.dart';
 import 'package:initiative_tracker/preference_manger.dart';
 import 'package:initiative_tracker/random_generator.dart';
 
@@ -21,6 +21,7 @@ class CharacterScreenState extends State<CharacterScreen> {
   final TextEditingController hpController = TextEditingController();
   final TextEditingController initController = TextEditingController();
   final TextEditingController noteController = TextEditingController();
+  PartyBloc partyBloc;
 
   int _number;
   int _initMod;
@@ -30,6 +31,10 @@ class CharacterScreenState extends State<CharacterScreen> {
 
   @override
   void initState() {
+    super.initState();
+
+    partyBloc = BlocProvider.of<PartyBloc>(context);
+
     character = widget.character;
 
     if (character != null) {
@@ -38,8 +43,6 @@ class CharacterScreenState extends State<CharacterScreen> {
       initController.text = character.initiative.toString();
       noteController.text = (character.notes ?? "").toString();
     }
-
-    super.initState();
   }
 
   @override
@@ -98,7 +101,8 @@ class CharacterScreenState extends State<CharacterScreen> {
                   keyboardType: TextInputType.number,
                   controller: hpController,
                   validator: (value) {
-                    if (value.isEmpty) { // This will only get numbers
+                    if (value.isEmpty) {
+                      // This will only get numbers
                       return "Please enter valid HP";
                     }
                     return null;
@@ -145,46 +149,42 @@ class CharacterScreenState extends State<CharacterScreen> {
                   controller: noteController,
                 ),
               ),
-              new ScopedModelDescendant<PartyModel>(
-                builder: (context, child, model) => RaisedButton(
-                  child: Text(
-                      character == null ? 'Add Character' : 'Edit Character'),
-                  onPressed: () {
-                    if (_formKey.currentState.validate()) {
-                      if (character != null) {
-                        character.edit(
-                            nameController.text,
-                            int.parse(hpController.text),
-                            initController.text != ""
+              new RaisedButton(
+                child: Text(
+                    character == null ? 'Add Character' : 'Edit Character'),
+                onPressed: () {
+                  if (_formKey.currentState.validate()) {
+                    if (character != null) {
+                      character.edit(
+                          nameController.text,
+                          int.parse(hpController.text),
+                          initController.text != ""
+                              ? int.parse(initController.text)
+                              : null,
+                          noteController.text);
+                      partyBloc.add(PartyCharacterAdded(character));
+                      Navigator.of(context).pop();
+                    } else {
+                      for (int i = 1; i <= (_number ?? 1); i++) {
+                        character = CharacterModel(
+                            name: nameController.text +
+                                ((_number ?? 1) > 1 ? " " + i.toString() : ""),
+                            hp: int.parse(hpController.text),
+                            initiative: initController.text != ""
                                 ? int.parse(initController.text)
-                                : null,
-                            noteController.text);
-                        model.sortCharacters();
-
-                        Navigator.of(context).pop();
-                      } else {
-                        for (int i = 1; i <= (_number ?? 1); i++) {
-                          character = CharacterModel(
-                              name: nameController.text +
-                                  ((_number ?? 1) > 1
-                                      ? " " + i.toString()
-                                      : ""),
-                              hp:int.parse(hpController.text),
-                              initiative: initController.text != ""
-                                  ? int.parse(initController.text)
-                                  : rollDice(PreferenceManger.getNumberDice(),
-                                          PreferenceManger.getNumberSides()) +
-                                      (_initMod ?? 0),
-                              notes: noteController.text);
-                          model.addCharacter(character);
-                        }
-                        Scaffold.of(context).showSnackBar(
-                            SnackBar(content: Text('Added Character')));
+                                : rollDice(PreferenceManger.getNumberDice(),
+                                        PreferenceManger.getNumberSides()) +
+                                    (_initMod ?? 0),
+                            notes: noteController.text);
+                        partyBloc.add(PartyCharacterAdded(character));
                       }
+                      character = null;
+                      // Scaffold.of(context).showSnackBar(
+                      //     SnackBar(content: Text('Added Character')));
                     }
-                  },
-                ),
-              ),
+                  }
+                },
+              )
             ],
           )),
     );

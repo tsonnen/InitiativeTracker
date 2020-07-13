@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:initiative_tracker/models/character_model.dart';
 import 'package:initiative_tracker/party_list_model.dart';
 import 'package:initiative_tracker/models/party_model.dart';
 import 'package:initiative_tracker/preference_manger.dart';
 
-import 'package:initiative_tracker/screens/home_screen.dart';
-import 'package:scoped_model/scoped_model.dart';
+import 'package:initiative_tracker/screens/party_screen.dart';
 
 void main() {
   group("Home Screen Tests", () {
@@ -255,10 +255,12 @@ void checkTitleText(PartyModel partyModel) {
       findsOneWidget);
 }
 
-ScopedModel createHomeScreen(
+// TODO: Update for BlocProvider
+Widget createHomeScreen(
     PartyListModel partyListModel, PartyModel partyModel) {
-  return new ScopedModel<PartyModel>(
-      model: partyModel,
-      child: ScopedModel<PartyListModel>(
-          model: partyListModel, child: MaterialApp(home: HomeScreen())));
+      return null;
+  // return new MultiBlocProvider(
+  //     model: partyModel,
+  //     child: ScopedModel<PartyListModel>(
+  //         model: partyListModel, child: MaterialApp(home: PartyScreen())));
 }

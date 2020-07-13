@@ -1,9 +1,13 @@
+import 'dart:js';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:initiative_tracker/bloc/party/party_bloc.dart';
 import 'package:initiative_tracker/models/character_model.dart';
 import 'package:initiative_tracker/models/party_model.dart';
 import 'package:initiative_tracker/screens/character_screen.dart';
-import 'package:scoped_model/scoped_model.dart';
+import 'package:initiative_tracker/uuid.dart';
 
 import '../testHelpers.dart';
 
@@ -35,7 +39,8 @@ void main() {
       partyModel = PartyModel();
     });
     testWidgets("Add Character-No Gen", (WidgetTester tester) async {
-      CharacterModel charToAdd = CharacterModel(name:"Test Char", initiative:12, hp:12, notes:"None");
+      CharacterModel charToAdd = CharacterModel(
+          name: "Test Char", initiative: 12, hp: 12, notes: "None");
 
       await tester.pumpWidget(createCharacterScreen(partyModel));
 
@@ -65,7 +70,7 @@ void main() {
     });
 
     testWidgets("Add Character-Gen", (WidgetTester tester) async {
-      CharacterModel charToAdd = CharacterModel(name:"Test Char", hp:12);
+      CharacterModel charToAdd = CharacterModel(name: "Test Char", hp: 12);
       int numCharacters = 4;
 
       await tester.pumpWidget(createCharacterScreen(partyModel));
@@ -96,20 +101,27 @@ void main() {
 
   group("Character Screen Edit Tests", () {
     PartyModel partyModel;
+    PartyBloc partyBloc;
 
     setUp(() {
       partyModel = null;
       partyModel = PartyModel();
+      partyBloc = new PartyBloc();
+
+      partyBloc.add(PartyGenerated());
     });
     testWidgets("Test Edit", (WidgetTester tester) async {
-      CharacterModel charToEdit = CharacterModel(name:"Test Char", initiative:12, hp:45, notes:"My Notes");
-      partyModel.addCharacter(charToEdit);
+      CharacterModel charToEdit = CharacterModel(
+          name: "Test Char", initiative: 12, hp: 45, notes: "My Notes");
+
+      partyBloc.add(PartyCharacterAdded(charToEdit));
 
       CharacterModel editedChar = charToEdit.clone();
       editedChar.hp = 25;
 
-      await tester
-          .pumpWidget(createCharacterScreen(partyModel, character: charToEdit));
+      await tester.pumpWidget(BlocProvider<PartyBloc>(
+          create: (context) => partyBloc,
+          child: createCharacterScreen(partyModel, character: charToEdit)));
 
       await tester.pumpAndSettle();
 
@@ -138,12 +150,14 @@ Future<void> tapButton(WidgetTester tester, {CharacterModel character}) async {
   await tester.pumpAndSettle();
 }
 
-ScopedModel createCharacterScreen(PartyModel partyModel,
+//TODO: Update for BLOC
+BlocProvider createCharacterScreen(PartyModel partyModel,
     {CharacterModel character}) {
-  return new ScopedModel<PartyModel>(
-      model: partyModel,
-      child: MaterialApp(
-          home: CharacterScreen(
-        character: character,
-      )));
+      return null;
+  // return new BlocProvider(
+  //     child: MaterialApp(
+  //         home: CharacterScreen(
+  //       character: character,
+  //     )),
+  //     bloc: new PartyBloc());
 }

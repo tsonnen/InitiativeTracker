@@ -50,7 +50,7 @@ void main() {
       System legacy = systems.first;
       expect(legacy.systemName, "Legacy");
       List<PartyModel> sysParties =
-          await dbProvider.getSystemParty(legacy.systemUUID);
+          await dbProvider.getSystemParties(legacy.systemUUID);
       expect(listEquals(parties, sysParties), true);
     });
   });
@@ -58,6 +58,7 @@ void main() {
   group('Test CRUD operations', () {
     test("Test Add Party", () async {
       PartyModel party = PartyModel(
+        partyName: "",
           characters: List<CharacterModel>.generate(
               4, (index) => CharacterModel(name: "$index", hp: pow(index, 2))));
       await dbProvider.addParty(party);
@@ -75,6 +76,25 @@ void main() {
       await dbProvider.deleteParty(testParty.partyUUID);
       party = await dbProvider.getParty(testParty.partyUUID);
       expect(null, party);
+    });
+    
+    test("Test Add Character", () async {
+      CharacterModel character = CharacterModel(name: "Character", hp: 12);
+      await dbProvider.addCharacter(character);
+      CharacterModel dbCharacter = await dbProvider.getCharacter(character.characterUUID);
+
+      expect(character, dbCharacter);
+    });
+
+    test("Test Delete Character", () async {
+      CharacterModel testCharacter = parties.first.characters.first;
+      CharacterModel character = await dbProvider.getCharacter(testCharacter.characterUUID);
+
+      expect(character, testCharacter);
+
+      await dbProvider.deleteCharacter(testCharacter.characterUUID);
+      character = await dbProvider.getCharacter(testCharacter.characterUUID);
+      expect(null, character);
     });
   });
 }

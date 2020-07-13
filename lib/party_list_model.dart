@@ -2,10 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:scoped_model/scoped_model.dart';
 import 'package:initiative_tracker/models/party_model.dart';
 
-class PartyListModel extends Model {
+class PartyListModel {
   List<PartyModel> parties;
 
   PartyListModel.json({this.parties});
@@ -35,7 +34,7 @@ class PartyListModel extends Model {
     assert(!containsParty(party),
         "Specified party is a duplicate. Use editParty instead");
     parties.add(party.clone());
-    notifyListeners();
+    
   }
 
   void editParty(PartyModel partyModel) {
@@ -47,7 +46,7 @@ class PartyListModel extends Model {
 
   void remove(PartyModel item) {
     this.parties.remove(item);
-    notifyListeners();
+    
   }
 
   static PartyListModel readSavedPartiesSync() {
@@ -99,7 +98,7 @@ class PartyListModel extends Model {
   void from(PartyListModel partyListModel) {
     PartyListModel cloned = partyListModel.clone();
     this.parties = cloned.parties;
-    notifyListeners();
+    
   }
 
   @override
