@@ -17,13 +17,13 @@ class PartiesBloc extends Bloc<PartiesEvent, PartiesState> {
   Stream<PartiesState> mapEventToState(
     PartiesEvent event,
   ) async* {
-    if (event is PartiesLoaded) {
+    if (event is LoadParties) {
       yield* _mapPartiesLoadedToState();
-    } else if (event is PartiesAdded) {
+    } else if (event is AddParty) {
       yield* _mapPartiesAddedToState(event);
-    } else if (event is PartiesDeleted) {
+    } else if (event is DeleteParty) {
       yield* _mapPartiesDeletedToState(event);
-    } else if (event is PartiesSystemChanged) {
+    } else if (event is ChangePartiesSystem) {
       this.systemUUID = event.systemUUID;
       yield* _loadCharacters();
     }
@@ -49,6 +49,6 @@ class PartiesBloc extends Bloc<PartiesEvent, PartiesState> {
     yield PartiesLoadInProgress();
     List<PartyModel> parties =
         await DBProvider.db.getSystemParties(this.systemUUID);
-    yield PartiesLoadSuccessful(parties);
+    yield PartiesLoadedSuccessful(parties);
   }
 }

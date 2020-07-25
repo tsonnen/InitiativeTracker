@@ -36,7 +36,7 @@ class PartyScreenState extends State<PartyScreen> {
   Widget build(BuildContext context) {
     return BlocBuilder<PartyBloc, PartyState>(builder: (context, state) {
       if (state is PartyInitial) {
-        partyBloc.add(PartyGenerated());
+        partyBloc.add(GenerateParty());
         return Text("Loading");
       }
       PartyModel partyModel = state.partyModel;
@@ -47,7 +47,7 @@ class PartyScreenState extends State<PartyScreen> {
             IconButton(
               icon: Icon(Icons.refresh),
               onPressed: () {
-                partyBloc.add(PartyGenerated());
+                partyBloc.add(GenerateParty());
               },
             ),
             PopupMenuButton(
@@ -58,10 +58,20 @@ class PartyScreenState extends State<PartyScreen> {
                         label: "Save Party",
                         icon: Icons.save,
                         onTap: () {
-                          if (partyModel.partyName == null || partyModel.partyName.isEmpty) {
+                          if (partyModel.partyName == null ||
+                              partyModel.partyName.isEmpty) {
                             _showNameDialog();
+                          } else if (PreferenceManger.getConfirmOverwrite()) {
+                            _showOverWriteDialog(context).then((value) {
+                              if (value) {
+                                partiesBloc.add(AddParty(partyModel));
+                              } else if (!value) {
+                                partyModel.generateUUID();
+                                _showNameDialog();
+                              }
+                            });
                           } else {
-                            partiesBloc.add(PartiesAdded(partyModel));
+                            partiesBloc.add(AddParty(partyModel));
                           }
                         }),
                   ),
@@ -102,7 +112,8 @@ class PartyScreenState extends State<PartyScreen> {
         body: Container(
             child: CharacterList(
                 onLongPress: (characterModel) {
-                  partyBloc.add(PartyCharacterDeleted(characterModel));
+                  partyBloc.add(
+                      DeletePartyCharacter(characterModel: characterModel));
                 },
                 partyModel: partyModel)),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -124,13 +135,13 @@ class PartyScreenState extends State<PartyScreen> {
                 IconButton(
                   icon: Icon(Icons.navigate_before),
                   onPressed: () {
-                    partyBloc.add(PartyRoundMoved(roundForward: false));
+                    partyBloc.add(ChangeRound(roundForward: false));
                   },
                 ),
                 IconButton(
                   icon: Icon(Icons.navigate_next),
                   onPressed: () {
-                    partyBloc.add(PartyRoundMoved(roundForward: true));
+                    partyBloc.add(ChangeRound(roundForward: true));
                   },
                 ),
               ]),
@@ -139,6 +150,7 @@ class PartyScreenState extends State<PartyScreen> {
     });
   }
 
+// TODO: Split these into classes
   void _showNameDialog() {
     final TextEditingController nameController = TextEditingController();
     PartyModel partyModel = partyBloc.state.partyModel;
@@ -165,7 +177,7 @@ class PartyScreenState extends State<PartyScreen> {
               child: new Text("Save"),
               onPressed: () {
                 partyModel.setName(nameController.text);
-                partiesBloc.add(PartiesAdded(partyModel));
+                partiesBloc.add(AddParty(partyModel));
                 Navigator.of(context).pop();
               },
             )
@@ -186,14 +198,14 @@ class PartyScreenState extends State<PartyScreen> {
           content: Container(
               width: double.maxFinite,
               child: BlocBuilder(
-                  bloc: partiesBloc,
+                  cubit: partiesBloc,
                   builder: (context, state) {
                     if (state is PartyInitial) {
-                      partiesBloc.add(PartiesLoaded());
+                      partiesBloc.add(LoadParties());
                       return Text("Set Up");
                     } else if (state is PartiesLoadInProgress) {
                       return Text("Loading");
-                    } else if (state is PartiesLoadSuccessful) {
+                    } else if (state is PartiesLoadedSuccessful) {
                       List<PartyModel> partyList = state.parties;
                       return ListView(
                         children: partyList
@@ -201,11 +213,30 @@ class PartyScreenState extends State<PartyScreen> {
                               (item) => ListTile(
                                 title: new Text(item.partyName ?? "No Name"),
                                 onLongPress: () {
-                                  partiesBloc
-                                      .add(PartiesDeleted(item.partyUUID));
+                                  if (PreferenceManger.getConfirmDelete()) {
+                                    _showDeleteDialog(context, item.partyName)
+                                        .then((value) {
+                                      if (value) {
+                                        partiesBloc
+                                            .add(DeleteParty(item.partyUUID));
+                                      }
+                                    });
+                                  } else {
+                                    partiesBloc
+                                        .add(DeleteParty(item.partyUUID));
+                                  }
                                 },
                                 onTap: () {
-                                  partyBloc.add(PartyLoaded(item.partyUUID));
+                                  if (PreferenceManger.getConfirmLoad()) {
+                                    partyBloc.add(LoadParty(item));
+                                  } else {
+                                    _showLoadDialog(context, item.partyName)
+                                        .then((value) {
+                                      if (value) {
+                                        partyBloc.add(LoadParty(item));
+                                      }
+                                    });
+                                  }
                                 },
                               ),
                             )
@@ -229,10 +260,9 @@ class PartyScreenState extends State<PartyScreen> {
     );
   }
 
-  void _showDeleteDialog(PartyModel partyModel) {
-    String name = partyModel.partyName;
+  Future<bool> _showDeleteDialog(BuildContext context, String name) {
     // flutter defined function
-    showDialog(
+    return showDialog<bool>(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
@@ -243,14 +273,74 @@ class PartyScreenState extends State<PartyScreen> {
               new FlatButton(
                 child: new Text("Yes"),
                 onPressed: () {
-                  partiesBloc.add(PartiesDeleted(partyModel.partyUUID));
-                  Navigator.of(context).pop();
+                  Navigator.of(context).pop(true);
                 },
               ),
               new FlatButton(
                 child: new Text("No"),
                 onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  Future<bool> _showOverWriteDialog(BuildContext context) {
+    // flutter defined function
+    return showDialog<bool>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: new Text("Overwrite"),
+            content: new Text(
+                "This party is already saved\nWould you like to overwrite it?"),
+            actions: <Widget>[
+              // usually buttons at the bottom of the dialog
+              new FlatButton(
+                child: new Text("Yes"),
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+              ),
+              new FlatButton(
+                child: new Text("No"),
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+              ),
+              new FlatButton(
+                child: new Text("Cancel"),
+                onPressed: () {
                   Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        });
+  }
+
+  Future<bool> _showLoadDialog(BuildContext context, String name) {
+    // flutter defined function
+    return showDialog<bool>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: new Text("Load"),
+            content: new Text("Would you like to load $name?"),
+            actions: <Widget>[
+              // usually buttons at the bottom of the dialog
+              new FlatButton(
+                child: new Text("Yes"),
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+              ),
+              new FlatButton(
+                child: new Text("No"),
+                onPressed: () {
+                  Navigator.of(context).pop(false);
                 },
               ),
             ],

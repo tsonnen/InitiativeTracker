@@ -162,7 +162,7 @@ class CharacterScreenState extends State<CharacterScreen> {
                               ? int.parse(initController.text)
                               : null,
                           noteController.text);
-                      partyBloc.add(PartyCharacterAdded(character));
+                      partyBloc.add(AddPartyCharacter(character));
                       Navigator.of(context).pop();
                     } else {
                       for (int i = 1; i <= (_number ?? 1); i++) {
@@ -176,7 +176,7 @@ class CharacterScreenState extends State<CharacterScreen> {
                                         PreferenceManger.getNumberSides()) +
                                     (_initMod ?? 0),
                             notes: noteController.text);
-                        partyBloc.add(PartyCharacterAdded(character));
+                        partyBloc.add(AddPartyCharacter(character));
                       }
                       character = null;
                       // Scaffold.of(context).showSnackBar(

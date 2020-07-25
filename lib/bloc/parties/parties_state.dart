@@ -14,10 +14,10 @@ class PartiesLoadInProgress extends PartiesState {
   List<Object> get props => [];
 }
 
-class PartiesLoadSuccessful extends PartiesState {
+class PartiesLoadedSuccessful extends PartiesState {
   final List<PartyModel> parties;
 
-  PartiesLoadSuccessful(this.parties);
+  PartiesLoadedSuccessful(this.parties);
   @override
   List<Object> get props => [parties];
 }

@@ -1,5 +1,3 @@
-import 'dart:convert';
-import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -11,12 +9,14 @@ import 'package:initiative_tracker/models/system.dart';
 import 'package:initiative_tracker/party_list_model.dart';
 import 'package:initiative_tracker/services/database.dart';
 import 'package:path/path.dart';
-import 'package:sqflite_common/sqlite_api.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-Future<List<PartyModel>> setupDB(DBProvider dbProvider) async {
-  await dbProvider.addInitialValues();
-  return (await PartyListModel.readSavedParties()).parties;
+import '../testHelpers.dart';
+
+Future<List<PartyModel>> setupDB() async {
+  await DBProvider.db.addInitialValues();
+  List<PartyModel> parties = (await PartyListModel.readSavedParties()).parties;
+  return parties;
 }
 
 void main() {
@@ -25,16 +25,15 @@ void main() {
   const MethodChannel channel =
       MethodChannel('plugins.flutter.io/path_provider');
   channel.setMockMethodCallHandler((MethodCall methodCall) async {
-    return "test_resources";
+    var path = TestHelper.testPath("test_resources");
+    return path;
   });
 
-  DBProvider dbProvider;
   List<PartyModel> parties;
   final databaseFactory = databaseFactoryFfi;
 
   setUp(() async {
-    dbProvider = DBProvider.db;
-    parties = await setupDB(dbProvider);
+    parties = await setupDB();
   });
 
   tearDown(() async {
@@ -45,12 +44,12 @@ void main() {
 
   group('Legacy JSON to sqlite', () {
     test("Should load JSON file into database", () async {
-      List<System> systems = await dbProvider.getAllSystems();
+      List<System> systems = await DBProvider.db.getAllSystems();
       expect(systems.length, 1);
       System legacy = systems.first;
       expect(legacy.systemName, "Legacy");
       List<PartyModel> sysParties =
-          await dbProvider.getSystemParties(legacy.systemUUID);
+          await DBProvider.db.getSystemParties(legacy.systemUUID);
       expect(listEquals(parties, sysParties), true);
     });
   });
@@ -61,39 +60,39 @@ void main() {
         partyName: "",
           characters: List<CharacterModel>.generate(
               4, (index) => CharacterModel(name: "$index", hp: pow(index, 2))));
-      await dbProvider.addParty(party);
-      PartyModel dbParty = await dbProvider.getParty(party.partyUUID);
+      await DBProvider.db.addParty(party);
+      PartyModel dbParty = await DBProvider.db.getParty(party.partyUUID);
 
       expect(party, dbParty);
     });
 
     test("Test Delete Party", () async {
       PartyModel testParty = parties.first;
-      PartyModel party = await dbProvider.getParty(testParty.partyUUID);
+      PartyModel party = await DBProvider.db.getParty(testParty.partyUUID);
 
       expect(testParty, party);
 
-      await dbProvider.deleteParty(testParty.partyUUID);
-      party = await dbProvider.getParty(testParty.partyUUID);
+      await DBProvider.db.deleteParty(testParty.partyUUID);
+      party = await DBProvider.db.getParty(testParty.partyUUID);
       expect(null, party);
     });
     
     test("Test Add Character", () async {
       CharacterModel character = CharacterModel(name: "Character", hp: 12);
-      await dbProvider.addCharacter(character);
-      CharacterModel dbCharacter = await dbProvider.getCharacter(character.characterUUID);
+      await DBProvider.db.addCharacter(character);
+      CharacterModel dbCharacter = await DBProvider.db.getCharacter(character.characterUUID);
 
       expect(character, dbCharacter);
     });
 
     test("Test Delete Character", () async {
       CharacterModel testCharacter = parties.first.characters.first;
-      CharacterModel character = await dbProvider.getCharacter(testCharacter.characterUUID);
+      CharacterModel character = await DBProvider.db.getCharacter(testCharacter.characterUUID);
 
       expect(character, testCharacter);
 
-      await dbProvider.deleteCharacter(testCharacter.characterUUID);
-      character = await dbProvider.getCharacter(testCharacter.characterUUID);
+      await DBProvider.db.deleteCharacter(testCharacter.characterUUID);
+      character = await DBProvider.db.getCharacter(testCharacter.characterUUID);
       expect(null, character);
     });
   });

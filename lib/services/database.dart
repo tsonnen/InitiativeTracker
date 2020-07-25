@@ -4,8 +4,6 @@ import 'package:initiative_tracker/exceptions/data_exception.dart';
 import 'package:initiative_tracker/models/system.dart';
 import 'package:initiative_tracker/party_list_model.dart';
 import 'package:initiative_tracker/models/party_model.dart';
-import 'package:initiative_tracker/uuid.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common/sqlite_api.dart';
@@ -32,7 +30,7 @@ class DBProvider {
 
   Future<Database> initDB() async {
     sqfliteFfiInit();
-    
+
     var dbFactory = Platform.environment.containsKey('FLUTTER_TEST')
         ? databaseFactoryFfi
         : databaseFactory;
@@ -74,10 +72,10 @@ class DBProvider {
     PartyListModel partyList = await PartyListModel.readSavedParties();
     System system = new System("Legacy");
     await addSystem(system);
-    partyList.parties.forEach((party) async {
+    for (PartyModel party in partyList.parties) {
       party.systemUUID = system.systemUUID;
       await addParty(party, addChar: true);
-    });
+    }
 
     return system.systemUUID;
   }
@@ -174,13 +172,13 @@ class DBProvider {
     await db.insert("Party", party.toSQLiteMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
     if (addChar) {
-      party.characters.forEach((character) async {
+      for (CharacterModel character in party.characters) {
         if (character.systemUUID != party.systemUUID) {
           character.systemUUID = party.systemUUID;
         }
 
         await addCharacter(character);
-      });
+      }
     }
     return party;
   }

@@ -98,7 +98,7 @@ class CharacterModel {
 
   bool operator ==(rhs) {
     return this.characterUUID == rhs.characterUUID &&
-        this.characterName == rhs.characterUUID &&
+        this.characterName == rhs.characterName &&
         this.initiative == rhs.initiative &&
         this.notes == rhs.notes &&
         this.hp == rhs.hp;

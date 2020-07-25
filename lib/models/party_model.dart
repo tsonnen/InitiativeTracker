@@ -96,7 +96,7 @@ class PartyModel {
         ? jsonDecode(json['characters'])
         : json['characters'];
     return new PartyModel.map(
-        partyName: json[legacyRead ? 'name' : 'partyName'] ?? "NONAME",
+        partyName: json[legacyRead ? 'name' : 'partyName'],
         partyUUID: json[legacyRead ? 'id' : 'partyUUID'],
         systemUUID: json['systemUUID'],
         round: json['round'],

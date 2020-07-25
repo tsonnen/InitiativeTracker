@@ -7,42 +7,42 @@ abstract class PartyEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class PartyCharacterAdded extends PartyEvent{
+class AddPartyCharacter extends PartyEvent{
   final CharacterModel characterModel;
 
-  PartyCharacterAdded(this.characterModel);
+  AddPartyCharacter(this.characterModel);
 
   @override
   List<Object> get props => [characterModel];
 }
 
-class PartyCharacterDeleted extends PartyEvent{
+class DeletePartyCharacter extends PartyEvent{
   final CharacterModel characterModel;
 
-  PartyCharacterDeleted(this.characterModel);
+  DeletePartyCharacter({@required this.characterModel});
 
   @override
   List<Object> get props => [characterModel];
 }
 
-class PartyGenerated extends PartyEvent{
+class GenerateParty extends PartyEvent{
 
 }
 
-class PartyRoundMoved extends PartyEvent {
+class ChangeRound extends PartyEvent {
   final bool roundForward;
   
-  PartyRoundMoved({@required this.roundForward});
+  ChangeRound({@required this.roundForward});
 
   @override
   List<Object> get props => [roundForward];
 }
 
-class PartyLoaded extends PartyEvent{
-  final String partyUUID;
+class LoadParty extends PartyEvent{
+  final PartyModel partyModel;
 
-  PartyLoaded(this.partyUUID);
+  LoadParty(this.partyModel);
 
   @override
-  List<Object> get props => [partyUUID];
+  List<Object> get props => [partyModel];
 }
