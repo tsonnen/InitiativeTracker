@@ -4,6 +4,7 @@ import 'package:initiative_tracker/bloc/parties/parties_bloc.dart';
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
 import 'package:bloc_test/bloc_test.dart';
 import 'dart:io';
+import 'package:mockito/mockito.dart';
 
 class MockPartyBloc extends MockBloc<PartyState> implements PartyBloc {}
 
@@ -43,14 +44,14 @@ class TestHelper {
     await tester.pump(const Duration(seconds: 1));
   }
 
-  // Fix for CI not working for testfiles
-  static String testPath(String relativePath) {
-    Directory current = Directory.current;
-    String path =
-        current.path.endsWith('/test') ? "../": "";
-    path =  path + relativePath;
-
-    return path;
+  static Future<File> getProjectFile(String path) async {
+    var dir = Directory.current;
+    while (!await dir
+        .list()
+        .any((entity) => entity.path.endsWith('pubspec.yaml'))) {
+      dir = dir.parent;
+    }
+    return File('${dir.path}/$path');
   }
 }
 

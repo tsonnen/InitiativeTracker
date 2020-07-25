@@ -25,7 +25,7 @@ void main() {
   const MethodChannel channel =
       MethodChannel('plugins.flutter.io/path_provider');
   channel.setMockMethodCallHandler((MethodCall methodCall) async {
-    var path = TestHelper.testPath("test_resources");
+    var path = (await TestHelper.getProjectFile("test_resources")).path;
     return path;
   });
 
@@ -57,7 +57,7 @@ void main() {
   group('Test CRUD operations', () {
     test("Test Add Party", () async {
       PartyModel party = PartyModel(
-        partyName: "",
+          partyName: "",
           characters: List<CharacterModel>.generate(
               4, (index) => CharacterModel(name: "$index", hp: pow(index, 2))));
       await DBProvider.db.addParty(party);
@@ -76,18 +76,20 @@ void main() {
       party = await DBProvider.db.getParty(testParty.partyUUID);
       expect(null, party);
     });
-    
+
     test("Test Add Character", () async {
       CharacterModel character = CharacterModel(name: "Character", hp: 12);
       await DBProvider.db.addCharacter(character);
-      CharacterModel dbCharacter = await DBProvider.db.getCharacter(character.characterUUID);
+      CharacterModel dbCharacter =
+          await DBProvider.db.getCharacter(character.characterUUID);
 
       expect(character, dbCharacter);
     });
 
     test("Test Delete Character", () async {
       CharacterModel testCharacter = parties.first.characters.first;
-      CharacterModel character = await DBProvider.db.getCharacter(testCharacter.characterUUID);
+      CharacterModel character =
+          await DBProvider.db.getCharacter(testCharacter.characterUUID);
 
       expect(character, testCharacter);
 
