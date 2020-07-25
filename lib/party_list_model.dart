@@ -76,14 +76,14 @@ class PartyListModel {
   }
 
   static Future<PartyListModel> readSavedParties() async {
+    final file = await _localFile;
     try {
-      final file = await _localFile;
-
       // Read the file.
       String jsonData = await file.readAsString();
 
       return new PartyListModel.fromMap(json.decode(jsonData), legacyRead: true);
     } catch (e) {
+      print("Failed to load legacy JSON: ${file.path}");
       // If encountering an error, return 0.
       return new PartyListModel();
     }
