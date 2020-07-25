@@ -26,6 +26,7 @@ void main() {
       MethodChannel('plugins.flutter.io/path_provider');
   channel.setMockMethodCallHandler((MethodCall methodCall) async {
     var path = (await TestHelper.getProjectFile("test_resources")).path;
+    print(path);
     return path;
   });
 
