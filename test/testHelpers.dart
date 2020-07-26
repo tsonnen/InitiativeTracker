@@ -1,10 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:initiative_tracker/bloc/parties/parties_bloc.dart';
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
 import 'package:bloc_test/bloc_test.dart';
-import 'dart:io';
 import 'package:mockito/mockito.dart';
+import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
+import 'package:plugin_platform_interface/plugin_platform_interface.dart';
+import 'package:path/path.dart';
 
 class MockPartyBloc extends MockBloc<PartyState> implements PartyBloc {}
 
@@ -12,6 +16,20 @@ class MockPartiesBloc extends MockBloc<PartiesState> implements PartiesBloc {
   String systemUUID;
 
   MockPartiesBloc(this.systemUUID);
+}
+
+class MockPathProviderPlatform extends Mock
+    with MockPlatformInterfaceMixin
+    implements PathProviderPlatform {
+  Future<String> getApplicationDocumentsPath() async {
+    var dir = Directory.current;
+    while (!await dir
+        .list()
+        .any((entity) => entity.path.endsWith('pubspec.yaml'))) {
+      dir = dir.parent;
+    }
+    return join(dir.path, "test_resources");
+  }
 }
 
 class TestHelper {

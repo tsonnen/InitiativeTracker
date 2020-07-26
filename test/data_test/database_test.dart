@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -9,6 +10,8 @@ import 'package:initiative_tracker/models/system.dart';
 import 'package:initiative_tracker/party_list_model.dart';
 import 'package:initiative_tracker/services/database.dart';
 import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import '../testHelpers.dart';
@@ -22,18 +25,18 @@ Future<List<PartyModel>> setupDB() async {
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  const MethodChannel channel =
-      MethodChannel('plugins.flutter.io/path_provider');
-  channel.setMockMethodCallHandler((MethodCall methodCall) async {
-    var path = (await TestHelper.getProjectFile("test_resources")).path;
-    print(path);
-    return path;
-  });
-
   List<PartyModel> parties;
   final databaseFactory = databaseFactoryFfi;
 
   setUp(() async {
+    PathProviderPlatform.instance = MockPathProviderPlatform();
+    // This is required because we manually register the Linux path provider when on the Linux platform.
+    // Will be removed when automatic registration of dart plugins is implemented.
+    // See this issue https://github.com/flutter/flutter/issues/52267 for details
+    disablePathProviderPlatformOverride = true;
+
+    await databaseFactory.deleteDatabase(
+        join(await databaseFactory.getDatabasesPath(), "data.db"));
     parties = await setupDB();
   });
 
