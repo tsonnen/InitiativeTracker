@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:initiative_tracker/character.dart';
-import 'package:initiative_tracker/party_model.dart';
+import 'package:initiative_tracker/models/character_model.dart';
+import 'package:initiative_tracker/models/party_model.dart';
 import 'package:initiative_tracker/screens/character_screen.dart';
 
 class CharacterCard extends StatefulWidget {
-  final Character item;
+  final CharacterModel item;
   final VoidCallback onLongPress;
   final VoidCallback onTap;
 
@@ -19,10 +19,10 @@ class CharacterCard extends StatefulWidget {
 class CharacterCardState extends State<CharacterCard> {
   @override
   Widget build(BuildContext context) {
-    Character item = widget.item;
+    CharacterModel item = widget.item;
     return Card(
       child: ListTile(
-          title: new Text(item.name),
+          title: new Text(item.characterName),
           isThreeLine: true,
           subtitle: new Text(item.notes ?? ""),
           trailing: new Container(
@@ -45,7 +45,7 @@ class CharacterCardState extends State<CharacterCard> {
                   style: TextStyle(
                     color: item.hp < 0
                         ? Colors.red
-                        : Theme.of(context).textTheme.body1.color,
+                        : Theme.of(context).textTheme.bodyText2.color,
                   ),
                 ),
                 new IconButton(
@@ -86,7 +86,7 @@ class CharacterList extends StatelessWidget {
                         builder: (context) => CharacterScreen(character: item,)));
                   },
                   onLongPress: () {
-                    partyModel.removeCharacter(item);
+                    this.onLongPress(item);
                   },
                 ))
             .toList());

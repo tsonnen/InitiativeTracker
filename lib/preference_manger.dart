@@ -40,7 +40,25 @@ class PreferenceManger {
     return true;
   }
 
-  static void getPreferences() async {
-    prefs = await SharedPreferences.getInstance();
+  static String getSystemUUID(){
+    if(prefs != null){
+      return prefs.getString("pref_systemuuid") ?? null;
+    }
+    return null;
+  }
+
+  static Future<void> getPreferences() async {
+    if(prefs == null){
+      prefs = await SharedPreferences.getInstance();
+    }
+  }
+
+  static Future<void> setSystemUUID(String systemUUID) async {
+    if(prefs != null){
+      await prefs.setString("pref_systemuuid", systemUUID);
+    }else{
+      await getPreferences();
+      await setSystemUUID(systemUUID);
+    }
   }
 }
