@@ -11,22 +11,22 @@ void main() {
       var jsonData =
           '[{"name":"test","characters":[{"name":"john","initiative":12,"hp":12,"id":"abcd"},{"name":"jo","initiative":11,"hp":11,"id":"efg"}]}]';
       var parsedJson = json.decode(jsonData);
-      PartyListModel partyList = PartyListModel.fromMap(parsedJson);
+      var partyList = PartyListModel.fromMap(parsedJson);
 
       expect(partyList.parties.length, 1);
     });
 
     test('Check JSON dataflow', () {
-      PartyListModel partyList = PartyListModel();
+      var partyList = PartyListModel();
       for(var i = 0; i < 4; ++i){
-        PartyModel partyModel = PartyModel();
+        var partyModel = PartyModel();
         for(var j = 0; j < 4; ++j){
-          CharacterModel character = CharacterModel(name:'test $i-$j', initiative:i*j, hp:i*j);
+          var character = CharacterModel(name:'test $i-$j', initiative:i*j, hp:i*j);
           partyModel.addCharacter(character);
         }
         partyList.addParty(partyModel);
       }
-      PartyListModel parsedPartyList = PartyListModel.fromMap(partyList.toMap());
+      var parsedPartyList = PartyListModel.fromMap(partyList.toMap());
 
       expect(parsedPartyList, partyList);
     });

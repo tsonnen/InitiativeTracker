@@ -12,16 +12,16 @@ import 'package:initiative_tracker/bloc/party/party_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await PrefService.init(prefix: "pref_");
+  await PrefService.init(prefix: 'pref_');
 
   await PreferenceManger.getPreferences();
 
   if (PreferenceManger.getSystemUUID() == null) {
-    String systemUUID = await DBProvider.db.addInitialValues();
+    var systemUUID = await DBProvider.db.addInitialValues();
     await PreferenceManger.setSystemUUID(systemUUID);
   }
 
-  runApp(new App());
+  runApp(App());
 }
 
 class App extends StatefulWidget {
@@ -36,9 +36,9 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    return new DynamicTheme(
+    return DynamicTheme(
         defaultBrightness: Brightness.dark,
-        data: (brightness) => new ThemeData(brightness: brightness),
+        data: (brightness) => ThemeData(brightness: brightness),
         themedWidgetBuilder: (context, theme) {
           return MultiBlocProvider(
               providers: [

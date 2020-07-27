@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:initiative_tracker/bloc/parties/parties_bloc.dart';
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
-import 'package:initiative_tracker/models/party_model.dart';
 import 'package:initiative_tracker/preference_manger.dart';
 import 'package:initiative_tracker/screens/character_screen.dart';
 import 'package:initiative_tracker/widgets/character_list.dart';
@@ -12,15 +11,16 @@ import 'package:initiative_tracker/screens/help_screen.dart';
 import 'package:initiative_tracker/screens/settings_screen.dart';
 
 class PartyScreen extends StatefulWidget {
-  static final String route = "Home-Screen";
+  static final String route = 'Home-Screen';
 
+  @override
   State<StatefulWidget> createState() {
     return PartyScreenState();
   }
 }
 
 class PartyScreenState extends State<PartyScreen> {
-  var titleText = "Round 1";
+  var titleText = 'Round 1';
   PartyBloc partyBloc;
   PartiesBloc partiesBloc;
 
@@ -37,12 +37,12 @@ class PartyScreenState extends State<PartyScreen> {
     return BlocBuilder<PartyBloc, PartyState>(builder: (context, state) {
       if (state is PartyInitial) {
         partyBloc.add(GenerateParty());
-        return Text("Loading");
+        return Text('Loading');
       }
-      PartyModel partyModel = state.partyModel;
-      return new Scaffold(
+      var partyModel = state.partyModel;
+      return Scaffold(
         appBar: AppBar(
-          title: Text("Round ${partyModel.round}"),
+          title: Text('Round ${partyModel.round}'),
           actions: <Widget>[
             IconButton(
               icon: Icon(Icons.refresh),
@@ -55,7 +55,7 @@ class PartyScreenState extends State<PartyScreen> {
                 return [
                   PopupMenuItem(
                     child: MenuItem(
-                        label: "Save Party",
+                        label: 'Save Party',
                         icon: Icons.save,
                         onTap: () {
                           if (partyModel.partyName == null ||
@@ -78,7 +78,7 @@ class PartyScreenState extends State<PartyScreen> {
                   PopupMenuItem(
                     child: MenuItem(
                       icon: Icons.view_list,
-                      label: "Manage Saved Parties",
+                      label: 'Manage Saved Parties',
                       onTap: () {
                         _showPartiesDialog();
                       },
@@ -86,7 +86,7 @@ class PartyScreenState extends State<PartyScreen> {
                   ),
                   PopupMenuItem(
                     child: MenuItem(
-                      label: "Settings",
+                      label: 'Settings',
                       icon: Icons.settings,
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
@@ -96,7 +96,7 @@ class PartyScreenState extends State<PartyScreen> {
                   ),
                   PopupMenuItem(
                     child: MenuItem(
-                      label: "Help",
+                      label: 'Help',
                       icon: Icons.help_outline,
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
@@ -128,7 +128,7 @@ class PartyScreenState extends State<PartyScreen> {
           tooltip: 'Add Character',
         ),
         bottomNavigationBar: BottomAppBar(
-          child: new Row(
+          child: Row(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
@@ -152,8 +152,8 @@ class PartyScreenState extends State<PartyScreen> {
 
 // TODO: Split these into classes
   void _showNameDialog() {
-    final TextEditingController nameController = TextEditingController();
-    PartyModel partyModel = partyBloc.state.partyModel;
+    final nameController = TextEditingController();
+    var partyModel = partyBloc.state.partyModel;
 
     // flutter defined function
     showDialog(
@@ -161,20 +161,20 @@ class PartyScreenState extends State<PartyScreen> {
       builder: (BuildContext context) {
         // return object of type Dialog
         return AlertDialog(
-          title: new Text("Enter a Name"),
-          content: new TextField(
+          title: Text('Enter a Name'),
+          content: TextField(
             controller: nameController,
           ),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
-            new FlatButton(
-              child: new Text("Cancel"),
+            FlatButton(
+              child: Text('Cancel'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
-            new FlatButton(
-              child: new Text("Save"),
+            FlatButton(
+              child: Text('Save'),
               onPressed: () {
                 partyModel.setName(nameController.text);
                 partiesBloc.add(AddParty(partyModel));
@@ -194,7 +194,7 @@ class PartyScreenState extends State<PartyScreen> {
       builder: (BuildContext context) {
         // return object of type Dialog
         return AlertDialog(
-          title: new Text("Manage Parties"),
+          title: Text('Manage Parties'),
           content: Container(
               width: double.maxFinite,
               child: BlocBuilder(
@@ -202,16 +202,16 @@ class PartyScreenState extends State<PartyScreen> {
                   builder: (context, state) {
                     if (state is PartyInitial) {
                       partiesBloc.add(LoadParties());
-                      return Text("Set Up");
+                      return Text('Set Up');
                     } else if (state is PartiesLoadInProgress) {
-                      return Text("Loading");
+                      return Text('Loading');
                     } else if (state is PartiesLoadedSuccessful) {
-                      List<PartyModel> partyList = state.parties;
+                      var partyList = state.parties;
                       return ListView(
                         children: partyList
                             .map(
                               (item) => ListTile(
-                                title: new Text(item.partyName ?? "No Name"),
+                                title: Text(item.partyName ?? 'No Name'),
                                 onLongPress: () {
                                   if (PreferenceManger.getConfirmDelete()) {
                                     _showDeleteDialog(context, item.partyName)
@@ -244,12 +244,12 @@ class PartyScreenState extends State<PartyScreen> {
                       );
                     }
 
-                    return Text("Loading");
+                    return Text('Loading');
                   })),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
-            new FlatButton(
-              child: new Text("Done"),
+            FlatButton(
+              child: Text('Done'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -266,18 +266,18 @@ class PartyScreenState extends State<PartyScreen> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: new Text("Delete"),
-            content: new Text("Would you like to delete $name?"),
+            title: Text('Delete'),
+            content: Text('Would you like to delete $name?'),
             actions: <Widget>[
               // usually buttons at the bottom of the dialog
-              new FlatButton(
-                child: new Text("Yes"),
+              FlatButton(
+                child: Text('Yes'),
                 onPressed: () {
                   Navigator.of(context).pop(true);
                 },
               ),
-              new FlatButton(
-                child: new Text("No"),
+              FlatButton(
+                child: Text('No'),
                 onPressed: () {
                   Navigator.of(context).pop(false);
                 },
@@ -293,25 +293,25 @@ class PartyScreenState extends State<PartyScreen> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: new Text("Overwrite"),
-            content: new Text(
-                "This party is already saved\nWould you like to overwrite it?"),
+            title: Text('Overwrite'),
+            content: Text(
+                'This party is already saved\nWould you like to overwrite it?'),
             actions: <Widget>[
               // usually buttons at the bottom of the dialog
-              new FlatButton(
-                child: new Text("Yes"),
+              FlatButton(
+                child: Text('Yes'),
                 onPressed: () {
                   Navigator.of(context).pop(true);
                 },
               ),
-              new FlatButton(
-                child: new Text("No"),
+              FlatButton(
+                child: Text('No'),
                 onPressed: () {
                   Navigator.of(context).pop(false);
                 },
               ),
-              new FlatButton(
-                child: new Text("Cancel"),
+              FlatButton(
+                child: Text('Cancel'),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -327,18 +327,18 @@ class PartyScreenState extends State<PartyScreen> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: new Text("Load"),
-            content: new Text("Would you like to load $name?"),
+            title: Text('Load'),
+            content: Text('Would you like to load $name?'),
             actions: <Widget>[
               // usually buttons at the bottom of the dialog
-              new FlatButton(
-                child: new Text("Yes"),
+              FlatButton(
+                child: Text('Yes'),
                 onPressed: () {
                   Navigator.of(context).pop(true);
                 },
               ),
-              new FlatButton(
-                child: new Text("No"),
+              FlatButton(
+                child: Text('No'),
                 onPressed: () {
                   Navigator.of(context).pop(false);
                 },

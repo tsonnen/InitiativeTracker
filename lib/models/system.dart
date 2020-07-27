@@ -6,11 +6,11 @@ class System {
   Map<String, String> systemAttributes;
 
   System(this.systemName , {this.systemAttributes}){
-    this.systemUUID = Uuid().generateV4();
+    systemUUID = Uuid().generateV4();
   }
 
   factory System.fromMap(Map<String, dynamic> json) {
-    return new System.json(
+    return System.json(
         systemUUID: json['systemUUID'],
         systemName: json['systemName'],
         systemAttributes: json['systemAttributes']);

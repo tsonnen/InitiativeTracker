@@ -17,9 +17,9 @@ class PartyBloc extends Bloc<PartyEvent, PartyState> {
   Stream<PartyState> mapEventToState(
     PartyEvent event,
   ) async* {
-    PartyModel partyModel = state.partyModel?.clone();
+    var partyModel = state.partyModel?.clone();
     if(event is GenerateParty){
-      yield PartyLoadedSucess(new PartyModel());
+      yield PartyLoadedSucess(PartyModel());
     }else if (event is AddPartyCharacter){
       yield PartyModCharacter();
       partyModel.addCharacter(event.characterModel);

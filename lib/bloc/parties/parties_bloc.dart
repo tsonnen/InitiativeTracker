@@ -24,7 +24,7 @@ class PartiesBloc extends Bloc<PartiesEvent, PartiesState> {
     } else if (event is DeleteParty) {
       yield* _mapPartiesDeletedToState(event);
     } else if (event is ChangePartiesSystem) {
-      this.systemUUID = event.systemUUID;
+      systemUUID = event.systemUUID;
       yield* _loadCharacters();
     }
   }
@@ -35,7 +35,7 @@ class PartiesBloc extends Bloc<PartiesEvent, PartiesState> {
 
   Stream<PartiesState> _mapPartiesAddedToState(event) async* {
     PartyModel partyModel = event.partyModel;
-    partyModel.systemUUID = this.systemUUID;
+    partyModel.systemUUID = systemUUID;
     await DBProvider.db.addParty(partyModel);
     yield* _loadCharacters();
   }
@@ -47,8 +47,8 @@ class PartiesBloc extends Bloc<PartiesEvent, PartiesState> {
 
   Stream<PartiesState> _loadCharacters() async* {
     yield PartiesLoadInProgress();
-    List<PartyModel> parties =
-        await DBProvider.db.getSystemParties(this.systemUUID);
+    var parties =
+        await DBProvider.db.getSystemParties(systemUUID);
     yield PartiesLoadedSuccessful(parties);
   }
 }

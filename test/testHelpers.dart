@@ -13,14 +13,15 @@ import 'package:path/path.dart';
 class MockPartyBloc extends MockBloc<PartyState> implements PartyBloc {}
 
 class MockPartiesBloc extends MockBloc<PartiesState> implements PartiesBloc {
-  String systemUUID;
 
-  MockPartiesBloc(this.systemUUID);
+  MockPartiesBloc();
 }
 
 class MockPathProviderPlatform extends Mock
     with MockPlatformInterfaceMixin
     implements PathProviderPlatform {
+
+  @override
   Future<String> getApplicationDocumentsPath() async {
     var dir = Directory.current;
     while (!await dir
@@ -28,14 +29,14 @@ class MockPathProviderPlatform extends Mock
         .any((entity) => entity.path.endsWith('pubspec.yaml'))) {
       dir = dir.parent;
     }
-    return join(dir.path, "test_resources");
+    return join(dir.path, 'test_resources');
   }
 }
 
 class TestHelper {
   static void dumpTree() {
     assert(WidgetsBinding.instance != null);
-    String mode = 'RELEASE MODE';
+    var mode = 'RELEASE MODE';
     assert(() {
       mode = 'CHECKED MODE';
       return true;
@@ -78,7 +79,7 @@ class MatchType<T> extends Matcher {
 
   @override
   Description describe(Description description) =>
-      description.add("Item of type ${T.runtimeType}");
+      description.add('Item of type ${T.runtimeType}');
 
   @override
   bool matches(desc, Map matchState) {

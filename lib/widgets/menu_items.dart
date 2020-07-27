@@ -13,10 +13,10 @@ class MenuItem extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Icon(this.icon),
+            Icon(icon),
             Expanded(
               child: Text(
-                this.label,
+                label,
                 overflow: TextOverflow.ellipsis,
               ),
             )
