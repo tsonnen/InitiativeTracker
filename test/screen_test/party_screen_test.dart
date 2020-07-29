@@ -6,9 +6,8 @@ import 'package:initiative_tracker/bloc/parties/parties_bloc.dart';
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
 import 'package:initiative_tracker/models/character_model.dart';
 import 'package:initiative_tracker/models/party_model.dart';
-import 'package:initiative_tracker/preference_manger.dart';
-
 import 'package:initiative_tracker/screens/party_screen.dart';
+import 'package:initiative_tracker/widgets/party_screen_dialogs.dart';
 import 'package:mockito/mockito.dart';
 
 import '../testHelpers.dart';
@@ -174,7 +173,6 @@ void main() {
       expect(partyModel.characters.first.hp, 6);
     });
 
-// TODO: Split popup tests into seperate file
     testWidgets('Test Save Party', (WidgetTester tester) async {
       when(partyBloc.state).thenAnswer((_) => PartyLoadedSucess(partyModel));
       when(partiesBloc.state)
@@ -191,7 +189,7 @@ void main() {
       await tester.tap(find.byIcon(Icons.save, skipOffstage: false));
       await tester.pumpAndSettle();
 
-      expect(find.byType(AlertDialog), findsOneWidget);
+      expect(find.byType(PartyNameDialog), findsOneWidget);
 
       await tester.enterText(find.byType(TextField), 'Saved Party');
       await tester.pumpAndSettle();
@@ -218,22 +216,7 @@ void main() {
       await tester.tap(find.byIcon(Icons.view_list, skipOffstage: false));
       await tester.pumpAndSettle();
 
-      expect(find.byType(AlertDialog), findsOneWidget);
-      expect(find.text(partyModel.partyName), findsOneWidget);
-
-      await tester.longPress(find.text(partyModel.partyName));
-      await tester.pumpAndSettle();
-
-      if (PreferenceManger.getConfirmDelete()) {
-        expect(
-            find.widgetWithText(AlertDialog,
-                'Would you like to delete ${partyModel.partyName}?'),
-            findsOneWidget);
-        await tester.tap(find.text('Yes'));
-        await tester.pumpAndSettle();
-      }
-
-      verify(partiesBloc.add(DeleteParty(partyModel.partyUUID))).called(1);
+      expect(find.byType(PartiesDialog), findsOneWidget);
     });
 
     testWidgets('Test Help Route', (WidgetTester tester) async {

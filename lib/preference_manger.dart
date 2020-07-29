@@ -56,4 +56,22 @@ class PreferenceManger {
       await setSystemUUID(systemUUID);
     }
   }
+
+  static Future<void> setConfirmLoad(bool confirm) async {
+    if(prefs != null){
+      await prefs.setBool('pref_confirm_load', confirm);
+    }else{
+      await getPreferences();
+      await setConfirmLoad(confirm);
+    }
+  }
+
+  static Future<void> setConfirmDelete(bool confirm) async {
+    if(prefs != null){
+      await prefs.setBool('pref_confirm_delete', confirm);
+    }else{
+      await getPreferences();
+      await setConfirmDelete(confirm);
+    }
+  }
 }
