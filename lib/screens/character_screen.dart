@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:numberpicker/numberpicker.dart';
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
 import 'package:initiative_tracker/models/character_model.dart';
 import 'package:initiative_tracker/preference_manger.dart';
@@ -122,18 +123,23 @@ class CharacterScreenState extends State<CharacterScreen> {
                     ),
                   ),
                   Flexible(
-                    child: DropdownButton(
-                      value: _initMod,
-                      hint: Text('Initiative Modifier'),
-                      items: List<DropdownMenuItem<int>>.generate(
-                          11,
-                          (i) => DropdownMenuItem(
-                              value: i - 5, child: Text((i - 5).toString()))),
-                      onChanged: (int value) {
-                        setState(() {
-                          _initMod = value;
+                    child: FlatButton(
+                      onPressed: () {
+                        showDialog<int>(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return NumberPickerDialog.integer(
+                                minValue: -100,
+                                maxValue: 100,
+                                initialIntegerValue: _initMod ?? 0,
+                              );
+                            }).then((value) {
+                          setState(() {
+                            _initMod = value;
+                          });
                         });
                       },
+                      child: Text('Initiative Modifier : ${_initMod ?? ''}'),
                     ),
                   ),
                 ],
