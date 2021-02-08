@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.com/tsonnen/InitiativeTracker.svg?branch=master)](https://travis-ci.com/tsonnen/InitiativeTracker)
 
-![](https://github.com/tsonnen/InitiativeTracker/raw/master/images/Initiative%20Tracker-feature-graphic.png)
+![](https://github.com/tsonnen/InitiativeTracker/blob/main/images/Initiative%20Tracker-feature-graphic.png)
 
 # Initiative Tracker
 
@@ -20,7 +20,7 @@ in the repo.
 # License
 
 ~~~
-Copyright 2019 Tim Sonnen
+Copyright 2021 Tim Sonnen
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
