@@ -66,6 +66,7 @@ class PartyModel {
     cloned.partyUUID = partyUUID;
     cloned.characters = List<CharacterModel>.from(
         characters.map((character) => character.clone()));
+    cloned.round = round;
     return cloned;
   }
 
