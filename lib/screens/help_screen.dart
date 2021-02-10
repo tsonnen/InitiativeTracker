@@ -32,15 +32,15 @@ class HelpPageState extends State<HelpPage> {
       ),
       body: new Markdown(
         data: markdown,
-        onTapLink: (value) {
-          if (value.contains("help:")) {
-            value = value.replaceAll("help:", "");
+        onTapLink: (text, hrewf, title) {
+          if (hrewf.contains("help:")) {
+            hrewf = hrewf.replaceAll("help:", "");
             backStack.addLast(_currentPage);
             forwardStack.clear();
-            showHelp(value);
-          } else if (value.contains("url:")) {
-            value = value.replaceAll("url:", "");
-            String url = value;
+            showHelp(hrewf);
+          } else if (hrewf.contains("url:")) {
+            hrewf = hrewf.replaceAll("url:", "");
+            String url = hrewf;
             canLaunch(url).then((ableLaunch) {
               if (ableLaunch) {
                 launch(url);
