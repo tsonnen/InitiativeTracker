@@ -10,15 +10,15 @@ class CharacterModel {
   String notes;
   int hp;
   bool isExpanded = false;
-  Map<String, int> attributes = Map<String, int>();
+  Map<String, int> attributes = <String, int>{};
   String systemUUID;
 
   CharacterModel({String name, int hp, int initiative, String notes})
-      : this.characterName = name ?? "TEST",
-        this.hp = hp ?? 123,
-        this.characterUUID = Uuid().generateV4(),
-        this.initiative = initiative ?? rollDice(1, 20),
-        this.notes = notes;
+      : characterName = name ?? 'TEST',
+        hp = hp ?? 123,
+        characterUUID = Uuid().generateV4(),
+        initiative = initiative ?? rollDice(1, 20),
+        notes = notes;
 
   CharacterModel.map(
       {this.characterName,
@@ -30,15 +30,15 @@ class CharacterModel {
       this.attributes});
 
   void setName(String name) {
-    this.characterName = name;
+    characterName = name;
   }
 
   void increaseHP() {
-    setHP(++this.hp);
+    setHP(++hp);
   }
 
   void reduceHP() {
-    setHP(--this.hp);
+    setHP(--hp);
   }
 
   void setHP(int hp) {
@@ -49,8 +49,8 @@ class CharacterModel {
     this.initiative = initiative;
   }
 
-  void edit(String name, int hp, int initiative, String notes) {
-    this.characterName = name;
+  void edit(String characterName, int hp, int initiative, String notes) {
+    this.characterName = characterName;
     this.hp = hp;
     this.initiative = initiative;
     this.notes = notes;
@@ -58,7 +58,7 @@ class CharacterModel {
 
   factory CharacterModel.fromMap(Map<String, dynamic> json,
       {bool legacyRead = false}) {
-    return new CharacterModel.map(
+    return CharacterModel.map(
       characterName: json[legacyRead ? 'name' : 'characterName'],
       initiative: json['initiative'],
       hp: json['hp'],
@@ -90,20 +90,22 @@ class CharacterModel {
       };
 
   bool compare(CharacterModel rhs) {
-    return this.characterName == rhs.characterName &&
-        this.initiative == rhs.initiative &&
-        this.notes == rhs.notes &&
-        this.hp == rhs.hp;
+    return characterName == rhs.characterName &&
+        initiative == rhs.initiative &&
+        notes == rhs.notes &&
+        hp == rhs.hp;
   }
 
+  @override
   bool operator ==(rhs) {
-    return this.characterUUID == rhs.characterUUID &&
-        this.characterName == rhs.characterName &&
-        this.initiative == rhs.initiative &&
-        this.notes == rhs.notes &&
-        this.hp == rhs.hp;
+    return characterUUID == rhs.characterUUID &&
+        characterName == rhs.characterName &&
+        initiative == rhs.initiative &&
+        notes == rhs.notes &&
+        hp == rhs.hp;
   }
 
+  @override
   int get hashCode =>
       characterName.hashCode ^
       initiative.hashCode ^
@@ -112,13 +114,13 @@ class CharacterModel {
       initiative.hashCode ^
       notes.hashCode;
 
-  clone() {
-    var cloned = new CharacterModel();
-    cloned.hp = this.hp;
-    cloned.characterUUID = this.characterUUID;
-    cloned.initiative = this.initiative;
-    cloned.characterName = this.characterName;
-    cloned.notes = this.notes;
+  CharacterModel clone() {
+    var cloned = CharacterModel();
+    cloned.hp = hp;
+    cloned.characterUUID = characterUUID;
+    cloned.initiative = initiative;
+    cloned.characterName = characterName;
+    cloned.notes = notes;
 
     return cloned;
   }

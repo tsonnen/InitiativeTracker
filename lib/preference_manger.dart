@@ -5,7 +5,7 @@ class PreferenceManger {
 
   static int getNumberDice() {
     if (prefs != null) {
-      String numDice = prefs.getString("pref_num_dice");
+      var numDice = prefs.getString('pref_num_dice');
       return numDice != null ? int.parse(numDice) : 1;
     }
     return 1;
@@ -13,7 +13,7 @@ class PreferenceManger {
 
   static int getNumberSides() {
     if (prefs != null) {
-      String numSides = prefs.getString("pref_num_sides");
+      var numSides = prefs.getString('pref_num_sides');
       return numSides != null ? int.parse(numSides) : 20;
     }
     return 20;
@@ -21,44 +21,57 @@ class PreferenceManger {
 
   static bool getConfirmDelete(){
     if (prefs != null) {
-      return prefs.getBool("pref_confirm_delete") ?? true;
+      return prefs.getBool('pref_confirm_delete') ?? true;
     }
     return true;
   }
 
   static bool getConfirmOverwrite(){
     if (prefs != null) {
-      return prefs.getBool("pref_confirm_overwrite") ?? true;
+      return prefs.getBool('pref_confirm_overwrite') ?? true;
     }
     return true;
   }
 
   static bool getConfirmLoad(){
     if (prefs != null) {
-      return prefs.getBool("pref_confirm_load") ?? true;
+      return prefs.getBool('pref_confirm_load') ?? true;
     }
     return true;
   }
 
   static String getSystemUUID(){
-    if(prefs != null){
-      return prefs.getString("pref_systemuuid") ?? null;
-    }
-    return null;
+    return prefs?.getString('pref_systemuuid');
   }
 
   static Future<void> getPreferences() async {
-    if(prefs == null){
-      prefs = await SharedPreferences.getInstance();
-    }
+    prefs ??= await SharedPreferences.getInstance();
   }
 
   static Future<void> setSystemUUID(String systemUUID) async {
     if(prefs != null){
-      await prefs.setString("pref_systemuuid", systemUUID);
+      await prefs.setString('pref_systemuuid', systemUUID);
     }else{
       await getPreferences();
       await setSystemUUID(systemUUID);
+    }
+  }
+
+  static Future<void> setConfirmLoad(bool confirm) async {
+    if(prefs != null){
+      await prefs.setBool('pref_confirm_load', confirm);
+    }else{
+      await getPreferences();
+      await setConfirmLoad(confirm);
+    }
+  }
+
+  static Future<void> setConfirmDelete(bool confirm) async {
+    if(prefs != null){
+      await prefs.setBool('pref_confirm_delete', confirm);
+    }else{
+      await getPreferences();
+      await setConfirmDelete(confirm);
     }
   }
 }

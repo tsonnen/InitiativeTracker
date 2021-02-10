@@ -12,9 +12,7 @@ class PartyModel {
   int round = 1;
 
   PartyModel({this.characters, this.partyName}) {
-    if (characters == null) {
-      characters = new List<CharacterModel>();
-    }
+    characters ??= [];
     generateUUID();
   }
 
@@ -30,7 +28,7 @@ class PartyModel {
   }
 
   void addCharacter(CharacterModel character) {
-    int index = characters.indexWhere(
+    var index = characters.indexWhere(
         (element) => element.characterUUID == character.characterUUID);
 
     index != -1 ? characters[index] = character : characters.add(character);
@@ -43,7 +41,7 @@ class PartyModel {
   }
 
   void removeCharacterByUUID(String characterUUID) {
-    characters.removeWhere((item)=> item.characterUUID == characterUUID);
+    characters.removeWhere((item) => item.characterUUID == characterUUID);
   }
 
   void reduceHP(CharacterModel item) {
@@ -54,8 +52,8 @@ class PartyModel {
     item.setHP(++item.hp);
   }
 
-  void setName(String name) {
-    this.partyName = name;
+  void setName(String partyName) {
+    this.partyName = partyName;
   }
 
   void prevRound() {
@@ -63,26 +61,27 @@ class PartyModel {
   }
 
   PartyModel clone() {
-    var cloned = new PartyModel();
-    cloned.partyName = this.partyName;
-    cloned.partyUUID = this.partyUUID;
-    cloned.characters = new List<CharacterModel>.from(
-        this.characters.map((character) => character.clone()));
+    var cloned = PartyModel();
+    cloned.partyName = partyName;
+    cloned.partyUUID = partyUUID;
+    cloned.characters = List<CharacterModel>.from(
+        characters.map((character) => character.clone()));
+    cloned.round = round;
     return cloned;
   }
 
   void from(PartyModel partyModel) {
     var cloned = partyModel.clone();
-    this.partyName = cloned.partyName;
-    this.partyUUID = cloned.partyUUID;
-    this.characters = new List<CharacterModel>.from(
+    partyName = cloned.partyName;
+    partyUUID = cloned.partyUUID;
+    characters = List<CharacterModel>.from(
         cloned.characters.map((character) => character.clone()));
   }
 
   void clear() {
     round = 1;
     characters = null;
-    characters = new List<CharacterModel>();
+    characters = <CharacterModel>[];
     generateUUID();
   }
 
@@ -95,7 +94,7 @@ class PartyModel {
     List<dynamic> charJSON = json['characters'] is String
         ? jsonDecode(json['characters'])
         : json['characters'];
-    return new PartyModel.map(
+    return PartyModel.map(
         partyName: json[legacyRead ? 'name' : 'partyName'],
         partyUUID: json[legacyRead ? 'id' : 'partyUUID'],
         systemUUID: json['systemUUID'],
@@ -123,27 +122,28 @@ class PartyModel {
       };
 
   void generateUUID() {
-    this.partyUUID = Uuid().generateV4();
+    partyUUID = Uuid().generateV4();
   }
 
   bool containsCharacter(CharacterModel characterModel) {
-    var matches = this.characters.where(
+    var matches = characters.where(
         (character) => character.characterUUID == characterModel.characterUUID);
-    return matches.length > 0;
+    return matches.isNotEmpty;
   }
 
   @override
   bool operator ==(rhs) {
-    return this.partyName == rhs.partyName &&
-        this.partyUUID == rhs.partyUUID &&
-        this.round == rhs.round &&
-        ListEquality().equals(this.characters, rhs.characters);
+    return partyName == rhs.partyName &&
+        partyUUID == rhs.partyUUID &&
+        round == rhs.round &&
+        ListEquality().equals(characters, rhs.characters);
   }
 
+  @override
   int get hashCode =>
       partyName.hashCode ^
       partyUUID.hashCode ^
       round.hashCode ^
-      systemUUID.hashCode^
+      systemUUID.hashCode ^
       characters.hashCode;
 }

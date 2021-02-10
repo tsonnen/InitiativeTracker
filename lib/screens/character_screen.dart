@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:numberpicker/numberpicker.dart';
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
 import 'package:initiative_tracker/models/character_model.dart';
 import 'package:initiative_tracker/preference_manger.dart';
 import 'package:initiative_tracker/random_generator.dart';
 
 class CharacterScreen extends StatefulWidget {
-  static final String route = "Character-Screen";
+  static final String route = 'Character-Screen';
   final CharacterModel character;
   final String partyUUID;
 
@@ -41,7 +42,7 @@ class CharacterScreenState extends State<CharacterScreen> {
       nameController.text = character.characterName.toString();
       hpController.text = character.hp.toString();
       initController.text = character.initiative.toString();
-      noteController.text = (character.notes ?? "").toString();
+      noteController.text = (character.notes ?? '').toString();
     }
   }
 
@@ -61,7 +62,7 @@ class CharacterScreenState extends State<CharacterScreen> {
                     child: TextFormField(
                       decoration: InputDecoration(
                         border: InputBorder.none,
-                        hintText: "Name",
+                        hintText: 'Name',
                       ),
                       controller: nameController,
                       validator: (value) {
@@ -77,10 +78,10 @@ class CharacterScreenState extends State<CharacterScreen> {
                     child: Flexible(
                       child: DropdownButton(
                         value: _number,
-                        hint: new Text("# Units"),
-                        items: new List<DropdownMenuItem<int>>.generate(
+                        hint: Text('# Units'),
+                        items: List<DropdownMenuItem<int>>.generate(
                             20,
-                            (i) => new DropdownMenuItem(
+                            (i) => DropdownMenuItem(
                                 value: i + 1, child: Text((i + 1).toString()))),
                         onChanged: (int value) {
                           setState(() {
@@ -96,14 +97,14 @@ class CharacterScreenState extends State<CharacterScreen> {
                 child: TextFormField(
                   decoration: InputDecoration(
                     border: InputBorder.none,
-                    hintText: "HP",
+                    hintText: 'HP',
                   ),
                   keyboardType: TextInputType.number,
                   controller: hpController,
                   validator: (value) {
                     if (value.isEmpty) {
                       // This will only get numbers
-                      return "Please enter valid HP";
+                      return 'Please enter valid HP';
                     }
                     return null;
                   },
@@ -115,25 +116,30 @@ class CharacterScreenState extends State<CharacterScreen> {
                     child: TextFormField(
                       decoration: InputDecoration(
                         border: InputBorder.none,
-                        hintText: "Initiative",
+                        hintText: 'Initiative',
                       ),
                       keyboardType: TextInputType.number,
                       controller: initController,
                     ),
                   ),
                   Flexible(
-                    child: DropdownButton(
-                      value: _initMod,
-                      hint: new Text("Initiative Modifier"),
-                      items: new List<DropdownMenuItem<int>>.generate(
-                          11,
-                          (i) => new DropdownMenuItem(
-                              value: i - 5, child: Text((i - 5).toString()))),
-                      onChanged: (int value) {
-                        setState(() {
-                          _initMod = value;
+                    child: FlatButton(
+                      onPressed: () {
+                        showDialog<int>(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return NumberPickerDialog.integer(
+                                minValue: -100,
+                                maxValue: 100,
+                                initialIntegerValue: _initMod ?? 0,
+                              );
+                            }).then((value) {
+                          setState(() {
+                            _initMod = value;
+                          });
                         });
                       },
+                      child: Text('Initiative Modifier : ${_initMod ?? ''}'),
                     ),
                   ),
                 ],
@@ -142,14 +148,14 @@ class CharacterScreenState extends State<CharacterScreen> {
                 child: TextFormField(
                   decoration: InputDecoration(
                     border: InputBorder.none,
-                    hintText: "Notes",
+                    hintText: 'Notes',
                   ),
                   keyboardType: TextInputType.multiline,
                   maxLines: null,
                   controller: noteController,
                 ),
               ),
-              new RaisedButton(
+              RaisedButton(
                 child: Text(
                     character == null ? 'Add Character' : 'Edit Character'),
                 onPressed: () {
@@ -158,19 +164,19 @@ class CharacterScreenState extends State<CharacterScreen> {
                       character.edit(
                           nameController.text,
                           int.parse(hpController.text),
-                          initController.text != ""
+                          initController.text != ''
                               ? int.parse(initController.text)
                               : null,
                           noteController.text);
                       partyBloc.add(AddPartyCharacter(character));
                       Navigator.of(context).pop();
                     } else {
-                      for (int i = 1; i <= (_number ?? 1); i++) {
+                      for (var i = 1; i <= (_number ?? 1); i++) {
                         character = CharacterModel(
                             name: nameController.text +
-                                ((_number ?? 1) > 1 ? " " + i.toString() : ""),
+                                ((_number ?? 1) > 1 ? ' ' + i.toString() : ''),
                             hp: int.parse(hpController.text),
-                            initiative: initController.text != ""
+                            initiative: initController.text != ''
                                 ? int.parse(initController.text)
                                 : rollDice(PreferenceManger.getNumberDice(),
                                         PreferenceManger.getNumberSides()) +

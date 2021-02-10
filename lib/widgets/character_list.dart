@@ -11,6 +11,7 @@ class CharacterCard extends StatefulWidget {
 
   CharacterCard({this.item, this.onTap, this.onLongPress});
 
+  @override
   State<StatefulWidget> createState() {
     return CharacterCardState();
   }
@@ -19,19 +20,19 @@ class CharacterCard extends StatefulWidget {
 class CharacterCardState extends State<CharacterCard> {
   @override
   Widget build(BuildContext context) {
-    CharacterModel item = widget.item;
+    var item = widget.item;
     return Card(
       child: ListTile(
-          title: new Text(item.characterName),
+          title: Text(item.characterName),
           isThreeLine: true,
-          subtitle: new Text(item.notes ?? ""),
-          trailing: new Container(
-            child: new Row(
+          subtitle: Text(item.notes ?? ''),
+          trailing: Container(
+            child: Row(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-                new IconButton(
-                  icon: new Icon(Icons.remove),
+                IconButton(
+                  icon: Icon(Icons.remove),
                   color: Colors.red,
                   onPressed: () {
                     setState(() {
@@ -39,7 +40,7 @@ class CharacterCardState extends State<CharacterCard> {
                     });
                   },
                 ),
-                new Text(
+                Text(
                   item.hp.toString(),
                   textAlign: TextAlign.right,
                   style: TextStyle(
@@ -48,8 +49,8 @@ class CharacterCardState extends State<CharacterCard> {
                         : Theme.of(context).textTheme.bodyText2.color,
                   ),
                 ),
-                new IconButton(
-                  icon: new Icon(Icons.add),
+                IconButton(
+                  icon: Icon(Icons.add),
                   onPressed: () {
                     setState(() {
                       item.increaseHP();
@@ -76,8 +77,7 @@ class CharacterList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-        children: this
-            .partyModel
+        children: partyModel
             .getCharacterList()
             .map((item) => CharacterCard(
                   item: item,
@@ -86,7 +86,7 @@ class CharacterList extends StatelessWidget {
                         builder: (context) => CharacterScreen(character: item,)));
                   },
                   onLongPress: () {
-                    this.onLongPress(item);
+                    onLongPress(item);
                   },
                 ))
             .toList());

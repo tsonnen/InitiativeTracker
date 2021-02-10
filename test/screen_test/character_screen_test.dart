@@ -10,13 +10,13 @@ import 'package:mockito/mockito.dart';
 import '../testHelpers.dart';
 
 void main() {
-  group("Character Screen Form Tests", () {
+  group('Character Screen Form Tests', () {
     PartyBloc partyBloc;
 
     setUp(() {
       partyBloc = MockPartyBloc();
     });
-    testWidgets("Test Validators-EMPTY", (WidgetTester tester) async {
+    testWidgets('Test Validators-EMPTY', (WidgetTester tester) async {
       when(partyBloc.state).thenAnswer((_) => PartyLoadedSucess(PartyModel()));
       when(partyBloc.add(argThat(MatchType<AddPartyCharacter>())))
           .thenReturn(null);
@@ -34,38 +34,38 @@ void main() {
     });
   });
 
-  group("Character Screen-Add Character", () {
+  group('Character Screen-Add Character', () {
     PartyBloc partyBloc;
 
     setUp(() {
       partyBloc = MockPartyBloc();
     });
-    testWidgets("Add Character-No Gen", (WidgetTester tester) async {
+    testWidgets('Add Character-No Gen', (WidgetTester tester) async {
       when(partyBloc.state).thenAnswer((_) => PartyLoadedSucess(PartyModel()));
       when(partyBloc.add(argThat(MatchType<AddPartyCharacter>())))
           .thenReturn(null);
 
-      CharacterModel charToAdd = CharacterModel(
-          name: "Test Char", initiative: 12, hp: 12, notes: "None");
+      var charToAdd = CharacterModel(
+          name: 'Test Char', initiative: 12, hp: 12, notes: 'None');
 
       await tester.pumpWidget(createCharacterScreen(partyBloc));
 
       await tester.pumpAndSettle();
 
       await tester.enterText(
-          find.widgetWithText(TextFormField, "Name"), charToAdd.characterName);
+          find.widgetWithText(TextFormField, 'Name'), charToAdd.characterName);
       await tester.pumpAndSettle();
 
       await tester.enterText(
-          find.widgetWithText(TextFormField, "HP"), charToAdd.hp.toString());
+          find.widgetWithText(TextFormField, 'HP'), charToAdd.hp.toString());
       await tester.pumpAndSettle();
 
-      await tester.enterText(find.widgetWithText(TextFormField, "Initiative"),
+      await tester.enterText(find.widgetWithText(TextFormField, 'Initiative'),
           charToAdd.initiative.toString());
       await tester.pumpAndSettle();
 
       await tester.enterText(
-          find.widgetWithText(TextFormField, "Notes"), charToAdd.notes);
+          find.widgetWithText(TextFormField, 'Notes'), charToAdd.notes);
       await tester.pumpAndSettle();
 
       await tapButton(tester);
@@ -74,23 +74,23 @@ void main() {
       verify(partyBloc.add(argThat(MatchType<AddPartyCharacter>()))).called(1);
     });
 
-    testWidgets("Add Character-Gen", (WidgetTester tester) async {
+    testWidgets('Add Character-Gen', (WidgetTester tester) async {
       when(partyBloc.state).thenAnswer((_) => PartyLoadedSucess(PartyModel()));
       when(partyBloc.add(argThat(MatchType<AddPartyCharacter>())))
           .thenReturn(null);
-      CharacterModel charToAdd = CharacterModel(name: "Test Char", hp: 12);
-      int numCharacters = 4;
+      var charToAdd = CharacterModel(name: 'Test Char', hp: 12);
+      var numCharacters = 4;
 
       await tester.pumpWidget(createCharacterScreen(partyBloc));
 
       await tester.pumpAndSettle();
 
       await tester.enterText(
-          find.widgetWithText(TextFormField, "Name"), charToAdd.characterName);
+          find.widgetWithText(TextFormField, 'Name'), charToAdd.characterName);
       await tester.pumpAndSettle();
 
       await tester.enterText(
-          find.widgetWithText(TextFormField, "HP"), charToAdd.hp.toString());
+          find.widgetWithText(TextFormField, 'HP'), charToAdd.hp.toString());
       await tester.pumpAndSettle();
 
       DropdownButton dropdown =
@@ -107,21 +107,21 @@ void main() {
     });
   });
 
-  group("Character Screen Edit Tests", () {
+  group('Character Screen Edit Tests', () {
     PartyBloc partyBloc;
 
     setUp(() {
-      partyBloc = new MockPartyBloc();
+      partyBloc = MockPartyBloc();
     });
-    testWidgets("Test Edit", (WidgetTester tester) async {
+    testWidgets('Test Edit', (WidgetTester tester) async {
       when(partyBloc.state).thenAnswer((_) => PartyLoadedSucess(PartyModel()));
       when(partyBloc.add(argThat(MatchType<AddPartyCharacter>())))
           .thenReturn(null);
 
-      CharacterModel charToEdit = CharacterModel(
-          name: "Test Char", initiative: 12, hp: 45, notes: "My Notes");
+      var charToEdit = CharacterModel(
+          name: 'Test Char', initiative: 12, hp: 45, notes: 'My Notes');
 
-      CharacterModel editedChar = charToEdit.clone();
+      var editedChar = charToEdit.clone();
       editedChar.hp = 25;
 
       await tester.pumpWidget(BlocProvider<PartyBloc>(
@@ -149,14 +149,14 @@ void main() {
 }
 
 Future<void> tapButton(WidgetTester tester, {CharacterModel character}) async {
-  String btnText = character == null ? 'Add Character' : 'Edit Character';
+  var btnText = character == null ? 'Add Character' : 'Edit Character';
   await tester.tap(find.widgetWithText(RaisedButton, btnText));
   await tester.pumpAndSettle();
 }
 
 Widget createCharacterScreen(PartyBloc partyBloc,
     {CharacterModel character}) {
-  return new BlocProvider(
+  return BlocProvider(
       create: (BuildContext context) => partyBloc,
       child: MaterialApp(
           home: CharacterScreen(

@@ -5,7 +5,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HelpPage extends StatefulWidget {
-  static final String route = "Help-Page";
+  static final String route = 'Help-Page';
 
   @override
   HelpPageState createState() => HelpPageState();
@@ -14,33 +14,33 @@ class HelpPage extends StatefulWidget {
 class HelpPageState extends State<HelpPage> {
   String markdown = '';
   String _currentPage;
-  Queue backStack = new Queue();
-  Queue forwardStack = new Queue();
+  Queue backStack = Queue();
+  Queue forwardStack = Queue();
 
   @override
   void initState() {
     super.initState();
 
-    showHelp("table_contents");
+    showHelp('table_contents');
   }
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
+    return Scaffold(
       appBar: AppBar(
         title: Text('Help'),
       ),
-      body: new Markdown(
+      body: Markdown(
         data: markdown,
-        onTapLink: (text, hrewf, title) {
-          if (hrewf.contains("help:")) {
-            hrewf = hrewf.replaceAll("help:", "");
+        onTapLink: (text, href, title) {
+          if (href.contains('help:')) {
+            href = href.replaceAll('help:', '');
             backStack.addLast(_currentPage);
             forwardStack.clear();
-            showHelp(hrewf);
-          } else if (hrewf.contains("url:")) {
-            hrewf = hrewf.replaceAll("url:", "");
-            String url = hrewf;
+            showHelp(href);
+          } else if (href.contains('url:')) {
+            href = href.replaceAll('url:', '');
+            var url = href;
             canLaunch(url).then((ableLaunch) {
               if (ableLaunch) {
                 launch(url);
@@ -52,7 +52,7 @@ class HelpPageState extends State<HelpPage> {
         },
       ),
       bottomNavigationBar: BottomAppBar(
-        child: new Row(
+        child: Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
@@ -85,7 +85,7 @@ class HelpPageState extends State<HelpPage> {
     );
   }
 
-  showHelp(String file) {
+  void showHelp(String file) {
     loadHelpFile(file).then((value) {
       setState(() {
         markdown = value;

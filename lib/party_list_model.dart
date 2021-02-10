@@ -10,43 +10,44 @@ class PartyListModel {
   PartyListModel.json({this.parties});
 
   PartyListModel() {
-    parties = new List<PartyModel>();
+    parties = <PartyModel>[];
   }
 
-  factory PartyListModel.fromMap(List<dynamic> parsedJson, {bool legacyRead=false}) {
-    return new PartyListModel.json(
-      parties: parsedJson.map((i) => PartyModel.fromMap(i, legacyRead: legacyRead)).toList(),
+  factory PartyListModel.fromMap(List<dynamic> parsedJson,
+      {bool legacyRead = false}) {
+    return PartyListModel.json(
+      parties: parsedJson
+          .map((i) => PartyModel.fromMap(i, legacyRead: legacyRead))
+          .toList(),
     );
   }
 
   List<dynamic> toMap({bool legacy = false}) {
-    List jsonList = List();
-    parties.map((i) => jsonList.add(i.toMap(legacy:legacy))).toList();
+    var jsonList = [];
+    parties.map((i) => jsonList.add(i.toMap(legacy: legacy))).toList();
     return jsonList;
   }
 
   bool containsParty(PartyModel partyModel) {
-    var matches = this.parties.where((party) => party.partyUUID == partyModel.partyUUID);
-    return matches.length > 0;
+    var matches =
+        parties.where((party) => party.partyUUID == partyModel.partyUUID);
+    return matches.isNotEmpty;
   }
 
   void addParty(PartyModel party) {
     assert(!containsParty(party),
-        "Specified party is a duplicate. Use editParty instead");
+        'Specified party is a duplicate. Use editParty instead');
     parties.add(party.clone());
-    
   }
 
   void editParty(PartyModel partyModel) {
-    this
-        .parties
-        .remove(this.parties.firstWhere((party) => party.partyUUID == partyModel.partyUUID));
+    parties.remove(
+        parties.firstWhere((party) => party.partyUUID == partyModel.partyUUID));
     addParty(partyModel);
   }
 
   void remove(PartyModel item) {
-    this.parties.remove(item);
-    
+    parties.remove(item);
   }
 
   static PartyListModel readSavedPartiesSync() {
@@ -54,7 +55,7 @@ class PartyListModel {
     readSavedParties().then((value) {
       model = value;
     });
-    return model ?? new PartyListModel();
+    return model ?? PartyListModel();
   }
 
   static Future<String> get _localPath async {
@@ -72,39 +73,39 @@ class PartyListModel {
     final file = await _localFile;
 
     // Write the file.
-    return file.writeAsString(json.encode(this.toMap(legacy: true)));
+    return file.writeAsString(json.encode(toMap(legacy: true)));
   }
 
   static Future<PartyListModel> readSavedParties() async {
     final file = await _localFile;
     try {
       // Read the file.
-      String jsonData = await file.readAsString();
+      var jsonData = await file.readAsString();
 
-      return new PartyListModel.fromMap(json.decode(jsonData), legacyRead: true);
+      return PartyListModel.fromMap(json.decode(jsonData), legacyRead: true);
     } catch (e) {
-      print("Failed to load legacy JSON: ${file.path}");
+      print('Failed to load legacy JSON: ${file.path}');
       // If encountering an error, return 0.
-      return new PartyListModel();
+      return PartyListModel();
     }
   }
 
   PartyListModel clone() {
-    PartyListModel cloned = new PartyListModel();
-    cloned.parties = List.from(this.parties.map((party) => party.clone()));
+    var cloned = PartyListModel();
+    cloned.parties = List.from(parties.map((party) => party.clone()));
     return cloned;
   }
 
   void from(PartyListModel partyListModel) {
-    PartyListModel cloned = partyListModel.clone();
-    this.parties = cloned.parties;
-    
+    var cloned = partyListModel.clone();
+    parties = cloned.parties;
   }
 
   @override
-  bool operator ==(rhs){
-    return ListEquality().equals(this.parties,rhs.parties);
+  bool operator ==(rhs) {
+    return ListEquality().equals(parties, rhs.parties);
   }
-  int get hashCode => parties.hashCode;
 
+  @override
+  int get hashCode => parties.hashCode;
 }
