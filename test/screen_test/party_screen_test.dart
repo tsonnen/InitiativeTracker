@@ -118,8 +118,6 @@ void main() {
       await tester.pumpAndSettle();
       verify(partyBloc.add(ChangeRound(roundForward: true))).called(1);
 
-      TestHelper.dumpTree();
-
       // Test round advance
       await tester.tap(find.widgetWithIcon(IconButton, Icons.navigate_next));
       await tester.pumpAndSettle();
@@ -129,7 +127,6 @@ void main() {
       await tester.tap(find.widgetWithIcon(IconButton, Icons.navigate_before));
       await tester.pumpAndSettle();
       verify(partyBloc.add(ChangeRound(roundForward: false))).called(1);
-
     });
 
     testWidgets('Test Party Reset', (WidgetTester tester) async {
