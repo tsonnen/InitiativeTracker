@@ -8,7 +8,6 @@ import 'package:initiative_tracker/models/party_model.dart';
 import 'package:initiative_tracker/party_list_model.dart';
 import 'package:initiative_tracker/services/database.dart';
 import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -31,8 +30,6 @@ void main() {
     // This is required because we manually register the Linux path provider when on the Linux platform.
     // Will be removed when automatic registration of dart plugins is implemented.
     // See this issue https://github.com/flutter/flutter/issues/52267 for details
-    disablePathProviderPlatformOverride = true;
-
     await databaseFactory.deleteDatabase(
         join(await databaseFactory.getDatabasesPath(), 'data.db'));
     parties = await setupDB();
@@ -50,8 +47,7 @@ void main() {
       expect(systems.length, 1);
       var legacy = systems.first;
       expect(legacy.systemName, 'Legacy');
-      var sysParties =
-          await DBProvider.db.getSystemParties(legacy.systemUUID);
+      var sysParties = await DBProvider.db.getSystemParties(legacy.systemUUID);
       expect(listEquals(parties, sysParties), true);
     });
   });

@@ -10,7 +10,6 @@ part 'party_event.dart';
 part 'party_state.dart';
 
 class PartyBloc extends Bloc<PartyEvent, PartyState> {
-
   PartyBloc() : super(PartyInitial());
 
   @override
@@ -18,19 +17,19 @@ class PartyBloc extends Bloc<PartyEvent, PartyState> {
     PartyEvent event,
   ) async* {
     var partyModel = state.partyModel?.clone();
-    if(event is GenerateParty){
+    if (event is GenerateParty) {
       yield PartyLoadedSucess(PartyModel());
-    }else if (event is AddPartyCharacter){
+    } else if (event is AddPartyCharacter) {
       yield PartyModCharacter();
       partyModel.addCharacter(event.characterModel);
       yield PartyLoadedSucess(partyModel);
-    }else if (event is DeletePartyCharacter){
+    } else if (event is DeletePartyCharacter) {
       yield PartyModCharacter();
       partyModel.removeCharacterByUUID(event.characterModel.characterUUID);
       yield PartyLoadedSucess(partyModel);
-    }else if (event is LoadParty){
+    } else if (event is LoadParty) {
       yield PartyLoadedSucess(event.partyModel);
-    }else if(event is ChangeRound){
+    } else if (event is ChangeRound) {
       event.roundForward ? partyModel.nextRound() : partyModel.prevRound();
       yield PartyLoadedSucess(partyModel);
     }

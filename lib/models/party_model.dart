@@ -41,7 +41,7 @@ class PartyModel {
   }
 
   void removeCharacterByUUID(String characterUUID) {
-    characters.removeWhere((item)=> item.characterUUID == characterUUID);
+    characters.removeWhere((item) => item.characterUUID == characterUUID);
   }
 
   void reduceHP(CharacterModel item) {
@@ -144,6 +144,6 @@ class PartyModel {
       partyName.hashCode ^
       partyUUID.hashCode ^
       round.hashCode ^
-      systemUUID.hashCode^
+      systemUUID.hashCode ^
       characters.hashCode;
 }
