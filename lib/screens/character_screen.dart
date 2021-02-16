@@ -52,7 +52,8 @@ class CharacterScreenState extends State<CharacterScreen> {
       appBar: AppBar(
         title: Text(character == null ? 'Add Character' : 'Edit Character'),
       ),
-      body: Form(
+      body: Builder(
+        builder: (context) => Form(
           key: _formKey,
           child: Column(
             children: <Widget>[
@@ -178,14 +179,16 @@ class CharacterScreenState extends State<CharacterScreen> {
                         partyBloc.add(AddPartyCharacter(character));
                       }
                       character = null;
-                      // Scaffold.of(context).showSnackBar(
-                      //     SnackBar(content: Text('Added Character')));
+                      Scaffold.of(context).showSnackBar(
+                          SnackBar(content: Text('Added Character')));
                     }
                   }
                 },
               )
             ],
-          )),
+          ),
+        ),
+      ),
     );
   }
 }
