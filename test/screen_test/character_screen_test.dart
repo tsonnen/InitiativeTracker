@@ -28,7 +28,6 @@ void main() {
       await tapButton(tester);
 
       expect(find.text('Please enter a name'), findsOneWidget);
-      expect(find.text('Please enter valid HP'), findsOneWidget);
 
       verifyNever(partyBloc.add(argThat(MatchType<AddPartyCharacter>())));
     });
@@ -57,7 +56,7 @@ void main() {
       await tester.pumpAndSettle();
 
       await tester.enterText(
-          find.widgetWithText(TextFormField, 'HP'), charToAdd.hp.toString());
+          find.widgetWithText(TextField, 'HP'), charToAdd.hp.toString());
       await tester.pumpAndSettle();
 
       await tester.enterText(find.widgetWithText(TextFormField, 'Initiative'),
@@ -90,7 +89,7 @@ void main() {
       await tester.pumpAndSettle();
 
       await tester.enterText(
-          find.widgetWithText(TextFormField, 'HP'), charToAdd.hp.toString());
+          find.widgetWithText(TextField, 'HP'), charToAdd.hp.toString());
       await tester.pumpAndSettle();
 
       DropdownButton dropdown =
@@ -136,7 +135,7 @@ void main() {
       expect(find.text(charToEdit.initiative.toString()), findsOneWidget);
 
       await tester.enterText(
-          find.widgetWithText(TextFormField, charToEdit.hp.toString()),
+          find.widgetWithText(TextField, charToEdit.hp.toString()),
           editedChar.hp.toString());
       await tester.pumpAndSettle();
 
@@ -154,8 +153,7 @@ Future<void> tapButton(WidgetTester tester, {CharacterModel character}) async {
   await tester.pumpAndSettle();
 }
 
-Widget createCharacterScreen(PartyBloc partyBloc,
-    {CharacterModel character}) {
+Widget createCharacterScreen(PartyBloc partyBloc, {CharacterModel character}) {
   return BlocProvider(
       create: (BuildContext context) => partyBloc,
       child: MaterialApp(
