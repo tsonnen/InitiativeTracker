@@ -94,20 +94,13 @@ class CharacterScreenState extends State<CharacterScreen> {
                 ],
               ),
               Container(
-                child: TextFormField(
+                child: TextField(
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: 'HP',
                   ),
                   keyboardType: TextInputType.number,
                   controller: hpController,
-                  validator: (value) {
-                    if (value.isEmpty) {
-                      // This will only get numbers
-                      return 'Please enter valid HP';
-                    }
-                    return null;
-                  },
                 ),
               ),
               Row(
@@ -175,7 +168,7 @@ class CharacterScreenState extends State<CharacterScreen> {
                         character = CharacterModel(
                             name: nameController.text +
                                 ((_number ?? 1) > 1 ? ' ' + i.toString() : ''),
-                            hp: int.parse(hpController.text),
+                            hp: int.tryParse(hpController.text),
                             initiative: initController.text != ''
                                 ? int.parse(initController.text)
                                 : rollDice(PreferenceManger.getNumberDice(),
