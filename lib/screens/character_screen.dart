@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:initiative_tracker/widgets/form_widgets.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
 import 'package:initiative_tracker/models/character_model.dart';
@@ -22,10 +23,11 @@ class CharacterScreenState extends State<CharacterScreen> {
   final TextEditingController hpController = TextEditingController();
   final TextEditingController initController = TextEditingController();
   final TextEditingController noteController = TextEditingController();
+  final TextEditingController initModController =
+      TextEditingController(); // TODO: Remove this and just use the init controller when #16 is fixed
   PartyBloc partyBloc;
 
-  int _number;
-  int _initMod;
+  int _number = 1;
   CharacterModel character;
 
   final _formKey = GlobalKey<FormState>();
@@ -79,26 +81,30 @@ class CharacterScreenState extends State<CharacterScreen> {
                     Visibility(
                       visible: character == null,
                       child: Flexible(
-                        child: DropdownButton(
-                          value: _number,
-                          hint: Text('# Units'),
-                          items: List<DropdownMenuItem<int>>.generate(
-                              20,
-                              (i) => DropdownMenuItem(
-                                  value: i + 1,
-                                  child: Text((i + 1).toString()))),
-                          onChanged: (int value) {
-                            setState(() {
-                              _number = value;
+                        child: FlatButton(
+                          onPressed: () {
+                            showDialog<int>(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return NumberPickerDialog.integer(
+                                    minValue: 1,
+                                    maxValue: 100,
+                                    initialIntegerValue: _number ?? 1,
+                                  );
+                                }).then((value) {
+                              setState(() {
+                                _number = value;
+                              });
                             });
                           },
+                          child: Text('${_number} Unit(s)'),
                         ),
                       ),
                     ),
                   ],
                 ),
                 Container(
-                  child: TextField(
+                  child: TextFormField(
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       labelText: 'HP',
@@ -120,24 +126,8 @@ class CharacterScreenState extends State<CharacterScreen> {
                       ),
                     ),
                     Flexible(
-                      child: FlatButton(
-                        onPressed: () {
-                          showDialog<int>(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return NumberPickerDialog.integer(
-                                  minValue: -100,
-                                  maxValue: 100,
-                                  initialIntegerValue: _initMod ?? 0,
-                                );
-                              }).then((value) {
-                            setState(() {
-                              _initMod = value;
-                            });
-                          });
-                        },
-                        child: Text('Initiative Modifier : ${_initMod ?? ''}'),
-                      ),
+                      child: SpinnerButton(
+                          -100, 100, null, 'INIT MOD', initModController),
                     ),
                   ],
                 ),
@@ -179,7 +169,8 @@ class CharacterScreenState extends State<CharacterScreen> {
                                   ? int.parse(initController.text)
                                   : rollDice(PreferenceManger.getNumberDice(),
                                           PreferenceManger.getNumberSides()) +
-                                      (_initMod ?? 0),
+                                      (int.tryParse(initModController.text) ??
+                                          0),
                               notes: noteController.text);
                           partyBloc.add(AddPartyCharacter(character));
                         }
