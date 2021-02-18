@@ -55,137 +55,143 @@ class CharacterScreenState extends State<CharacterScreen> {
       body: Builder(
         builder: (context) => Form(
           key: _formKey,
-          child: Column(
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Flexible(
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Name',
-                      ),
-                      controller: nameController,
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return 'Please enter a name';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                  Visibility(
-                    visible: character == null,
-                    child: Flexible(
-                      child: DropdownButton(
-                        value: _number,
-                        hint: Text('# Units'),
-                        items: List<DropdownMenuItem<int>>.generate(
-                            20,
-                            (i) => DropdownMenuItem(
-                                value: i + 1, child: Text((i + 1).toString()))),
-                        onChanged: (int value) {
-                          setState(() {
-                            _number = value;
-                          });
+          child: Container(
+            padding: EdgeInsets.all(10.0),
+            child: Column(
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Flexible(
+                      child: TextFormField(
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          labelText: 'Name',
+                        ),
+                        controller: nameController,
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return 'Please enter a name';
+                          }
+                          return null;
                         },
                       ),
                     ),
-                  ),
-                ],
-              ),
-              Container(
-                child: TextField(
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'HP',
-                  ),
-                  keyboardType: TextInputType.number,
-                  controller: hpController,
-                ),
-              ),
-              Row(
-                children: <Widget>[
-                  Flexible(
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Initiative',
+                    Visibility(
+                      visible: character == null,
+                      child: Flexible(
+                        child: DropdownButton(
+                          value: _number,
+                          hint: Text('# Units'),
+                          items: List<DropdownMenuItem<int>>.generate(
+                              20,
+                              (i) => DropdownMenuItem(
+                                  value: i + 1,
+                                  child: Text((i + 1).toString()))),
+                          onChanged: (int value) {
+                            setState(() {
+                              _number = value;
+                            });
+                          },
+                        ),
                       ),
-                      keyboardType: TextInputType.number,
-                      controller: initController,
                     ),
-                  ),
-                  Flexible(
-                    child: FlatButton(
-                      onPressed: () {
-                        showDialog<int>(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return NumberPickerDialog.integer(
-                                minValue: -100,
-                                maxValue: 100,
-                                initialIntegerValue: _initMod ?? 0,
-                              );
-                            }).then((value) {
-                          setState(() {
-                            _initMod = value;
-                          });
-                        });
-                      },
-                      child: Text('Initiative Modifier : ${_initMod ?? ''}'),
-                    ),
-                  ),
-                ],
-              ),
-              Flexible(
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Notes',
-                  ),
-                  keyboardType: TextInputType.multiline,
-                  maxLines: null,
-                  controller: noteController,
+                  ],
                 ),
-              ),
-              RaisedButton(
-                child: Text(
-                    character == null ? 'Add Character' : 'Edit Character'),
-                onPressed: () {
-                  if (_formKey.currentState.validate()) {
-                    if (character != null) {
-                      character.edit(
-                          nameController.text,
-                          int.parse(hpController.text),
-                          initController.text != ''
-                              ? int.parse(initController.text)
-                              : null,
-                          noteController.text);
-                      partyBloc.add(AddPartyCharacter(character));
-                      Navigator.of(context).pop();
-                    } else {
-                      for (var i = 1; i <= (_number ?? 1); i++) {
-                        character = CharacterModel(
-                            name: nameController.text +
-                                ((_number ?? 1) > 1 ? ' ' + i.toString() : ''),
-                            hp: int.tryParse(hpController.text),
-                            initiative: initController.text != ''
+                Container(
+                  child: TextField(
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      labelText: 'HP',
+                    ),
+                    keyboardType: TextInputType.number,
+                    controller: hpController,
+                  ),
+                ),
+                Row(
+                  children: <Widget>[
+                    Flexible(
+                      child: TextFormField(
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          labelText: 'Initiative',
+                        ),
+                        keyboardType: TextInputType.number,
+                        controller: initController,
+                      ),
+                    ),
+                    Flexible(
+                      child: FlatButton(
+                        onPressed: () {
+                          showDialog<int>(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return NumberPickerDialog.integer(
+                                  minValue: -100,
+                                  maxValue: 100,
+                                  initialIntegerValue: _initMod ?? 0,
+                                );
+                              }).then((value) {
+                            setState(() {
+                              _initMod = value;
+                            });
+                          });
+                        },
+                        child: Text('Initiative Modifier : ${_initMod ?? ''}'),
+                      ),
+                    ),
+                  ],
+                ),
+                Flexible(
+                  child: TextFormField(
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      labelText: 'Notes',
+                    ),
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                    controller: noteController,
+                  ),
+                ),
+                RaisedButton(
+                  child: Text(
+                      character == null ? 'Add Character' : 'Edit Character'),
+                  onPressed: () {
+                    if (_formKey.currentState.validate()) {
+                      if (character != null) {
+                        character.edit(
+                            nameController.text,
+                            int.parse(hpController.text),
+                            initController.text != ''
                                 ? int.parse(initController.text)
-                                : rollDice(PreferenceManger.getNumberDice(),
-                                        PreferenceManger.getNumberSides()) +
-                                    (_initMod ?? 0),
-                            notes: noteController.text);
+                                : null,
+                            noteController.text);
                         partyBloc.add(AddPartyCharacter(character));
+                        Navigator.of(context).pop();
+                      } else {
+                        for (var i = 1; i <= (_number ?? 1); i++) {
+                          character = CharacterModel(
+                              name: nameController.text +
+                                  ((_number ?? 1) > 1
+                                      ? ' ' + i.toString()
+                                      : ''),
+                              hp: int.tryParse(hpController.text),
+                              initiative: initController.text != ''
+                                  ? int.parse(initController.text)
+                                  : rollDice(PreferenceManger.getNumberDice(),
+                                          PreferenceManger.getNumberSides()) +
+                                      (_initMod ?? 0),
+                              notes: noteController.text);
+                          partyBloc.add(AddPartyCharacter(character));
+                        }
+                        character = null;
+                        Scaffold.of(context).showSnackBar(
+                            SnackBar(content: Text('Added Character')));
                       }
-                      character = null;
-                      Scaffold.of(context).showSnackBar(
-                          SnackBar(content: Text('Added Character')));
                     }
-                  }
-                },
-              )
-            ],
+                  },
+                )
+              ],
+            ),
           ),
         ),
       ),
