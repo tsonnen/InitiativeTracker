@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:initiative_tracker/helpers/helpers.dart';
+import 'package:initiative_tracker/helpers/keys.dart';
 import 'package:initiative_tracker/widgets/form_widgets.dart';
-import 'package:numberpicker/numberpicker.dart';
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
 import 'package:initiative_tracker/models/character_model.dart';
 import 'package:initiative_tracker/preference_manger.dart';
@@ -23,11 +24,10 @@ class CharacterScreenState extends State<CharacterScreen> {
   final TextEditingController hpController = TextEditingController();
   final TextEditingController initController = TextEditingController();
   final TextEditingController noteController = TextEditingController();
-  final TextEditingController initModController =
-      TextEditingController(); // TODO: Remove this and just use the init controller when #16 is fixed
   PartyBloc partyBloc;
 
-  int _number = 1;
+  final PrimitiveWrapper _number = PrimitiveWrapper(1);
+  final PrimitiveWrapper _initMod = PrimitiveWrapper(0);
   CharacterModel character;
 
   final _formKey = GlobalKey<FormState>();
@@ -65,10 +65,7 @@ class CharacterScreenState extends State<CharacterScreen> {
                   children: <Widget>[
                     Flexible(
                       child: TextFormField(
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          labelText: 'Name',
-                        ),
+                        decoration: Styles.textFieldDecoration('Name'),
                         controller: nameController,
                         validator: (value) {
                           if (value.isEmpty) {
@@ -81,34 +78,15 @@ class CharacterScreenState extends State<CharacterScreen> {
                     Visibility(
                       visible: character == null,
                       child: Flexible(
-                        child: FlatButton(
-                          onPressed: () {
-                            showDialog<int>(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return NumberPickerDialog.integer(
-                                    minValue: 1,
-                                    maxValue: 100,
-                                    initialIntegerValue: _number ?? 1,
-                                  );
-                                }).then((value) {
-                              setState(() {
-                                _number = value;
-                              });
-                            });
-                          },
-                          child: Text('${_number} Unit(s)'),
-                        ),
+                        child: SpinnerButton(1, 1000, _number, '# Units',
+                            key: Keys.numUnitKey),
                       ),
                     ),
                   ],
                 ),
                 Container(
                   child: TextFormField(
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      labelText: 'HP',
-                    ),
+                    decoration: Styles.textFieldDecoration('HP'),
                     keyboardType: TextInputType.number,
                     controller: hpController,
                   ),
@@ -117,26 +95,20 @@ class CharacterScreenState extends State<CharacterScreen> {
                   children: <Widget>[
                     Flexible(
                       child: TextFormField(
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          labelText: 'Initiative',
-                        ),
+                        decoration: Styles.textFieldDecoration('Initiative'),
                         keyboardType: TextInputType.number,
                         controller: initController,
                       ),
                     ),
                     Flexible(
-                      child: SpinnerButton(
-                          -100, 100, null, 'INIT MOD', initModController),
+                      child: SpinnerButton(-100, 100, _initMod, 'INIT MOD',
+                          key: Keys.initModKey),
                     ),
                   ],
                 ),
                 Flexible(
                   child: TextFormField(
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      labelText: 'Notes',
-                    ),
+                    decoration: Styles.textFieldDecoration('Notes'),
                     keyboardType: TextInputType.multiline,
                     maxLines: null,
                     controller: noteController,
@@ -158,10 +130,11 @@ class CharacterScreenState extends State<CharacterScreen> {
                         partyBloc.add(AddPartyCharacter(character));
                         Navigator.of(context).pop();
                       } else {
-                        for (var i = 1; i <= (_number ?? 1); i++) {
+                        print(_number.value.toString());
+                        for (var i = 1; i <= (_number.value ?? 1); i++) {
                           character = CharacterModel(
                               name: nameController.text +
-                                  ((_number ?? 1) > 1
+                                  ((_number.value ?? 1) > 1
                                       ? ' ' + i.toString()
                                       : ''),
                               hp: int.tryParse(hpController.text),
@@ -169,8 +142,7 @@ class CharacterScreenState extends State<CharacterScreen> {
                                   ? int.parse(initController.text)
                                   : rollDice(PreferenceManger.getNumberDice(),
                                           PreferenceManger.getNumberSides()) +
-                                      (int.tryParse(initModController.text) ??
-                                          0),
+                                      (_initMod.value ?? 0),
                               notes: noteController.text);
                           partyBloc.add(AddPartyCharacter(character));
                         }

@@ -1,20 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:initiative_tracker/helpers/helpers.dart';
 import 'package:numberpicker/numberpicker.dart';
 
+class Styles {
+  static InputDecoration textFieldDecoration(String labelText) {
+    return InputDecoration(
+      border: InputBorder.none,
+      labelText: labelText,
+    );
+  }
+}
+
 class SpinnerButton extends StatefulWidget {
-  final TextEditingController controller;
-  final int initVal;
+  final PrimitiveWrapper primWrap;
   final String label;
   final int max;
   final int min;
 
-  SpinnerButton(this.min, this.max, this.initVal, this.label, this.controller);
+  SpinnerButton(this.min, this.max, this.primWrap, this.label, {key})
+      : super(key: key);
 
   @override
   SpinnerButtonState createState() => SpinnerButtonState();
 }
 
 class SpinnerButtonState extends State<SpinnerButton> {
+  final TextEditingController controller = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.primWrap.value != null) {
+      controller.text = widget.primWrap.value.toString();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return TextField(
@@ -27,20 +48,19 @@ class SpinnerButtonState extends State<SpinnerButton> {
               return NumberPickerDialog.integer(
                 minValue: widget.min,
                 maxValue: widget.max,
-                initialIntegerValue: int.tryParse(widget.controller.text) ?? 0,
+                initialIntegerValue: widget.primWrap.value ?? 0,
               );
             }).then((value) {
-          setState(() {
-            widget.controller.text =
-                (value ?? (widget.controller.text ?? 0)).toString();
-          });
+          if (value != null) {
+            widget.primWrap.value = value;
+            setState(() {
+              controller.text = widget.primWrap.value.toString();
+            });
+          }
         });
       },
-      controller: widget.controller,
-      decoration: InputDecoration(
-        border: InputBorder.none,
-        labelText: widget.label,
-      ),
+      controller: controller,
+      decoration: Styles.textFieldDecoration(widget.label),
     );
   }
 }
