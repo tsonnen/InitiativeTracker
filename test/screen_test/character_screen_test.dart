@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
+import 'package:initiative_tracker/helpers/keys.dart';
 import 'package:initiative_tracker/models/character_model.dart';
 import 'package:initiative_tracker/models/party_model.dart';
 import 'package:initiative_tracker/screens/character_screen.dart';
+import 'package:initiative_tracker/widgets/form_widgets.dart';
 import 'package:mockito/mockito.dart';
 
 import '../testHelpers.dart';
@@ -73,36 +75,35 @@ void main() {
       verify(partyBloc.add(argThat(MatchType<AddPartyCharacter>()))).called(1);
     });
 
-    // TODO: This works when run as integration test, fails in flutter test
-    // testWidgets('Add Character-Gen', (WidgetTester tester) async {
-    //   when(partyBloc.state).thenAnswer((_) => PartyLoadedSucess(PartyModel()));
-    //   when(partyBloc.add(argThat(MatchType<AddPartyCharacter>())))
-    //       .thenReturn(null);
-    //   var charToAdd = CharacterModel(name: 'Test Char', hp: 12);
-    //   var numCharacters = 2;
+    testWidgets('Add Character-Gen', (WidgetTester tester) async {
+      when(partyBloc.state).thenAnswer((_) => PartyLoadedSucess(PartyModel()));
+      when(partyBloc.add(argThat(MatchType<AddPartyCharacter>())))
+          .thenReturn(null);
+      var charToAdd = CharacterModel(name: 'Test Char', hp: 12);
+      var numCharacters = 2;
 
-    //   await tester.pumpWidget(createCharacterScreen(partyBloc));
+      await tester.pumpWidget(createCharacterScreen(partyBloc));
 
-    //   await tester.pumpAndSettle();
+      await tester.pumpAndSettle();
 
-    //   await tester.enterText(
-    //       find.widgetWithText(TextFormField, 'Name'), charToAdd.characterName);
-    //   await tester.pumpAndSettle();
+      await tester.enterText(
+          find.widgetWithText(TextFormField, 'Name'), charToAdd.characterName);
+      await tester.pumpAndSettle();
 
-    //   await tester.enterText(
-    //       find.widgetWithText(TextField, 'HP'), charToAdd.hp.toString());
-    //   await tester.pumpAndSettle();
+      await tester.enterText(
+          find.widgetWithText(TextField, 'HP'), charToAdd.hp.toString());
+      await tester.pumpAndSettle();
 
-    //   var spinner = tester.widget<SpinnerButton>(find.byKey(Keys.numUnitKey));
+      var spinner = tester.widget<SpinnerButton>(find.byKey(Keys.numUnitKey));
 
-    //   await TestHelper.selectItemInSpinner(tester, spinner, numCharacters);
+      await TestHelper.selectItemInSpinner(tester, spinner, numCharacters);
 
-    //   await tapButton(tester);
-    //   await tester.pumpAndSettle();
+      await tapButton(tester);
+      await tester.pumpAndSettle();
 
-    //   verify(partyBloc.add(argThat(MatchType<AddPartyCharacter>())))
-    //       .called(numCharacters);
-    // });
+      verify(partyBloc.add(argThat(MatchType<AddPartyCharacter>())))
+          .called(numCharacters);
+    });
   });
 
   group('Character Screen Edit Tests', () {

@@ -6,7 +6,9 @@ import 'package:initiative_tracker/bloc/parties/parties_bloc.dart';
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:initiative_tracker/preference_manger.dart';
+import 'package:initiative_tracker/widgets/form_widgets.dart';
 import 'package:mockito/mockito.dart';
+import 'package:numberpicker/numberpicker.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:path/path.dart';
@@ -51,7 +53,7 @@ class TestHelper {
     }
   }
 
-  static Future<void> setMockPrefs(Map<String, dynamic> values) async{
+  static Future<void> setMockPrefs(Map<String, dynamic> values) async {
     SharedPreferences.setMockInitialValues(values);
     await PreferenceManger.getPreferences();
   }
@@ -91,6 +93,63 @@ class TestHelper {
       home: DialogTestScreen(dialog: dialog),
       navigatorObservers: navigatorObservers,
     );
+  }
+
+  static void selectItemInSpinner(
+      WidgetTester tester, SpinnerButton spinner, int targetVal) async {
+    await tester.tap(find.byWidget(spinner));
+
+    await tester.pumpAndSettle();
+
+    var picker = await tester.widget<NumberPicker>(find.byType(NumberPicker));
+
+    print(tester.getTopLeft(find.byWidget(picker)));
+
+    await scrollNumberPicker(
+        tester.getTopLeft(find.byWidget(picker)), tester, 1, Axis.vertical);
+
+    await tester.pumpAndSettle();
+    expect(find.byType(NumberPickerDialog), findsOneWidget);
+
+    await tester.tap(find.descendant(
+        of: find.byType(NumberPickerDialog),
+        matching: find.text(targetVal.toString()),
+        skipOffstage: false));
+
+    await tester.tap(find.text('OK'));
+    await tester.pumpAndSettle();
+  }
+
+  // copied from: https://raw.githubusercontent.com/MarcinusX/NumberPicker/master/test/decimal_numberpicker_test.dart
+  static void scrollNumberPicker(
+    Offset pickerPosition,
+    WidgetTester tester,
+    int scrollBy,
+    Axis axis,
+  ) async {
+    double pickerCenterX, pickerCenterY, offsetX, offsetY;
+    var pickerCenterMainAxis = 1.5 * NumberPicker.kDefaultItemExtent;
+    var pickerCenterCrossAxis = NumberPicker.kDefaultListViewCrossAxisSize / 2;
+    if (axis == Axis.vertical) {
+      pickerCenterX = pickerCenterCrossAxis;
+      pickerCenterY = pickerCenterMainAxis;
+      offsetX = 0.0;
+      offsetY = -scrollBy * NumberPicker.kDefaultItemExtent;
+    } else {
+      pickerCenterX = pickerCenterMainAxis;
+      pickerCenterY = pickerCenterCrossAxis;
+      offsetX = -scrollBy * NumberPicker.kDefaultItemExtent;
+      offsetY = 0.0;
+    }
+    var pickerCenter = Offset(
+      pickerPosition.dx + pickerCenterX,
+      pickerPosition.dy + pickerCenterY,
+    );
+    final testGesture = await tester.startGesture(pickerCenter);
+    await testGesture.moveBy(Offset(
+      offsetX,
+      offsetY,
+    ));
   }
 }
 
