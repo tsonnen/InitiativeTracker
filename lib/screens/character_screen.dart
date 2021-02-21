@@ -130,7 +130,6 @@ class CharacterScreenState extends State<CharacterScreen> {
                         partyBloc.add(AddPartyCharacter(character));
                         Navigator.of(context).pop();
                       } else {
-                        print(_number.value.toString());
                         for (var i = 1; i <= (_number.value ?? 1); i++) {
                           character = CharacterModel(
                               name: nameController.text +

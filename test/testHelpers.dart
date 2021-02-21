@@ -103,8 +103,6 @@ class TestHelper {
 
     var picker = await tester.widget<NumberPicker>(find.byType(NumberPicker));
 
-    print(tester.getTopLeft(find.byWidget(picker)));
-
     await scrollNumberPicker(
         tester.getTopLeft(find.byWidget(picker)), tester, 1, Axis.vertical);
 
