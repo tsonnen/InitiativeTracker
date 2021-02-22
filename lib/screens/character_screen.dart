@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:numberpicker/numberpicker.dart';
+import 'package:initiative_tracker/helpers/helpers.dart';
+import 'package:initiative_tracker/helpers/keys.dart';
+import 'package:initiative_tracker/widgets/form_widgets.dart';
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
 import 'package:initiative_tracker/models/character_model.dart';
 import 'package:initiative_tracker/preference_manger.dart';
@@ -24,8 +26,8 @@ class CharacterScreenState extends State<CharacterScreen> {
   final TextEditingController noteController = TextEditingController();
   PartyBloc partyBloc;
 
-  int _number;
-  int _initMod;
+  final PrimitiveWrapper _number = PrimitiveWrapper(1);
+  final PrimitiveWrapper _initMod = PrimitiveWrapper(0);
   CharacterModel character;
 
   final _formKey = GlobalKey<FormState>();
@@ -55,137 +57,103 @@ class CharacterScreenState extends State<CharacterScreen> {
       body: Builder(
         builder: (context) => Form(
           key: _formKey,
-          child: Column(
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Flexible(
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Name',
-                      ),
-                      controller: nameController,
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return 'Please enter a name';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                  Visibility(
-                    visible: character == null,
-                    child: Flexible(
-                      child: DropdownButton(
-                        value: _number,
-                        hint: Text('# Units'),
-                        items: List<DropdownMenuItem<int>>.generate(
-                            20,
-                            (i) => DropdownMenuItem(
-                                value: i + 1, child: Text((i + 1).toString()))),
-                        onChanged: (int value) {
-                          setState(() {
-                            _number = value;
-                          });
+          child: Container(
+            padding: EdgeInsets.all(10.0),
+            child: Column(
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Flexible(
+                      child: TextFormField(
+                        decoration: Styles.textFieldDecoration('Name'),
+                        controller: nameController,
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return 'Please enter a name';
+                          }
+                          return null;
                         },
                       ),
                     ),
-                  ),
-                ],
-              ),
-              Container(
-                child: TextField(
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'HP',
-                  ),
-                  keyboardType: TextInputType.number,
-                  controller: hpController,
-                ),
-              ),
-              Row(
-                children: <Widget>[
-                  Flexible(
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Initiative',
+                    Visibility(
+                      visible: character == null,
+                      child: Flexible(
+                        child: SpinnerButton(1, 1000, _number, '# Units',
+                            key: Keys.numUnitKey),
                       ),
-                      keyboardType: TextInputType.number,
-                      controller: initController,
                     ),
-                  ),
-                  Flexible(
-                    child: FlatButton(
-                      onPressed: () {
-                        showDialog<int>(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return NumberPickerDialog.integer(
-                                minValue: -100,
-                                maxValue: 100,
-                                initialIntegerValue: _initMod ?? 0,
-                              );
-                            }).then((value) {
-                          setState(() {
-                            _initMod = value;
-                          });
-                        });
-                      },
-                      child: Text('Initiative Modifier : ${_initMod ?? ''}'),
-                    ),
-                  ),
-                ],
-              ),
-              Flexible(
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Notes',
-                  ),
-                  keyboardType: TextInputType.multiline,
-                  maxLines: null,
-                  controller: noteController,
+                  ],
                 ),
-              ),
-              RaisedButton(
-                child: Text(
-                    character == null ? 'Add Character' : 'Edit Character'),
-                onPressed: () {
-                  if (_formKey.currentState.validate()) {
-                    if (character != null) {
-                      character.edit(
-                          nameController.text,
-                          int.parse(hpController.text),
-                          initController.text != ''
-                              ? int.parse(initController.text)
-                              : null,
-                          noteController.text);
-                      partyBloc.add(AddPartyCharacter(character));
-                      Navigator.of(context).pop();
-                    } else {
-                      for (var i = 1; i <= (_number ?? 1); i++) {
-                        character = CharacterModel(
-                            name: nameController.text +
-                                ((_number ?? 1) > 1 ? ' ' + i.toString() : ''),
-                            hp: int.tryParse(hpController.text),
-                            initiative: initController.text != ''
+                Container(
+                  child: TextFormField(
+                    decoration: Styles.textFieldDecoration('HP'),
+                    keyboardType: TextInputType.number,
+                    controller: hpController,
+                  ),
+                ),
+                Row(
+                  children: <Widget>[
+                    Flexible(
+                      child: TextFormField(
+                        decoration: Styles.textFieldDecoration('Initiative'),
+                        keyboardType: TextInputType.number,
+                        controller: initController,
+                      ),
+                    ),
+                    Flexible(
+                      child: SpinnerButton(-100, 100, _initMod, 'INIT MOD',
+                          key: Keys.initModKey),
+                    ),
+                  ],
+                ),
+                Flexible(
+                  child: TextFormField(
+                    decoration: Styles.textFieldDecoration('Notes'),
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                    controller: noteController,
+                  ),
+                ),
+                RaisedButton(
+                  child: Text(
+                      character == null ? 'Add Character' : 'Edit Character'),
+                  onPressed: () {
+                    if (_formKey.currentState.validate()) {
+                      if (character != null) {
+                        character.edit(
+                            nameController.text,
+                            int.parse(hpController.text),
+                            initController.text != ''
                                 ? int.parse(initController.text)
-                                : rollDice(PreferenceManger.getNumberDice(),
-                                        PreferenceManger.getNumberSides()) +
-                                    (_initMod ?? 0),
-                            notes: noteController.text);
+                                : null,
+                            noteController.text);
                         partyBloc.add(AddPartyCharacter(character));
+                        Navigator.of(context).pop();
+                      } else {
+                        for (var i = 1; i <= (_number.value ?? 1); i++) {
+                          character = CharacterModel(
+                              name: nameController.text +
+                                  ((_number.value ?? 1) > 1
+                                      ? ' ' + i.toString()
+                                      : ''),
+                              hp: int.tryParse(hpController.text),
+                              initiative: initController.text != ''
+                                  ? int.parse(initController.text)
+                                  : rollDice(PreferenceManger.getNumberDice(),
+                                          PreferenceManger.getNumberSides()) +
+                                      (_initMod.value ?? 0),
+                              notes: noteController.text);
+                          partyBloc.add(AddPartyCharacter(character));
+                        }
+                        character = null;
+                        Scaffold.of(context).showSnackBar(
+                            SnackBar(content: Text('Added Character')));
                       }
-                      character = null;
-                      Scaffold.of(context).showSnackBar(
-                          SnackBar(content: Text('Added Character')));
                     }
-                  }
-                },
-              )
-            ],
+                  },
+                )
+              ],
+            ),
           ),
         ),
       ),

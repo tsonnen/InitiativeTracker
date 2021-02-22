@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
+import 'package:initiative_tracker/helpers/keys.dart';
 import 'package:initiative_tracker/models/character_model.dart';
 import 'package:initiative_tracker/models/party_model.dart';
 import 'package:initiative_tracker/screens/character_screen.dart';
+import 'package:initiative_tracker/widgets/form_widgets.dart';
 import 'package:mockito/mockito.dart';
 
 import '../testHelpers.dart';
@@ -78,7 +80,7 @@ void main() {
       when(partyBloc.add(argThat(MatchType<AddPartyCharacter>())))
           .thenReturn(null);
       var charToAdd = CharacterModel(name: 'Test Char', hp: 12);
-      var numCharacters = 4;
+      var numCharacters = 2;
 
       await tester.pumpWidget(createCharacterScreen(partyBloc));
 
@@ -92,17 +94,15 @@ void main() {
           find.widgetWithText(TextField, 'HP'), charToAdd.hp.toString());
       await tester.pumpAndSettle();
 
-      DropdownButton dropdown =
-          (tester.widget<Visibility>(find.byType(Visibility)).child as Flexible)
-              .child;
+      var spinner = tester.widget<SpinnerButton>(find.byKey(Keys.numUnitKey));
 
-      await TestHelper.selectItemInDropdown(
-          tester, dropdown, numCharacters.toString());
+      await TestHelper.selectItemInSpinner(tester, spinner, numCharacters);
 
       await tapButton(tester);
       await tester.pumpAndSettle();
 
-      verify(partyBloc.add(argThat(MatchType<AddPartyCharacter>()))).called(4);
+      verify(partyBloc.add(argThat(MatchType<AddPartyCharacter>())))
+          .called(numCharacters);
     });
   });
 
