@@ -10,7 +10,7 @@ part 'character_list.g.dart';
 @JsonSerializable(explicitToJson: true)
 class CharacterList extends ListBase<CharacterModel> {
   @CharacterConverter()
-  final List<CharacterModel> l = [];
+  List<CharacterModel> l = [];
 
   CharacterList();
 

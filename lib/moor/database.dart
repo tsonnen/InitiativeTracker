@@ -8,9 +8,9 @@ part 'database.g.dart';
 // this annotation tells moor to prepare a database class that uses both of the
 // tables we just defined. We'll see how to use that database class in a moment.
 @UseMoor(tables: [Parties])
-class Database extends _$Database {
+class MyDatabase extends _$MyDatabase {
   // we tell the database where to store the data with this constructor
-  Database()
+  MyDatabase()
       : super(FlutterQueryExecutor.inDatabaseFolder(
           path: 'db.sqlite',
         ));
