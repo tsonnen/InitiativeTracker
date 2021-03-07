@@ -13,22 +13,13 @@ class PartyListModel {
     parties = <PartyModel>[];
   }
 
-  factory PartyListModel.fromMap(List<dynamic> parsedJson,
-      {bool legacyRead = false}) {
-    return PartyListModel.json(
-      parties: parsedJson
-          .map((i) => PartyModel.fromMap(i, legacyRead: legacyRead))
-          .toList(),
-    );
-  }
-
   List<dynamic> toMap({bool legacy = false}) {
     var jsonList = [];
-    parties.map((i) => jsonList.add(i.toMap(legacy: legacy))).toList();
+    parties.map((i) => jsonList.add(i.toJson())).toList();
     return jsonList;
   }
 
-  bool containsParty(PartyModel partyModel) {
+  bool containsParty(Encounter partyModel) {
     var matches =
         parties.where((party) => party.partyUUID == partyModel.partyUUID);
     return matches.isNotEmpty;
@@ -50,14 +41,6 @@ class PartyListModel {
     parties.remove(item);
   }
 
-  static PartyListModel readSavedPartiesSync() {
-    PartyListModel model;
-    readSavedParties().then((value) {
-      model = value;
-    });
-    return model ?? PartyListModel();
-  }
-
   static Future<String> get _localPath async {
     final directory = await getApplicationDocumentsDirectory();
 
@@ -74,20 +57,6 @@ class PartyListModel {
 
     // Write the file.
     return file.writeAsString(json.encode(toMap(legacy: true)));
-  }
-
-  static Future<PartyListModel> readSavedParties() async {
-    final file = await _localFile;
-    try {
-      // Read the file.
-      var jsonData = await file.readAsString();
-
-      return PartyListModel.fromMap(json.decode(jsonData), legacyRead: true);
-    } catch (e) {
-      print('Failed to load legacy JSON: ${file.path}');
-      // If encountering an error, return 0.
-      return PartyListModel();
-    }
   }
 
   PartyListModel clone() {

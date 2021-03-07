@@ -1,10 +1,13 @@
+import 'package:flutter/foundation.dart';
 import 'package:initiative_tracker/models/character_model.dart';
+import 'package:initiative_tracker/moor/character_list.dart';
 import 'package:initiative_tracker/moor/database.dart';
+import 'package:initiative_tracker/uuid.dart';
 
 class Encounter extends Party {
   int round;
 
-  Encounter({this.round, partyName, characters, partyUUID})
+  Encounter({this.round = 1, partyName, characters, partyUUID})
       : super(
             partyName: partyName, partyUUID: partyUUID, characters: characters);
 
@@ -37,10 +40,6 @@ class Encounter extends Party {
     item.setHP(++item.hp);
   }
 
-  void setName(String partyName) {
-    this.partyName = partyName;
-  }
-
   void prevRound() {
     round == 1 ? round = 1 : round--;
   }
@@ -49,13 +48,19 @@ class Encounter extends Party {
     var cloned = Encounter(
         partyName: partyName,
         partyUUID: partyUUID,
-        characters: List<CharacterModel>.from(
-            characters.map((character) => character.clone())),
-        round: round);
+        characters: characters?.clone() ?? CharacterList(),
+        round: round ?? 1);
     return cloned;
   }
 
   List<CharacterModel> getCharacterList() {
-    return characters;
+    return characters.list;
   }
+
+  Encounter.fromParty(Party party)
+      : round = 1,
+        super(
+            partyName: party?.partyName ?? '',
+            partyUUID: party?.partyUUID ?? Uuid().generateV4(),
+            characters: party?.characters ?? CharacterList());
 }

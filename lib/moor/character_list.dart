@@ -8,28 +8,38 @@ import 'package:moor/moor.dart';
 part 'character_list.g.dart';
 
 @JsonSerializable(explicitToJson: true)
-class CharacterList extends ListBase<CharacterModel> {
+class CharacterList {
   @CharacterConverter()
-  List<CharacterModel> l = [];
+  List<CharacterModel> _l = [];
+  List<CharacterModel> get list => _l;
 
-  CharacterList();
+  CharacterList() {
+    _l = [];
+  }
 
-  @override
-  @CharacterConverter()
-  CharacterModel first;
+  void removeWhere(bool Function(CharacterModel) test) {
+    return _l.removeWhere(test);
+  }
 
-  @override
-  @CharacterConverter()
-  CharacterModel last;
+  void add(CharacterModel characterModel) {
+    _l.add(characterModel);
+  }
 
-  @override
-  CharacterModel operator [](int index) {
-    return l[index];
+  void sort([int Function(CharacterModel, CharacterModel) compare]) {
+    return _l.sort(compare);
+  }
+
+  int indexWhere(bool Function(CharacterModel) test, {int start = 0}) {
+    return _l.indexWhere(test);
   }
 
   @override
+  CharacterModel operator [](int index) {
+    return _l[index];
+  }
+
   void operator []=(int index, CharacterModel value) {
-    l[index] = value;
+    _l[index] = value;
   }
 
   factory CharacterList.fromJson(Map<String, dynamic> json) =>
@@ -39,6 +49,12 @@ class CharacterList extends ListBase<CharacterModel> {
 
   @override
   int length;
+
+  CharacterList clone() {
+    var tmp = CharacterList();
+    _l?.forEach((i) => tmp.add(i));
+    return tmp;
+  }
 }
 
 class CharacterConverter implements JsonConverter<CharacterModel, String> {

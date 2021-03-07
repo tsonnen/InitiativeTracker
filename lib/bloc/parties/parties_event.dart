@@ -4,7 +4,7 @@ abstract class PartiesEvent extends Equatable {
   const PartiesEvent();
 }
 
-class DeleteParty extends  PartiesEvent{
+class DeleteParty extends PartiesEvent {
   final String partyUUID;
 
   DeleteParty(this.partyUUID);
@@ -13,7 +13,7 @@ class DeleteParty extends  PartiesEvent{
   List<Object> get props => [partyUUID];
 }
 
-class ChangePartiesSystem extends PartiesEvent{
+class ChangePartiesSystem extends PartiesEvent {
   final String systemUUID;
 
   ChangePartiesSystem(this.systemUUID);
@@ -22,8 +22,8 @@ class ChangePartiesSystem extends PartiesEvent{
   List<Object> get props => [systemUUID];
 }
 
-class AddParty extends PartiesEvent{
-  final PartyModel partyModel;
+class AddParty extends PartiesEvent {
+  final Party partyModel;
 
   AddParty(this.partyModel);
 
@@ -31,7 +31,7 @@ class AddParty extends PartiesEvent{
   List<Object> get props => [partyModel];
 }
 
-class LoadParties extends PartiesEvent{
+class LoadParties extends PartiesEvent {
   @override
   List<Object> get props => [];
 }

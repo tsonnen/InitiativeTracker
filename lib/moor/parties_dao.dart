@@ -12,7 +12,7 @@ class PartiesDao extends DatabaseAccessor<MyDatabase> with _$PartiesDaoMixin {
 
   Future<List<Party>> get allParties => select(parties).get();
 
-  Future<Party> getParty(int partyUUID) {
+  Future<Party> getParty(String partyUUID) {
     return (select(parties)..where((u) => u.partyUUID.equals(partyUUID)))
         .getSingle();
   }

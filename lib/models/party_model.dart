@@ -4,19 +4,19 @@ import 'package:initiative_tracker/models/character_model.dart';
 import 'package:initiative_tracker/uuid.dart';
 import 'package:collection/collection.dart';
 
-class PartyModel {
+class OLDPartyModel {
   List<CharacterModel> characters;
   String partyName;
   String partyUUID;
   String systemUUID;
   int round = 1;
 
-  PartyModel({this.characters, this.partyName}) {
+  OLDPartyModel({this.characters, this.partyName}) {
     characters ??= [];
     generateUUID();
   }
 
-  PartyModel.map(
+  OLDPartyModel.map(
       {this.partyName,
       this.partyUUID,
       this.characters,
@@ -60,8 +60,8 @@ class PartyModel {
     round == 1 ? round = 1 : round--;
   }
 
-  PartyModel clone() {
-    var cloned = PartyModel();
+  OLDPartyModel clone() {
+    var cloned = OLDPartyModel();
     cloned.partyName = partyName;
     cloned.partyUUID = partyUUID;
     cloned.characters = List<CharacterModel>.from(
@@ -70,7 +70,7 @@ class PartyModel {
     return cloned;
   }
 
-  void from(PartyModel partyModel) {
+  void from(OLDPartyModel partyModel) {
     var cloned = partyModel.clone();
     partyName = cloned.partyName;
     partyUUID = cloned.partyUUID;
@@ -89,12 +89,12 @@ class PartyModel {
     return characters;
   }
 
-  factory PartyModel.fromMap(Map<String, dynamic> json,
+  factory OLDPartyModel.fromMap(Map<String, dynamic> json,
       {bool legacyRead = false}) {
     List<dynamic> charJSON = json['characters'] is String
         ? jsonDecode(json['characters'])
         : json['characters'];
-    return PartyModel.map(
+    return OLDPartyModel.map(
         partyName: json[legacyRead ? 'name' : 'partyName'],
         partyUUID: json[legacyRead ? 'id' : 'partyUUID'],
         systemUUID: json['systemUUID'],
