@@ -13,7 +13,8 @@ before_script:
   - git clone https://github.com/flutter/flutter.git -b stable
   - ./flutter/bin/flutter doctor
 script: 
-  -  ./flutter/bin/flutter packages pub run build_runner build
+  - ./flutter/bin/flutter packages pub get
+  - ./flutter/bin/flutter packages pub run build_runner build
   - ./flutter/bin/flutter test
 cache:
   directories:
