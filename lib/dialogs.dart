@@ -17,11 +17,11 @@ class Dialogs {
           title: Text(title),
           content: Text(body),
           actions: <Widget>[
-            FlatButton(
+            TextButton(
               onPressed: () => Navigator.of(context).pop(DialogAction.abort),
               child: const Text('no'),
             ),
-            RaisedButton(
+            ElevatedButton(
               onPressed: () => Navigator.of(context).pop(DialogAction.yes),
               child: const Text(
                 'yes',
@@ -60,11 +60,11 @@ class Dialogs {
             controller: inputTextController,
           ),
           actions: <Widget>[
-            FlatButton(
+            TextButton(
               onPressed: () => Navigator.of(context).pop(DialogAction.abort),
               child: const Text('no'),
             ),
-            RaisedButton(
+            ElevatedButton(
               onPressed: () => Navigator.of(context).pop(DialogAction.yes),
               child: const Text(
                 'yes',
@@ -81,5 +81,4 @@ class Dialogs {
         ? inputTextController.text
         : null;
   }
-
 }

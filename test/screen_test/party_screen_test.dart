@@ -199,7 +199,7 @@ void main() {
 
       await tester.enterText(find.byType(TextField), 'Saved Party');
       await tester.pumpAndSettle();
-      await tester.tap(find.widgetWithText(FlatButton, 'Save'));
+      await tester.tap(find.widgetWithText(TextButton, 'Save'));
       await tester.pumpAndSettle();
 
       verify(partiesBloc.add(argThat(MatchType<AddParty>()))).called(1);

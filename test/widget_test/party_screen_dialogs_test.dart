@@ -26,8 +26,8 @@ void main() {
 
       expect(find.text('Enter a Name'), findsOneWidget);
       expect(find.byType(TextField), findsOneWidget);
-      expect(find.widgetWithText(FlatButton, 'Cancel'), findsOneWidget);
-      expect(find.widgetWithText(FlatButton, 'Save'), findsOneWidget);
+      expect(find.widgetWithText(TextButton, 'Cancel'), findsOneWidget);
+      expect(find.widgetWithText(TextButton, 'Save'), findsOneWidget);
     });
 
     testWidgets('Check Save', (WidgetTester tester) async {
@@ -46,7 +46,7 @@ void main() {
 
       await tester.enterText(find.byType(TextField), name);
 
-      await tester.tap(find.widgetWithText(FlatButton, 'Save'));
+      await tester.tap(find.widgetWithText(TextButton, 'Save'));
 
       await tester.pumpAndSettle();
     });
@@ -67,7 +67,7 @@ void main() {
 
       await tester.enterText(find.byType(TextField), name);
 
-      await tester.tap(find.widgetWithText(FlatButton, 'Cancel'));
+      await tester.tap(find.widgetWithText(TextButton, 'Cancel'));
 
       await tester.pumpAndSettle();
     });
@@ -87,8 +87,8 @@ void main() {
       expect(find.byType(ConfirmationDialog), findsOneWidget);
       expect(find.text('Load'), findsOneWidget);
       expect(find.text('Would you like to load $name?'), findsOneWidget);
-      expect(find.widgetWithText(FlatButton, 'Yes'), findsOneWidget);
-      expect(find.widgetWithText(FlatButton, 'No'), findsOneWidget);
+      expect(find.widgetWithText(TextButton, 'Yes'), findsOneWidget);
+      expect(find.widgetWithText(TextButton, 'No'), findsOneWidget);
     });
   });
 
@@ -106,8 +106,8 @@ void main() {
       expect(find.byType(ConfirmationDialog), findsOneWidget);
       expect(find.text('Delete'), findsOneWidget);
       expect(find.text('Do you want to delete $name'), findsOneWidget);
-      expect(find.widgetWithText(FlatButton, 'Yes'), findsOneWidget);
-      expect(find.widgetWithText(FlatButton, 'No'), findsOneWidget);
+      expect(find.widgetWithText(TextButton, 'Yes'), findsOneWidget);
+      expect(find.widgetWithText(TextButton, 'No'), findsOneWidget);
     });
   });
 
@@ -128,8 +128,8 @@ void main() {
           find.text(
               'This party is already saved as $name\nWould you like to overwrite it?'),
           findsOneWidget);
-      expect(find.widgetWithText(FlatButton, 'Yes'), findsOneWidget);
-      expect(find.widgetWithText(FlatButton, 'No'), findsOneWidget);
+      expect(find.widgetWithText(TextButton, 'Yes'), findsOneWidget);
+      expect(find.widgetWithText(TextButton, 'No'), findsOneWidget);
     });
   });
 
@@ -164,7 +164,7 @@ void main() {
       expect(find.byType(PartiesDialog), findsOneWidget);
       expect(find.text('Manage Parties'), findsOneWidget);
       expect(find.text('Loading'), findsOneWidget);
-      expect(find.widgetWithText(FlatButton, 'Done'), findsOneWidget);
+      expect(find.widgetWithText(TextButton, 'Done'), findsOneWidget);
 
       verify(partiesBloc.add(LoadParties())).called(1);
     });
@@ -188,7 +188,7 @@ void main() {
         expect(
             find.widgetWithText(ListTile, element.partyName), findsOneWidget);
       });
-      expect(find.widgetWithText(FlatButton, 'Done'), findsOneWidget);
+      expect(find.widgetWithText(TextButton, 'Done'), findsOneWidget);
     });
 
     testWidgets('Check Delete - No Confirm', (WidgetTester tester) async {
@@ -241,7 +241,7 @@ void main() {
 
       await tester.tap(find.descendant(
           of: find.byType(PartyDeleteDialog),
-          matching: find.widgetWithText(FlatButton, 'Yes')));
+          matching: find.widgetWithText(TextButton, 'Yes')));
 
       verify(partiesBloc.add(DeleteParty(partyModel))).called(1);
     });
@@ -295,7 +295,7 @@ void main() {
 
       await tester.tap(find.descendant(
           of: find.byType(PartyLoadDialog),
-          matching: find.widgetWithText(FlatButton, 'Yes')));
+          matching: find.widgetWithText(TextButton, 'Yes')));
 
       verify(partyBloc.add(LoadParty(partyModel))).called(1);
     });

@@ -21,11 +21,11 @@ class Hyperlink extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
+      onTap: _launchURL,
       child: Text(
         _text,
         style: TextStyle(decoration: TextDecoration.underline),
       ),
-      onTap: _launchURL,
     );
   }
 }

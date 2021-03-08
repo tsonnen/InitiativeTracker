@@ -149,7 +149,7 @@ void main() {
 
 Future<void> tapButton(WidgetTester tester, {CharacterModel character}) async {
   var btnText = character == null ? 'Add Character' : 'Edit Character';
-  await tester.tap(find.widgetWithText(RaisedButton, btnText));
+  await tester.tap(find.widgetWithText(ElevatedButton, btnText));
   await tester.pumpAndSettle();
 }
 

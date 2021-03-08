@@ -13,17 +13,17 @@ class ConfirmationDialog extends StatelessWidget {
       content: Text(body),
       actions: <Widget>[
         // usually buttons at the bottom of the dialog
-        FlatButton(
-          child: Text('Yes'),
+        TextButton(
           onPressed: () {
             Navigator.of(context).pop(true);
           },
+          child: Text('Yes'),
         ),
-        FlatButton(
-          child: Text('No'),
+        TextButton(
           onPressed: () {
             Navigator.of(context).pop(false);
           },
+          child: Text('No'),
         ),
       ],
     );
