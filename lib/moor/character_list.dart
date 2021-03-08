@@ -10,7 +10,9 @@ part 'character_list.g.dart';
 class CharacterList {
   @CharacterConverter()
   List<CharacterModel> _l = [];
+  @CharacterConverter()
   List<CharacterModel> get list => _l;
+  @CharacterConverter()
   CharacterModel get first => _l.first;
 
   CharacterList({List<CharacterModel> list = const []}) : _l = list;
