@@ -11,8 +11,11 @@ addons:
       - fonts-droid-fallback
 before_script:
   - git clone https://github.com/flutter/flutter.git -b master
+  - cd ./flutter/
+  - git checkout 1.22.5
+  - cd ~
   - ./flutter/bin/flutter doctor
-  - ./flutter/bin/flutter version v1.22.5
+  - ./flutter/bin/flutter version
 script: 
   - ./flutter/bin/flutter packages pub get
   - ./flutter/bin/flutter packages pub run build_runner build
