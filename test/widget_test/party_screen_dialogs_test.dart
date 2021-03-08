@@ -3,8 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:initiative_tracker/bloc/parties/parties_bloc.dart';
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
-import 'package:initiative_tracker/models/character_model.dart';
-import 'package:initiative_tracker/models/party_model.dart';
+import 'package:initiative_tracker/models/encounter.dart';
 import 'package:initiative_tracker/preference_manger.dart';
 import 'package:initiative_tracker/widgets/dialogs.dart';
 import 'package:initiative_tracker/widgets/party_screen_dialogs.dart';
@@ -137,16 +136,15 @@ void main() {
   group('Parties Dialog', () {
     PartyBloc partyBloc;
     PartiesBloc partiesBloc;
-    PartyModel partyModel;
-    List<PartyModel> partyList;
+    Encounter partyModel;
+    List<Encounter> partyList;
     SharedPreferences.setMockInitialValues({});
 
     setUp(() {
       partyBloc = MockPartyBloc();
       partiesBloc = MockPartiesBloc();
 
-      partyModel =
-          PartyModel(characters: <CharacterModel>[], partyName: 'CoolParty');
+      partyModel = Encounter(partyName: 'CoolParty');
       partyList = [partyModel];
     });
 
@@ -198,7 +196,7 @@ void main() {
       when(partyBloc.state).thenAnswer((_) => PartyLoadedSucess(partyModel));
       when(partiesBloc.state)
           .thenAnswer((_) => PartiesLoadedSuccessful(partyList));
-      when(partiesBloc.add(DeleteParty(partyModel.partyUUID))).thenReturn(null);
+      when(partiesBloc.add(DeleteParty(partyModel))).thenReturn(null);
       await tester.pumpWidget(MultiBlocProvider(providers: [
         BlocProvider<PartyBloc>(create: (BuildContext context) => partyBloc),
         BlocProvider<PartiesBloc>(create: (BuildContext context) => partiesBloc)
@@ -213,7 +211,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      verify(partiesBloc.add(DeleteParty(partyModel.partyUUID))).called(1);
+      verify(partiesBloc.add(DeleteParty(partyModel))).called(1);
     });
 
     testWidgets('Check Delete - Confirm', (WidgetTester tester) async {
@@ -221,7 +219,7 @@ void main() {
       when(partyBloc.state).thenAnswer((_) => PartyLoadedSucess(partyModel));
       when(partiesBloc.state)
           .thenAnswer((_) => PartiesLoadedSuccessful(partyList));
-      when(partiesBloc.add(DeleteParty(partyModel.partyUUID))).thenReturn(null);
+      when(partiesBloc.add(DeleteParty(partyModel))).thenReturn(null);
 
       await tester.pumpWidget(MultiBlocProvider(providers: [
         BlocProvider<PartyBloc>(create: (BuildContext context) => partyBloc),
@@ -237,7 +235,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      verifyNever(partiesBloc.add(DeleteParty(partyModel.partyUUID)));
+      verifyNever(partiesBloc.add(DeleteParty(partyModel)));
 
       expect(find.byType(PartyDeleteDialog), findsOneWidget);
 
@@ -245,7 +243,7 @@ void main() {
           of: find.byType(PartyDeleteDialog),
           matching: find.widgetWithText(FlatButton, 'Yes')));
 
-      verify(partiesBloc.add(DeleteParty(partyModel.partyUUID))).called(1);
+      verify(partiesBloc.add(DeleteParty(partyModel))).called(1);
     });
 
     testWidgets('Check Load - No Confirm', (WidgetTester tester) async {

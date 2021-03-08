@@ -84,12 +84,11 @@ class PartiesDialogState extends State<PartiesDialog> {
                                           name: item.partyName);
                                     }).then((value) {
                                   if (value) {
-                                    partiesBloc
-                                        .add(DeleteParty(item.partyUUID));
+                                    partiesBloc.add(DeleteParty(item));
                                   }
                                 });
                               } else {
-                                partiesBloc.add(DeleteParty(item.partyUUID));
+                                partiesBloc.add(DeleteParty(item));
                               }
                             },
                             onTap: () {

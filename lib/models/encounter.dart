@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:initiative_tracker/models/character_model.dart';
 import 'package:initiative_tracker/moor/character_list.dart';
 import 'package:initiative_tracker/moor/database.dart';
@@ -7,9 +6,15 @@ import 'package:initiative_tracker/uuid.dart';
 class Encounter extends Party {
   int round;
 
-  Encounter({this.round = 1, partyName, characters, partyUUID})
+  Encounter(
+      {this.round = 1,
+      String partyName,
+      CharacterList characters,
+      String partyUUID})
       : super(
-            partyName: partyName, partyUUID: partyUUID, characters: characters);
+            partyName: partyName,
+            partyUUID: partyUUID ?? Uuid().generateV4(),
+            characters: characters);
 
   void nextRound() {
     round++;
@@ -56,6 +61,13 @@ class Encounter extends Party {
   List<CharacterModel> getCharacterList() {
     return characters.list;
   }
+
+  @override
+  Encounter copyWith({round, partyName, characters, partyUUID}) => Encounter(
+      round: round ?? this.round,
+      partyName: partyName ?? this.partyName,
+      characters: characters ?? this.characters,
+      partyUUID: partyUUID ?? this.partyUUID);
 
   Encounter.fromParty(Party party)
       : round = 1,

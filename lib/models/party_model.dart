@@ -134,7 +134,7 @@ class OLDPartyModel {
   @override
   bool operator ==(rhs) {
     return partyName == rhs.partyName &&
-        partyUUID == rhs.partyUUID &&
+        partyUUID == rhs.party &&
         round == rhs.round &&
         ListEquality().equals(characters, rhs.characters);
   }

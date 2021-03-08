@@ -1,4 +1,3 @@
-import 'dart:collection';
 import 'dart:convert';
 
 import 'package:initiative_tracker/models/character_model.dart';
@@ -12,11 +11,9 @@ class CharacterList {
   @CharacterConverter()
   List<CharacterModel> _l = [];
   List<CharacterModel> get list => _l;
+  CharacterModel get first => _l.first;
 
-  CharacterList() {
-    _l = [];
-  }
-
+  CharacterList({List<CharacterModel> list = const []}) : _l = list;
   void removeWhere(bool Function(CharacterModel) test) {
     return _l.removeWhere(test);
   }
@@ -33,7 +30,6 @@ class CharacterList {
     return _l.indexWhere(test);
   }
 
-  @override
   CharacterModel operator [](int index) {
     return _l[index];
   }
@@ -46,9 +42,6 @@ class CharacterList {
       _$CharacterListFromJson(json);
 
   Map<String, dynamic> toJson() => _$CharacterListToJson(this);
-
-  @override
-  int length;
 
   CharacterList clone() {
     var tmp = CharacterList();

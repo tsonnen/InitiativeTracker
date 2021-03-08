@@ -1,16 +1,16 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:collection/collection.dart';
+import 'package:initiative_tracker/models/encounter.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:initiative_tracker/models/party_model.dart';
 
 class PartyListModel {
-  List<PartyModel> parties;
+  List<Encounter> parties;
 
   PartyListModel.json({this.parties});
 
   PartyListModel() {
-    parties = <PartyModel>[];
+    parties = <Encounter>[];
   }
 
   List<dynamic> toMap({bool legacy = false}) {
@@ -25,19 +25,19 @@ class PartyListModel {
     return matches.isNotEmpty;
   }
 
-  void addParty(PartyModel party) {
+  void addParty(Encounter party) {
     assert(!containsParty(party),
         'Specified party is a duplicate. Use editParty instead');
     parties.add(party.clone());
   }
 
-  void editParty(PartyModel partyModel) {
+  void editParty(Encounter partyModel) {
     parties.remove(
         parties.firstWhere((party) => party.partyUUID == partyModel.partyUUID));
     addParty(partyModel);
   }
 
-  void remove(PartyModel item) {
+  void remove(Encounter item) {
     parties.remove(item);
   }
 

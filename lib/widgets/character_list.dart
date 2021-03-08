@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:initiative_tracker/models/character_model.dart';
 import 'package:initiative_tracker/models/encounter.dart';
-import 'package:initiative_tracker/models/party_model.dart';
 import 'package:initiative_tracker/screens/character_screen.dart';
 
 class CharacterCard extends StatefulWidget {
