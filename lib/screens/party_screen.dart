@@ -40,7 +40,7 @@ class PartyScreenState extends State<PartyScreen> {
         partyBloc.add(GenerateParty());
         return Text('Loading');
       }
-      var partyModel = state.partyModel;
+      var partyModel = state.encounterModel;
       return Scaffold(
         appBar: AppBar(
           title: Text('Round ${partyModel.round}'),
@@ -67,7 +67,8 @@ class PartyScreenState extends State<PartyScreen> {
                                   return PartyNameDialog();
                                 }).then((value) {
                               if (value != null) {
-                                partyModel.setName(value);
+                                partyModel =
+                                    partyModel.copyWith(partyName: value);
                                 partiesBloc.add(AddParty(partyModel));
                               }
                             });
@@ -81,14 +82,14 @@ class PartyScreenState extends State<PartyScreen> {
                               if (value) {
                                 partiesBloc.add(AddParty(partyModel));
                               } else if (!value) {
-                                partyModel.generateUUID();
                                 showDialog<String>(
                                     context: context,
                                     builder: (context) {
                                       return PartyNameDialog();
                                     }).then((value) {
                                   if (value != null) {
-                                    partyModel.setName(value);
+                                    partyModel =
+                                        partyModel.copyWith(partyName: value);
                                     partiesBloc.add(AddParty(partyModel));
                                   }
                                 });
@@ -138,7 +139,7 @@ class PartyScreenState extends State<PartyScreen> {
           ],
         ),
         body: Container(
-            child: CharacterList(
+            child: CharacterListWidget(
                 onLongPress: (characterModel) {
                   partyBloc.add(
                       DeletePartyCharacter(characterModel: characterModel));
@@ -146,7 +147,6 @@ class PartyScreenState extends State<PartyScreen> {
                 partyModel: partyModel)),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: FloatingActionButton(
-          child: const Icon(Icons.add),
           onPressed: () {
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => CharacterScreen(
@@ -154,6 +154,7 @@ class PartyScreenState extends State<PartyScreen> {
                         partyModel != null ? partyModel.partyUUID : null)));
           },
           tooltip: 'Add Character',
+          child: const Icon(Icons.add),
         ),
         bottomNavigationBar: BottomAppBar(
           child: Row(

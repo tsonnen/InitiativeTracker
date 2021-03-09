@@ -37,6 +37,7 @@ class SettingsPageState extends State<SettingsPage> {
             isDefault: true,
           ),
           PreferenceTitle('Auto Roll Initiative'),
+          CheckboxPreference('Should Roll Initiative', 'should_roll_init'),
           DropdownPreference(
             'Number of Dice',
             'num_dice',

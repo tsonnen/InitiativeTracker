@@ -18,17 +18,17 @@ class PartyNameDialog extends StatelessWidget {
       ),
       actions: <Widget>[
         // usually buttons at the bottom of the dialog
-        FlatButton(
-          child: Text('Cancel'),
+        TextButton(
           onPressed: () {
             Navigator.of(context).pop(null);
           },
+          child: Text('Cancel'),
         ),
-        FlatButton(
-          child: Text('Save'),
+        TextButton(
           onPressed: () {
             Navigator.of(context).pop(nameController.text);
           },
+          child: Text('Save'),
         )
       ],
     );
@@ -84,12 +84,11 @@ class PartiesDialogState extends State<PartiesDialog> {
                                           name: item.partyName);
                                     }).then((value) {
                                   if (value) {
-                                    partiesBloc
-                                        .add(DeleteParty(item.partyUUID));
+                                    partiesBloc.add(DeleteParty(item));
                                   }
                                 });
                               } else {
-                                partiesBloc.add(DeleteParty(item.partyUUID));
+                                partiesBloc.add(DeleteParty(item));
                               }
                             },
                             onTap: () {
@@ -118,11 +117,11 @@ class PartiesDialogState extends State<PartiesDialog> {
               })),
       actions: <Widget>[
         // usually buttons at the bottom of the dialog
-        FlatButton(
-          child: Text('Done'),
+        TextButton(
           onPressed: () {
             Navigator.of(context).pop();
           },
+          child: Text('Done'),
         ),
       ],
     );

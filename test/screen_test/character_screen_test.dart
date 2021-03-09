@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
 import 'package:initiative_tracker/helpers/keys.dart';
 import 'package:initiative_tracker/models/character_model.dart';
-import 'package:initiative_tracker/models/party_model.dart';
+import 'package:initiative_tracker/models/encounter.dart';
 import 'package:initiative_tracker/screens/character_screen.dart';
 import 'package:initiative_tracker/widgets/form_widgets.dart';
 import 'package:mockito/mockito.dart';
@@ -19,7 +19,7 @@ void main() {
       partyBloc = MockPartyBloc();
     });
     testWidgets('Test Validators-EMPTY', (WidgetTester tester) async {
-      when(partyBloc.state).thenAnswer((_) => PartyLoadedSucess(PartyModel()));
+      when(partyBloc.state).thenAnswer((_) => PartyLoadedSucess(Encounter()));
       when(partyBloc.add(argThat(MatchType<AddPartyCharacter>())))
           .thenReturn(null);
 
@@ -42,7 +42,7 @@ void main() {
       partyBloc = MockPartyBloc();
     });
     testWidgets('Add Character-No Gen', (WidgetTester tester) async {
-      when(partyBloc.state).thenAnswer((_) => PartyLoadedSucess(PartyModel()));
+      when(partyBloc.state).thenAnswer((_) => PartyLoadedSucess(Encounter()));
       when(partyBloc.add(argThat(MatchType<AddPartyCharacter>())))
           .thenReturn(null);
 
@@ -76,7 +76,7 @@ void main() {
     });
 
     testWidgets('Add Character-Gen', (WidgetTester tester) async {
-      when(partyBloc.state).thenAnswer((_) => PartyLoadedSucess(PartyModel()));
+      when(partyBloc.state).thenAnswer((_) => PartyLoadedSucess(Encounter()));
       when(partyBloc.add(argThat(MatchType<AddPartyCharacter>())))
           .thenReturn(null);
       var charToAdd = CharacterModel(name: 'Test Char', hp: 12);
@@ -113,7 +113,7 @@ void main() {
       partyBloc = MockPartyBloc();
     });
     testWidgets('Test Edit', (WidgetTester tester) async {
-      when(partyBloc.state).thenAnswer((_) => PartyLoadedSucess(PartyModel()));
+      when(partyBloc.state).thenAnswer((_) => PartyLoadedSucess(Encounter()));
       when(partyBloc.add(argThat(MatchType<AddPartyCharacter>())))
           .thenReturn(null);
 
@@ -149,7 +149,7 @@ void main() {
 
 Future<void> tapButton(WidgetTester tester, {CharacterModel character}) async {
   var btnText = character == null ? 'Add Character' : 'Edit Character';
-  await tester.tap(find.widgetWithText(RaisedButton, btnText));
+  await tester.tap(find.widgetWithText(ElevatedButton, btnText));
   await tester.pumpAndSettle();
 }
 

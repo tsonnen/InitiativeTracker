@@ -3,8 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:initiative_tracker/bloc/parties/parties_bloc.dart';
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
-import 'package:initiative_tracker/models/character_model.dart';
-import 'package:initiative_tracker/models/party_model.dart';
+import 'package:initiative_tracker/models/encounter.dart';
 import 'package:initiative_tracker/preference_manger.dart';
 import 'package:initiative_tracker/widgets/dialogs.dart';
 import 'package:initiative_tracker/widgets/party_screen_dialogs.dart';
@@ -27,8 +26,8 @@ void main() {
 
       expect(find.text('Enter a Name'), findsOneWidget);
       expect(find.byType(TextField), findsOneWidget);
-      expect(find.widgetWithText(FlatButton, 'Cancel'), findsOneWidget);
-      expect(find.widgetWithText(FlatButton, 'Save'), findsOneWidget);
+      expect(find.widgetWithText(TextButton, 'Cancel'), findsOneWidget);
+      expect(find.widgetWithText(TextButton, 'Save'), findsOneWidget);
     });
 
     testWidgets('Check Save', (WidgetTester tester) async {
@@ -47,7 +46,7 @@ void main() {
 
       await tester.enterText(find.byType(TextField), name);
 
-      await tester.tap(find.widgetWithText(FlatButton, 'Save'));
+      await tester.tap(find.widgetWithText(TextButton, 'Save'));
 
       await tester.pumpAndSettle();
     });
@@ -68,7 +67,7 @@ void main() {
 
       await tester.enterText(find.byType(TextField), name);
 
-      await tester.tap(find.widgetWithText(FlatButton, 'Cancel'));
+      await tester.tap(find.widgetWithText(TextButton, 'Cancel'));
 
       await tester.pumpAndSettle();
     });
@@ -88,8 +87,8 @@ void main() {
       expect(find.byType(ConfirmationDialog), findsOneWidget);
       expect(find.text('Load'), findsOneWidget);
       expect(find.text('Would you like to load $name?'), findsOneWidget);
-      expect(find.widgetWithText(FlatButton, 'Yes'), findsOneWidget);
-      expect(find.widgetWithText(FlatButton, 'No'), findsOneWidget);
+      expect(find.widgetWithText(TextButton, 'Yes'), findsOneWidget);
+      expect(find.widgetWithText(TextButton, 'No'), findsOneWidget);
     });
   });
 
@@ -107,8 +106,8 @@ void main() {
       expect(find.byType(ConfirmationDialog), findsOneWidget);
       expect(find.text('Delete'), findsOneWidget);
       expect(find.text('Do you want to delete $name'), findsOneWidget);
-      expect(find.widgetWithText(FlatButton, 'Yes'), findsOneWidget);
-      expect(find.widgetWithText(FlatButton, 'No'), findsOneWidget);
+      expect(find.widgetWithText(TextButton, 'Yes'), findsOneWidget);
+      expect(find.widgetWithText(TextButton, 'No'), findsOneWidget);
     });
   });
 
@@ -129,24 +128,23 @@ void main() {
           find.text(
               'This party is already saved as $name\nWould you like to overwrite it?'),
           findsOneWidget);
-      expect(find.widgetWithText(FlatButton, 'Yes'), findsOneWidget);
-      expect(find.widgetWithText(FlatButton, 'No'), findsOneWidget);
+      expect(find.widgetWithText(TextButton, 'Yes'), findsOneWidget);
+      expect(find.widgetWithText(TextButton, 'No'), findsOneWidget);
     });
   });
 
   group('Parties Dialog', () {
     PartyBloc partyBloc;
     PartiesBloc partiesBloc;
-    PartyModel partyModel;
-    List<PartyModel> partyList;
+    Encounter partyModel;
+    List<Encounter> partyList;
     SharedPreferences.setMockInitialValues({});
 
     setUp(() {
       partyBloc = MockPartyBloc();
       partiesBloc = MockPartiesBloc();
 
-      partyModel =
-          PartyModel(characters: <CharacterModel>[], partyName: 'CoolParty');
+      partyModel = Encounter(partyName: 'CoolParty');
       partyList = [partyModel];
     });
 
@@ -166,7 +164,7 @@ void main() {
       expect(find.byType(PartiesDialog), findsOneWidget);
       expect(find.text('Manage Parties'), findsOneWidget);
       expect(find.text('Loading'), findsOneWidget);
-      expect(find.widgetWithText(FlatButton, 'Done'), findsOneWidget);
+      expect(find.widgetWithText(TextButton, 'Done'), findsOneWidget);
 
       verify(partiesBloc.add(LoadParties())).called(1);
     });
@@ -190,7 +188,7 @@ void main() {
         expect(
             find.widgetWithText(ListTile, element.partyName), findsOneWidget);
       });
-      expect(find.widgetWithText(FlatButton, 'Done'), findsOneWidget);
+      expect(find.widgetWithText(TextButton, 'Done'), findsOneWidget);
     });
 
     testWidgets('Check Delete - No Confirm', (WidgetTester tester) async {
@@ -198,7 +196,7 @@ void main() {
       when(partyBloc.state).thenAnswer((_) => PartyLoadedSucess(partyModel));
       when(partiesBloc.state)
           .thenAnswer((_) => PartiesLoadedSuccessful(partyList));
-      when(partiesBloc.add(DeleteParty(partyModel.partyUUID))).thenReturn(null);
+      when(partiesBloc.add(DeleteParty(partyModel))).thenReturn(null);
       await tester.pumpWidget(MultiBlocProvider(providers: [
         BlocProvider<PartyBloc>(create: (BuildContext context) => partyBloc),
         BlocProvider<PartiesBloc>(create: (BuildContext context) => partiesBloc)
@@ -213,7 +211,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      verify(partiesBloc.add(DeleteParty(partyModel.partyUUID))).called(1);
+      verify(partiesBloc.add(DeleteParty(partyModel))).called(1);
     });
 
     testWidgets('Check Delete - Confirm', (WidgetTester tester) async {
@@ -221,7 +219,7 @@ void main() {
       when(partyBloc.state).thenAnswer((_) => PartyLoadedSucess(partyModel));
       when(partiesBloc.state)
           .thenAnswer((_) => PartiesLoadedSuccessful(partyList));
-      when(partiesBloc.add(DeleteParty(partyModel.partyUUID))).thenReturn(null);
+      when(partiesBloc.add(DeleteParty(partyModel))).thenReturn(null);
 
       await tester.pumpWidget(MultiBlocProvider(providers: [
         BlocProvider<PartyBloc>(create: (BuildContext context) => partyBloc),
@@ -237,15 +235,15 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      verifyNever(partiesBloc.add(DeleteParty(partyModel.partyUUID)));
+      verifyNever(partiesBloc.add(DeleteParty(partyModel)));
 
       expect(find.byType(PartyDeleteDialog), findsOneWidget);
 
       await tester.tap(find.descendant(
           of: find.byType(PartyDeleteDialog),
-          matching: find.widgetWithText(FlatButton, 'Yes')));
+          matching: find.widgetWithText(TextButton, 'Yes')));
 
-      verify(partiesBloc.add(DeleteParty(partyModel.partyUUID))).called(1);
+      verify(partiesBloc.add(DeleteParty(partyModel))).called(1);
     });
 
     testWidgets('Check Load - No Confirm', (WidgetTester tester) async {
@@ -297,7 +295,7 @@ void main() {
 
       await tester.tap(find.descendant(
           of: find.byType(PartyLoadDialog),
-          matching: find.widgetWithText(FlatButton, 'Yes')));
+          matching: find.widgetWithText(TextButton, 'Yes')));
 
       verify(partyBloc.add(LoadParty(partyModel))).called(1);
     });

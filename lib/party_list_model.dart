@@ -1,61 +1,44 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:collection/collection.dart';
+import 'package:initiative_tracker/models/encounter.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:initiative_tracker/models/party_model.dart';
 
 class PartyListModel {
-  List<PartyModel> parties;
+  List<Encounter> parties;
 
   PartyListModel.json({this.parties});
 
   PartyListModel() {
-    parties = <PartyModel>[];
-  }
-
-  factory PartyListModel.fromMap(List<dynamic> parsedJson,
-      {bool legacyRead = false}) {
-    return PartyListModel.json(
-      parties: parsedJson
-          .map((i) => PartyModel.fromMap(i, legacyRead: legacyRead))
-          .toList(),
-    );
+    parties = <Encounter>[];
   }
 
   List<dynamic> toMap({bool legacy = false}) {
     var jsonList = [];
-    parties.map((i) => jsonList.add(i.toMap(legacy: legacy))).toList();
+    parties.map((i) => jsonList.add(i.toJson())).toList();
     return jsonList;
   }
 
-  bool containsParty(PartyModel partyModel) {
+  bool containsParty(Encounter partyModel) {
     var matches =
         parties.where((party) => party.partyUUID == partyModel.partyUUID);
     return matches.isNotEmpty;
   }
 
-  void addParty(PartyModel party) {
+  void addParty(Encounter party) {
     assert(!containsParty(party),
         'Specified party is a duplicate. Use editParty instead');
     parties.add(party.clone());
   }
 
-  void editParty(PartyModel partyModel) {
+  void editParty(Encounter partyModel) {
     parties.remove(
         parties.firstWhere((party) => party.partyUUID == partyModel.partyUUID));
     addParty(partyModel);
   }
 
-  void remove(PartyModel item) {
+  void remove(Encounter item) {
     parties.remove(item);
-  }
-
-  static PartyListModel readSavedPartiesSync() {
-    PartyListModel model;
-    readSavedParties().then((value) {
-      model = value;
-    });
-    return model ?? PartyListModel();
   }
 
   static Future<String> get _localPath async {
@@ -74,20 +57,6 @@ class PartyListModel {
 
     // Write the file.
     return file.writeAsString(json.encode(toMap(legacy: true)));
-  }
-
-  static Future<PartyListModel> readSavedParties() async {
-    final file = await _localFile;
-    try {
-      // Read the file.
-      var jsonData = await file.readAsString();
-
-      return PartyListModel.fromMap(json.decode(jsonData), legacyRead: true);
-    } catch (e) {
-      print('Failed to load legacy JSON: ${file.path}');
-      // If encountering an error, return 0.
-      return PartyListModel();
-    }
   }
 
   PartyListModel clone() {

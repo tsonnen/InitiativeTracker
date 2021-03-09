@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:initiative_tracker/models/character_model.dart';
-import 'package:initiative_tracker/models/party_model.dart';
+import 'package:initiative_tracker/models/encounter.dart';
 import 'package:initiative_tracker/screens/character_screen.dart';
 
 class CharacterCard extends StatefulWidget {
@@ -67,23 +67,24 @@ class CharacterCardState extends State<CharacterCard> {
   }
 }
 
-class CharacterList extends StatelessWidget {
-  final PartyModel partyModel;
-  final Function(dynamic) onLongPress;
-  final Function(dynamic) onTap;
+class CharacterListWidget extends StatelessWidget {
+  final Encounter partyModel;
+  final Function(CharacterModel) onLongPress;
+  final Function(CharacterModel) onTap;
 
-  CharacterList({this.partyModel, this.onTap, this.onLongPress});
+  CharacterListWidget({this.partyModel, this.onTap, this.onLongPress});
 
   @override
   Widget build(BuildContext context) {
     return ListView(
-        children: partyModel
-            .getCharacterList()
+        children: partyModel.characters.list
             .map((item) => CharacterCard(
                   item: item,
                   onTap: () {
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => CharacterScreen(character: item,)));
+                        builder: (context) => CharacterScreen(
+                              character: item,
+                            )));
                   },
                   onLongPress: () {
                     onLongPress(item);

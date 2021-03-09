@@ -114,9 +114,7 @@ class CharacterScreenState extends State<CharacterScreen> {
                     controller: noteController,
                   ),
                 ),
-                RaisedButton(
-                  child: Text(
-                      character == null ? 'Add Character' : 'Edit Character'),
+                ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState.validate()) {
                       if (character != null) {
@@ -151,6 +149,8 @@ class CharacterScreenState extends State<CharacterScreen> {
                       }
                     }
                   },
+                  child: Text(
+                      character == null ? 'Add Character' : 'Edit Character'),
                 )
               ],
             ),

@@ -10,9 +10,15 @@ addons:
       - libstdc++6
       - fonts-droid-fallback
 before_script:
-  - git clone https://github.com/flutter/flutter.git -b stable
+  - git clone https://github.com/flutter/flutter.git -b master
+  - cd ./flutter/
+  - git checkout 1.22.5
+  - cd ..
   - ./flutter/bin/flutter doctor
-script:
+  - ./flutter/bin/flutter version
+script: 
+  - ./flutter/bin/flutter packages pub get
+  - ./flutter/bin/flutter packages pub run build_runner build
   - ./flutter/bin/flutter test
 cache:
   directories:

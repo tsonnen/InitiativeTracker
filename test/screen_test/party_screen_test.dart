@@ -5,7 +5,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:initiative_tracker/bloc/parties/parties_bloc.dart';
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
 import 'package:initiative_tracker/models/character_model.dart';
-import 'package:initiative_tracker/models/party_model.dart';
+import 'package:initiative_tracker/models/encounter.dart';
+import 'package:initiative_tracker/moor/character_list.dart';
 import 'package:initiative_tracker/screens/party_screen.dart';
 import 'package:initiative_tracker/widgets/party_screen_dialogs.dart';
 import 'package:mockito/mockito.dart';
@@ -22,14 +23,15 @@ void main() {
   group('Home Screen Tests', () {
     PartiesBloc partiesBloc;
     PartyBloc partyBloc;
-    PartyModel partyModel;
+    Encounter partyModel;
 
     setUp(() {
       partiesBloc = MockPartiesBloc();
       partyBloc = MockPartyBloc();
-      partyModel = PartyModel(characters: [
+      partyModel = Encounter(
+          characters: CharacterList(list: [
         CharacterModel(name: 'Joe', hp: 6, initiative: 7, notes: '')
-      ]);
+      ]));
     });
 
     testWidgets('Should Route to Add Character Screen',
@@ -197,14 +199,14 @@ void main() {
 
       await tester.enterText(find.byType(TextField), 'Saved Party');
       await tester.pumpAndSettle();
-      await tester.tap(find.widgetWithText(FlatButton, 'Save'));
+      await tester.tap(find.widgetWithText(TextButton, 'Save'));
       await tester.pumpAndSettle();
 
-      verify(partiesBloc.add(AddParty(partyModel))).called(1);
+      verify(partiesBloc.add(argThat(MatchType<AddParty>()))).called(1);
     });
 
     testWidgets('Test Party Management', (WidgetTester tester) async {
-      partyModel.partyName = 'SAVED PARTY';
+      partyModel = partyModel.copyWith(partyName: 'SAVED PARTY');
       when(partyBloc.state).thenAnswer((_) => PartyLoadedSucess(partyModel));
       when(partiesBloc.state)
           .thenAnswer((_) => PartiesLoadedSuccessful([partyModel]));
@@ -259,7 +261,7 @@ void main() {
   });
 }
 
-void checkTitleText(PartyModel partyModel) {
+void checkTitleText(Encounter partyModel) {
   expect(find.widgetWithText(AppBar, 'Round ' + partyModel.round.toString()),
       findsOneWidget);
 }

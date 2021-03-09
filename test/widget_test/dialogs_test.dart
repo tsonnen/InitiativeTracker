@@ -20,42 +20,46 @@ void main() {
 
       expect(find.text(title), findsOneWidget);
       expect(find.text(body), findsOneWidget);
-      expect(find.widgetWithText(FlatButton, 'Yes'), findsOneWidget);
-      expect(find.widgetWithText(FlatButton, 'No'), findsOneWidget);
+      expect(find.widgetWithText(TextButton, 'Yes'), findsOneWidget);
+      expect(find.widgetWithText(TextButton, 'No'), findsOneWidget);
     });
 
     testWidgets('Check Yes', (WidgetTester tester) async {
       var mockObserver = MockNavigatorObserver();
 
       when(mockObserver.didPop(any, any)).thenAnswer((realInvocation) async {
-        var value = await (realInvocation.positionalArguments.first as Route).popped;
+        var value =
+            await (realInvocation.positionalArguments.first as Route).popped;
         expect(value, true);
       });
       await tester.pumpWidget(TestHelper.createDialogTestScreen(
-          ConfirmationDialog(title: title, body: body), navigatorObservers: [mockObserver]));
+          ConfirmationDialog(title: title, body: body),
+          navigatorObservers: [mockObserver]));
       await tester.pumpAndSettle();
       await TestHelper.openDialog(tester);
       await tester.pumpAndSettle();
 
-      await tester.tap(find.widgetWithText(FlatButton, 'Yes'));
+      await tester.tap(find.widgetWithText(TextButton, 'Yes'));
 
       await tester.pumpAndSettle();
     });
 
     testWidgets('Check No', (WidgetTester tester) async {
-       var mockObserver = MockNavigatorObserver();
+      var mockObserver = MockNavigatorObserver();
 
       when(mockObserver.didPop(any, any)).thenAnswer((realInvocation) async {
-        var value = await (realInvocation.positionalArguments.first as Route).popped;
+        var value =
+            await (realInvocation.positionalArguments.first as Route).popped;
         expect(value, false);
       });
       await tester.pumpWidget(TestHelper.createDialogTestScreen(
-          ConfirmationDialog(title: title, body: body), navigatorObservers: [mockObserver]));
+          ConfirmationDialog(title: title, body: body),
+          navigatorObservers: [mockObserver]));
       await tester.pumpAndSettle();
       await TestHelper.openDialog(tester);
       await tester.pumpAndSettle();
 
-      await tester.tap(find.widgetWithText(FlatButton, 'No'));
+      await tester.tap(find.widgetWithText(TextButton, 'No'));
 
       await tester.pumpAndSettle();
     });

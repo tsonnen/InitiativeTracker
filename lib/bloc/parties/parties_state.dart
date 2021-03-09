@@ -15,7 +15,7 @@ class PartiesLoadInProgress extends PartiesState {
 }
 
 class PartiesLoadedSuccessful extends PartiesState {
-  final List<PartyModel> parties;
+  final List<Party> parties;
 
   PartiesLoadedSuccessful(this.parties);
   @override

@@ -7,7 +7,7 @@ abstract class PartyEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class AddPartyCharacter extends PartyEvent{
+class AddPartyCharacter extends PartyEvent {
   final CharacterModel characterModel;
 
   AddPartyCharacter(this.characterModel);
@@ -16,7 +16,7 @@ class AddPartyCharacter extends PartyEvent{
   List<Object> get props => [characterModel];
 }
 
-class DeletePartyCharacter extends PartyEvent{
+class DeletePartyCharacter extends PartyEvent {
   final CharacterModel characterModel;
 
   DeletePartyCharacter({@required this.characterModel});
@@ -25,21 +25,19 @@ class DeletePartyCharacter extends PartyEvent{
   List<Object> get props => [characterModel];
 }
 
-class GenerateParty extends PartyEvent{
-
-}
+class GenerateParty extends PartyEvent {}
 
 class ChangeRound extends PartyEvent {
   final bool roundForward;
-  
+
   ChangeRound({@required this.roundForward});
 
   @override
   List<Object> get props => [roundForward];
 }
 
-class LoadParty extends PartyEvent{
-  final PartyModel partyModel;
+class LoadParty extends PartyEvent {
+  final Party partyModel;
 
   LoadParty(this.partyModel);
 
