@@ -30,7 +30,7 @@ void main() {
       partyBloc = MockPartyBloc();
       partyModel = Encounter(
           characters: CharacterList(list: [
-        CharacterModel(name: 'Joe', hp: 6, initiative: 7, notes: '')
+        CharacterModel(characterName: 'Joe', hp: 6, initiative: 7, notes: '')
       ]));
     });
 

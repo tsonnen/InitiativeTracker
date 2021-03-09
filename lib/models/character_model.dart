@@ -1,33 +1,34 @@
 import 'dart:convert';
+import 'dart:ui';
 
+import 'package:flutter/material.dart';
 import 'package:initiative_tracker/uuid.dart';
-import 'package:initiative_tracker/random_generator.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+part 'character_model.g.dart';
+
+@JsonSerializable()
 class CharacterModel {
   String characterUUID;
   String characterName;
   int initiative;
   String notes;
   int hp;
+  int initMod;
   bool isExpanded = false;
-  Map<String, int> attributes = <String, int>{};
-  String systemUUID;
 
-  CharacterModel({String name, int hp, int initiative, String notes})
-      : characterName = name ?? 'TEST',
-        hp = hp ?? 123,
-        characterUUID = Uuid().generateV4(),
-        initiative = initiative ?? rollDice(1, 20),
-        notes = notes;
+  @ColorConverter()
+  Color color;
 
-  CharacterModel.map(
-      {this.characterName,
-      this.hp,
+  CharacterModel(
+      {this.characterName = 'TEST',
+      this.hp = 123,
       this.initiative,
-      this.characterUUID,
       this.notes,
-      this.systemUUID,
-      this.attributes});
+      this.initMod = 0,
+      this.color = Colors.grey,
+      String characterUUID})
+      : characterUUID = characterUUID ?? Uuid().generateV4();
 
   void setName(String name) {
     characterName = name;
@@ -49,79 +50,68 @@ class CharacterModel {
     this.initiative = initiative;
   }
 
-  void edit(String characterName, int hp, int initiative, String notes) {
-    this.characterName = characterName;
-    this.hp = hp;
-    this.initiative = initiative;
-    this.notes = notes;
+  void edit(
+      {String characterName,
+      int hp,
+      int initiative,
+      String notes,
+      Color color}) {
+    this.characterName = characterName ?? this.characterName;
+    this.hp = hp ?? this.hp;
+    this.initiative = initiative ?? this.initiative;
+    this.notes = notes ?? this.notes;
+    this.color = color ?? this.color;
   }
 
-  factory CharacterModel.fromMap(Map<String, dynamic> json,
-      {bool legacyRead = false}) {
-    return CharacterModel.map(
-      characterName: json[legacyRead ? 'name' : 'characterName'],
-      initiative: json['initiative'],
-      hp: json['hp'],
-      characterUUID: json[legacyRead ? 'id' : 'characterUUID'],
-      notes: json['notes'],
-      systemUUID: json['systemUUID'],
-      // attributes: json['attributes']
-    );
-  }
+  factory CharacterModel.fromJson(Map<String, dynamic> json) =>
+      _$CharacterModelFromJson(json);
 
-  Map<String, dynamic> toMap({bool legacy = false}) => {
-        legacy ? 'name' : 'characterName': characterName,
-        'initiative': initiative,
-        'hp': hp,
-        legacy ? 'id' : 'characterUUID': characterUUID,
-        'notes': notes,
-        'attributes': attributes,
-        'systemUUID': systemUUID
-      };
-
-  Map<String, dynamic> toSQLMap() => {
-        'characterName': characterName,
-        'initiative': initiative,
-        'hp': hp,
-        'characterUUID': characterUUID,
-        'notes': notes,
-        'attributes': jsonEncode(attributes),
-        'systemUUID': systemUUID
-      };
-
-  bool compare(CharacterModel rhs) {
-    return characterName == rhs.characterName &&
-        initiative == rhs.initiative &&
-        notes == rhs.notes &&
-        hp == rhs.hp;
-  }
+  Map<String, dynamic> toJson() => _$CharacterModelToJson(this);
 
   @override
-  bool operator ==(rhs) {
-    return characterUUID == rhs.characterUUID &&
+  bool operator ==(Object rhs) {
+    return rhs is CharacterModel &&
         characterName == rhs.characterName &&
+        characterUUID == rhs.characterUUID &&
+        color == rhs.color &&
+        hp == rhs.hp &&
+        initMod == rhs.initMod &&
         initiative == rhs.initiative &&
-        notes == rhs.notes &&
-        hp == rhs.hp;
+        notes == rhs.notes;
+  }
+
+  CharacterModel copyWith(
+          {String characterName,
+          int hp,
+          int initiative,
+          String notes,
+          Color color,
+          String characterUUID,
+          int initMod}) =>
+      CharacterModel(
+          characterName: characterName ?? this.characterName,
+          characterUUID: characterUUID ?? this.characterUUID,
+          hp: hp ?? this.hp,
+          initiative: initiative ?? this.initiative,
+          notes: notes ?? this.notes,
+          color: color ?? this.color,
+          initMod: initMod ?? this.initMod);
+}
+
+class ColorConverter implements JsonConverter<Color, String> {
+  const ColorConverter();
+
+  @override
+  Color fromJson(String json) {
+    if (json is Map<String, dynamic>) {
+      return Color(jsonDecode(json));
+    }
+
+    return null;
   }
 
   @override
-  int get hashCode =>
-      characterName.hashCode ^
-      initiative.hashCode ^
-      characterUUID.hashCode ^
-      hp.hashCode ^
-      initiative.hashCode ^
-      notes.hashCode;
-
-  CharacterModel clone() {
-    var cloned = CharacterModel();
-    cloned.hp = hp;
-    cloned.characterUUID = characterUUID;
-    cloned.initiative = initiative;
-    cloned.characterName = characterName;
-    cloned.notes = notes;
-
-    return cloned;
+  String toJson(Color object) {
+    return jsonEncode(object.value);
   }
 }

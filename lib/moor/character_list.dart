@@ -58,7 +58,7 @@ class CharacterConverter implements JsonConverter<CharacterModel, String> {
   @override
   CharacterModel fromJson(String json) {
     if (json is Map<String, dynamic>) {
-      return CharacterModel.fromMap(jsonDecode(json));
+      return CharacterModel.fromJson(jsonDecode(json));
     }
 
     return null;
@@ -66,11 +66,10 @@ class CharacterConverter implements JsonConverter<CharacterModel, String> {
 
   @override
   String toJson(CharacterModel object) {
-    return jsonEncode(object.toSQLMap());
+    return jsonEncode(object.toJson());
   }
 }
 
-// stores preferences as strings
 class CharacterListConverter extends TypeConverter<CharacterList, String> {
   const CharacterListConverter();
   @override

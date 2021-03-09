@@ -1,84 +1,44 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_circle_color_picker/flutter_circle_color_picker.dart';
 
-enum DialogAction { yes, abort }
+class ColorPickerDialog extends StatefulWidget {
+  final Color color;
 
-class Dialogs {
-  static Future<DialogAction> yesAbortDialog(
-      BuildContext context, String title, String body) async {
-    final action = await showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          title: Text(title),
-          content: Text(body),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(DialogAction.abort),
-              child: const Text('no'),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.of(context).pop(DialogAction.yes),
-              child: const Text(
-                'yes',
-                style: TextStyle(
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-    return (action != null) ? action : DialogAction.abort;
+  ColorPickerDialog(this.color);
+  @override
+  State<ColorPickerDialog> createState() => ColorPickerDialogState();
+}
+
+class ColorPickerDialogState extends State<ColorPickerDialog> {
+  var color;
+
+  @override
+  void initState() {
+    color = widget.color;
+    super.initState();
   }
 
-  static Future<String> inputDialog(
-    BuildContext context,
-    String title,
-    String hint,
-  ) async {
-    final inputTextController = TextEditingController();
-    final action = await showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          title: Text(title),
-          content: TextField(
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              hintText: hint,
-            ),
-            controller: inputTextController,
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(DialogAction.abort),
-              child: const Text('no'),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.of(context).pop(DialogAction.yes),
-              child: const Text(
-                'yes',
-                style: TextStyle(
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ],
-        );
-      },
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('Pick a Color'),
+      content: SingleChildScrollView(
+        child: CircleColorPicker(
+          initialColor: color,
+          onChanged: (color) => this.color,
+          size: const Size(240, 240),
+          strokeWidth: 4,
+          thumbSize: 36,
+        ),
+      ),
+      actions: <Widget>[
+        FlatButton(
+          onPressed: () {
+            Navigator.of(context).pop(color);
+          },
+          child: const Text('Ok!'),
+        ),
+      ],
     );
-    return (action != null && action != DialogAction.abort)
-        ? inputTextController.text
-        : null;
   }
 }

@@ -47,7 +47,7 @@ void main() {
           .thenReturn(null);
 
       var charToAdd = CharacterModel(
-          name: 'Test Char', initiative: 12, hp: 12, notes: 'None');
+          characterName: 'Test Char', initiative: 12, hp: 12, notes: 'None');
 
       await tester.pumpWidget(createCharacterScreen(partyBloc));
 
@@ -79,7 +79,7 @@ void main() {
       when(partyBloc.state).thenAnswer((_) => PartyLoadedSucess(Encounter()));
       when(partyBloc.add(argThat(MatchType<AddPartyCharacter>())))
           .thenReturn(null);
-      var charToAdd = CharacterModel(name: 'Test Char', hp: 12);
+      var charToAdd = CharacterModel(characterName: 'Test Char', hp: 12);
       var numCharacters = 2;
 
       await tester.pumpWidget(createCharacterScreen(partyBloc));
@@ -118,9 +118,12 @@ void main() {
           .thenReturn(null);
 
       var charToEdit = CharacterModel(
-          name: 'Test Char', initiative: 12, hp: 45, notes: 'My Notes');
+          characterName: 'Test Char',
+          initiative: 12,
+          hp: 45,
+          notes: 'My Notes');
 
-      var editedChar = charToEdit.clone();
+      var editedChar = charToEdit.copyWith();
       editedChar.hp = 25;
 
       await tester.pumpWidget(BlocProvider<PartyBloc>(

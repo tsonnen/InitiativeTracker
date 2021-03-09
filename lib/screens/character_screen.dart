@@ -119,18 +119,18 @@ class CharacterScreenState extends State<CharacterScreen> {
                     if (_formKey.currentState.validate()) {
                       if (character != null) {
                         character.edit(
-                            nameController.text,
-                            int.parse(hpController.text),
-                            initController.text != ''
+                            characterName: nameController.text,
+                            hp: int.parse(hpController.text),
+                            initiative: initController.text != ''
                                 ? int.parse(initController.text)
                                 : null,
-                            noteController.text);
+                            notes: noteController.text);
                         partyBloc.add(AddPartyCharacter(character));
                         Navigator.of(context).pop();
                       } else {
                         for (var i = 1; i <= (_number.value ?? 1); i++) {
                           character = CharacterModel(
-                              name: nameController.text +
+                              characterName: nameController.text +
                                   ((_number.value ?? 1) > 1
                                       ? ' ' + i.toString()
                                       : ''),

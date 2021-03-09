@@ -65,7 +65,7 @@ class OLDPartyModel {
     cloned.partyName = partyName;
     cloned.partyUUID = partyUUID;
     cloned.characters = List<CharacterModel>.from(
-        characters.map((character) => character.clone()));
+        characters.map((character) => character.copyWith()));
     cloned.round = round;
     return cloned;
   }
@@ -75,7 +75,7 @@ class OLDPartyModel {
     partyName = cloned.partyName;
     partyUUID = cloned.partyUUID;
     characters = List<CharacterModel>.from(
-        cloned.characters.map((character) => character.clone()));
+        cloned.characters.map((character) => character.copyWith()));
   }
 
   void clear() {
@@ -100,8 +100,7 @@ class OLDPartyModel {
         systemUUID: json['systemUUID'],
         round: json['round'],
         characters: charJSON
-            .map<CharacterModel>(
-                (i) => CharacterModel.fromMap(i, legacyRead: legacyRead))
+            .map<CharacterModel>((i) => CharacterModel.fromJson(i))
             .toList());
   }
 
@@ -110,7 +109,7 @@ class OLDPartyModel {
         legacy ? 'id' : 'partyUUID': partyUUID,
         'systemUUID': systemUUID,
         'round': round,
-        'characters': characters.map((i) => i.toMap(legacy: legacy)).toList(),
+        'characters': characters.map((i) => i.toJson()).toList(),
       };
 
   Map<String, dynamic> toSQLiteMap() => {
@@ -118,7 +117,7 @@ class OLDPartyModel {
         'partyUUID': partyUUID,
         'systemUUID': systemUUID,
         'round': round,
-        'characters': jsonEncode(characters.map((i) => i.toMap()).toList()),
+        'characters': jsonEncode(characters.map((i) => i.toJson()).toList()),
       };
 
   void generateUUID() {
