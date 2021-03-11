@@ -12,8 +12,10 @@ class CharacterScreen extends StatefulWidget {
   static final String route = 'Character-Screen';
   final CharacterModel character;
   final String partyUUID;
+  final bool isEdit;
 
-  CharacterScreen({this.character, this.partyUUID});
+  CharacterScreen({this.character, this.partyUUID})
+      : isEdit = character != null;
 
   @override
   CharacterScreenState createState() => CharacterScreenState();
@@ -28,7 +30,9 @@ class CharacterScreenState extends State<CharacterScreen> {
 
   final PrimitiveWrapper _number = PrimitiveWrapper(1);
   final PrimitiveWrapper _initMod = PrimitiveWrapper(0);
+  String title;
   CharacterModel character;
+  Color color;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -38,21 +42,26 @@ class CharacterScreenState extends State<CharacterScreen> {
 
     partyBloc = BlocProvider.of<PartyBloc>(context);
 
-    character = widget.character;
+    character = widget.character ?? CharacterModel();
 
-    if (character != null) {
+    title = widget.isEdit ? 'Edit Character' : 'Add Character';
+
+    if (widget.isEdit) {
       nameController.text = character.characterName.toString();
       hpController.text = character.hp.toString();
       initController.text = character.initiative.toString();
       noteController.text = (character.notes ?? '').toString();
+      color = character.color;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    color ??= Theme.of(context).textTheme.bodyText1.color;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(character == null ? 'Add Character' : 'Edit Character'),
+        title: Text(title),
       ),
       body: Builder(
         builder: (context) => Form(
@@ -76,7 +85,7 @@ class CharacterScreenState extends State<CharacterScreen> {
                       ),
                     ),
                     Visibility(
-                      visible: character == null,
+                      visible: !widget.isEdit,
                       child: Flexible(
                         child: SpinnerButton(1, 1000, _number, '# Units',
                             key: Keys.numUnitKey),
@@ -114,10 +123,15 @@ class CharacterScreenState extends State<CharacterScreen> {
                     controller: noteController,
                   ),
                 ),
+                Flexible(
+                  child: ColorPickerButton(color, 'Character Color', (val) {
+                    color = val;
+                  }),
+                ),
                 ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState.validate()) {
-                      if (character != null) {
+                      if (widget.isEdit) {
                         character.edit(
                             characterName: nameController.text,
                             hp: int.parse(hpController.text),
@@ -141,6 +155,7 @@ class CharacterScreenState extends State<CharacterScreen> {
                                           PreferenceManger.getNumberSides()) +
                                       (_initMod.value ?? 0),
                               notes: noteController.text);
+                          character = character.copyWith(color: color);
                           partyBloc.add(AddPartyCharacter(character));
                         }
                         character = null;
@@ -149,8 +164,7 @@ class CharacterScreenState extends State<CharacterScreen> {
                       }
                     }
                   },
-                  child: Text(
-                      character == null ? 'Add Character' : 'Edit Character'),
+                  child: Text(title),
                 )
               ],
             ),

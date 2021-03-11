@@ -9,35 +9,35 @@ part 'character_list.g.dart';
 @JsonSerializable(explicitToJson: true)
 class CharacterList {
   @CharacterConverter()
-  List<CharacterModel> _l = [];
+  List<CharacterModel> l = [];
   @CharacterConverter()
-  List<CharacterModel> get list => _l;
+  List<CharacterModel> get list => l;
   @CharacterConverter()
-  CharacterModel get first => _l.first;
+  CharacterModel get first => l.first;
 
-  CharacterList({List<CharacterModel> list = const []}) : _l = list;
+  CharacterList({List<CharacterModel> list}) : l = list ?? [];
   void removeWhere(bool Function(CharacterModel) test) {
-    return _l.removeWhere(test);
+    return l.removeWhere(test);
   }
 
   void add(CharacterModel characterModel) {
-    _l.add(characterModel);
+    l.add(characterModel);
   }
 
   void sort([int Function(CharacterModel, CharacterModel) compare]) {
-    return _l.sort(compare);
+    return l.sort(compare);
   }
 
   int indexWhere(bool Function(CharacterModel) test, {int start = 0}) {
-    return _l.indexWhere(test);
+    return l.indexWhere(test);
   }
 
   CharacterModel operator [](int index) {
-    return _l[index];
+    return l[index];
   }
 
   void operator []=(int index, CharacterModel value) {
-    _l[index] = value;
+    l[index] = value;
   }
 
   factory CharacterList.fromJson(Map<String, dynamic> json) =>
@@ -47,7 +47,7 @@ class CharacterList {
 
   CharacterList clone() {
     var tmp = CharacterList();
-    _l?.forEach((i) => tmp.add(i));
+    l?.forEach((i) => tmp.add(i));
     return tmp;
   }
 }

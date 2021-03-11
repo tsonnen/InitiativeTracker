@@ -23,7 +23,10 @@ class CharacterCardState extends State<CharacterCard> {
     var item = widget.item;
     return Card(
       child: ListTile(
-          title: Text(item.characterName),
+          title: Text(
+            item.characterName,
+            style: TextStyle(color: item.color),
+          ),
           isThreeLine: true,
           subtitle: Text(item.notes ?? ''),
           trailing: Container(
