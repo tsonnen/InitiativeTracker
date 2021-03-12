@@ -27,21 +27,21 @@ class PartiesBloc extends Bloc<PartiesEvent, PartiesState> {
   }
 
   Stream<PartiesState> _mapPartiesLoadedToState() async* {
-    yield* _loadCharacters();
+    yield* _loadParties();
   }
 
   Stream<PartiesState> _mapPartiesAddedToState(event) async* {
     Encounter partyModel = event.encounterModel;
     await partiesDao.addParty(partyModel);
-    yield* _loadCharacters();
+    yield* _loadParties();
   }
 
   Stream<PartiesState> _mapPartiesDeletedToState(event) async* {
     await partiesDao.deleteParty(event.party);
-    yield* _loadCharacters();
+    yield* _loadParties();
   }
 
-  Stream<PartiesState> _loadCharacters() async* {
+  Stream<PartiesState> _loadParties() async* {
     yield PartiesLoadInProgress();
     var parties = await partiesDao.allParties;
     yield PartiesLoadedSuccessful(parties);

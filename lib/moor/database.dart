@@ -3,7 +3,7 @@ import 'package:initiative_tracker/uuid.dart';
 import 'package:moor/moor.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 import 'package:initiative_tracker/moor/parties.dart';
-import 'package:initiative_tracker/moor/character_list.dart';
+import 'package:initiative_tracker/models/character_list.dart';
 
 part 'database.g.dart';
 

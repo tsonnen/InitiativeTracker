@@ -1,14 +1,18 @@
 import 'package:initiative_tracker/models/encounter.dart';
-import 'package:initiative_tracker/moor/character_list.dart';
+import 'package:initiative_tracker/models/character_list.dart';
 import 'package:initiative_tracker/uuid.dart';
 import 'package:test/test.dart';
 
 void main() {
   group('Encounter Model Test', () {
-    var encounter = Encounter(
-        partyName: 'TEST',
-        partyUUID: Uuid().generateV4(),
-        characters: CharacterList());
+    var encounter;
+    setUp(() {
+      encounter = Encounter(
+          partyName: 'TEST',
+          partyUUID: Uuid().generateV4(),
+          characters: CharacterList());
+    });
+
     test('Test Copy With Encounter - NOTHING', () {
       expect(encounter.copyWith(), encounter);
     });

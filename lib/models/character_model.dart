@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:initiative_tracker/uuid.dart';
@@ -26,7 +25,7 @@ class CharacterModel {
       this.initiative,
       this.notes,
       this.initMod = 0,
-      this.color = Colors.grey,
+      this.color,
       String characterUUID})
       : characterUUID = characterUUID ?? Uuid().generateV4();
 
@@ -73,7 +72,7 @@ class CharacterModel {
     return rhs is CharacterModel &&
         characterName == rhs.characterName &&
         characterUUID == rhs.characterUUID &&
-        color == rhs.color &&
+        color?.value == rhs.color?.value &&
         hp == rhs.hp &&
         initMod == rhs.initMod &&
         initiative == rhs.initiative &&
@@ -103,7 +102,7 @@ class ColorConverter implements JsonConverter<Color, String> {
 
   @override
   Color fromJson(String json) {
-    if (json is Map<String, dynamic>) {
+    if (json is String) {
       return Color(jsonDecode(json));
     }
 
