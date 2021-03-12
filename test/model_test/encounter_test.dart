@@ -1,5 +1,5 @@
 import 'package:initiative_tracker/models/encounter.dart';
-import 'package:initiative_tracker/moor/character_list.dart';
+import 'package:initiative_tracker/models/character_list.dart';
 import 'package:initiative_tracker/uuid.dart';
 import 'package:test/test.dart';
 
