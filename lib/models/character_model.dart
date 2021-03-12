@@ -72,7 +72,7 @@ class CharacterModel {
     return rhs is CharacterModel &&
         characterName == rhs.characterName &&
         characterUUID == rhs.characterUUID &&
-        color == rhs.color &&
+        color?.value == rhs.color?.value &&
         hp == rhs.hp &&
         initMod == rhs.initMod &&
         initiative == rhs.initiative &&
@@ -102,7 +102,7 @@ class ColorConverter implements JsonConverter<Color, String> {
 
   @override
   Color fromJson(String json) {
-    if (json is Map<String, dynamic>) {
+    if (json is String) {
       return Color(jsonDecode(json));
     }
 
