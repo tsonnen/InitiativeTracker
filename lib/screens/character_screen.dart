@@ -148,7 +148,7 @@ class CharacterScreenState extends State<CharacterScreen> {
                                   ((_number.value ?? 1) > 1
                                       ? ' ' + i.toString()
                                       : ''),
-                              hp: int.tryParse(hpController.text),
+                              hp: int.tryParse(hpController.text) ?? 0,
                               initiative: initController.text != ''
                                   ? int.parse(initController.text)
                                   : rollDice(PreferenceManger.getNumberDice(),
@@ -160,7 +160,7 @@ class CharacterScreenState extends State<CharacterScreen> {
                         }
                         character = null;
                         Scaffold.of(context).showSnackBar(
-                            SnackBar(content: Text('Added Character')));
+                            SnackBar(content: Text('Added ${_number.value > 1 ? '${_number.value} Characters' : 'Character'}')));
                       }
                     }
                   },

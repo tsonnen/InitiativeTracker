@@ -19,10 +19,10 @@ class CharacterModel {
   @ColorConverter()
   Color color;
 
-  CharacterModel(
+  CharacterModel( 
       {this.characterName = 'TEST',
-      this.hp = 123,
-      this.initiative,
+      this.hp,
+      this.initiative = 0,
       this.notes,
       this.initMod = 0,
       this.color,
