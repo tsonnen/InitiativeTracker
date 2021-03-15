@@ -93,36 +93,40 @@ class CharacterScreenState extends State<CharacterScreen> {
                     ),
                   ],
                 ),
-                Container(
-                  child: TextFormField(
-                    decoration: Styles.textFieldDecoration('HP'),
-                    keyboardType: TextInputType.number,
-                    controller: hpController,
+                if (PreferenceManger.getShowHP())
+                  Container(
+                    child: TextFormField(
+                      decoration: Styles.textFieldDecoration('HP'),
+                      keyboardType: TextInputType.number,
+                      controller: hpController,
+                    ),
                   ),
-                ),
                 Row(
                   children: <Widget>[
-                    Flexible(
-                      child: TextFormField(
-                        decoration: Styles.textFieldDecoration('Initiative'),
-                        keyboardType: TextInputType.number,
-                        controller: initController,
+                    if (!PreferenceManger.getRollInititative())
+                      Flexible(
+                        child: TextFormField(
+                          decoration: Styles.textFieldDecoration('Initiative'),
+                          keyboardType: TextInputType.number,
+                          controller: initController,
+                        ),
                       ),
-                    ),
-                    Flexible(
-                      child: SpinnerButton(-100, 100, _initMod, 'INIT MOD',
-                          key: Keys.initModKey),
-                    ),
+                    if (PreferenceManger.getRollInititative())
+                      Flexible(
+                        child: SpinnerButton(-100, 100, _initMod, 'INIT MOD',
+                            key: Keys.initModKey),
+                      ),
                   ],
                 ),
-                Flexible(
-                  child: TextFormField(
-                    decoration: Styles.textFieldDecoration('Notes'),
-                    keyboardType: TextInputType.multiline,
-                    maxLines: null,
-                    controller: noteController,
+                if (PreferenceManger.getShowNotes())
+                  Flexible(
+                    child: TextFormField(
+                      decoration: Styles.textFieldDecoration('Notes'),
+                      keyboardType: TextInputType.multiline,
+                      maxLines: null,
+                      controller: noteController,
+                    ),
                   ),
-                ),
                 Flexible(
                   child: ColorPickerButton(color, 'Character Color', (val) {
                     color = val;
@@ -149,19 +153,20 @@ class CharacterScreenState extends State<CharacterScreen> {
                                       ? ' ' + i.toString()
                                       : ''),
                               hp: int.tryParse(hpController.text) ?? 0,
-                              initiative: initController.text != ''
-                                  ? int.parse(initController.text)
-                                  : rollDice(PreferenceManger.getNumberDice(),
+                              initiative: PreferenceManger.getRollInititative()
+                                  ? rollDice(PreferenceManger.getNumberDice(),
                                           PreferenceManger.getNumberSides()) +
-                                      (_initMod.value ?? 0),
+                                      (_initMod.value ?? 0)
+                                  : int.parse(initController.text),
                               initMod: _initMod.value,
                               notes: noteController.text);
                           character = character.copyWith(color: color);
                           partyBloc.add(AddPartyCharacter(character));
                         }
                         character = null;
-                        Scaffold.of(context).showSnackBar(
-                            SnackBar(content: Text('Added ${_number.value > 1 ? '${_number.value} Characters' : 'Character'}')));
+                        Scaffold.of(context).showSnackBar(SnackBar(
+                            content: Text(
+                                'Added ${_number.value > 1 ? '${_number.value} Characters' : 'Character'}')));
                       }
                     }
                   },

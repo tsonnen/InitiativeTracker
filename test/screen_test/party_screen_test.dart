@@ -72,8 +72,10 @@ void main() {
               skipOffstage: false),
           findsOneWidget);
 
-      await tester.tap(find.widgetWithText(
-          ListTile, partyModel.characters.first.characterName));
+      await tester.tap(find.descendant(
+          of: find.widgetWithText(
+              ExpansionTile, partyModel.characters.first.characterName),
+          matching: find.byIcon(Icons.edit)));
 
       await tester.pumpAndSettle();
 
@@ -97,8 +99,10 @@ void main() {
               skipOffstage: false),
           findsOneWidget);
 
-      await tester.longPress(find.widgetWithText(
-          ListTile, partyModel.characters.first.characterName));
+      await tester.tap(find.descendant(
+          of: find.widgetWithText(
+              ExpansionTile, partyModel.characters.first.characterName),
+          matching: find.byIcon(Icons.delete)));
 
       await tester.pumpAndSettle();
 
@@ -146,6 +150,7 @@ void main() {
       verify(partyBloc.add(argThat(MatchType<GenerateParty>()))).called(1);
     });
 
+    //TODO: Work on this
     testWidgets('Test HP Changes', (WidgetTester tester) async {
       when(partyBloc.state).thenAnswer((_) => PartyLoadedSucess(partyModel));
       when(partiesBloc.state)
@@ -228,7 +233,6 @@ void main() {
       await tester.pumpWidget(createHomeScreen(partiesBloc, partyBloc));
       await tester.pumpAndSettle();
 
-      
       await tester.tap(find.byTooltip('Open navigation menu'));
       await tester.pumpAndSettle();
 
@@ -242,7 +246,7 @@ void main() {
       when(partyBloc.state).thenAnswer((_) => PartyLoadedSucess(partyModel));
       when(partiesBloc.state)
           .thenAnswer((_) => PartiesLoadedSuccessful([partyModel]));
-      
+
       await tester.pumpWidget(createHomeScreen(partiesBloc, partyBloc));
       await tester.pumpAndSettle();
 

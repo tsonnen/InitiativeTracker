@@ -37,7 +37,11 @@ class SettingsPageState extends State<SettingsPage> {
             isDefault: true,
           ),
           PreferenceTitle('Auto Roll Initiative'),
-          CheckboxPreference('Should Roll Initiative', 'should_roll_init'),
+          CheckboxPreference(
+            'Should Roll Initiative',
+            'should_roll_init',
+            defaultVal: true,
+          ),
           DropdownPreference(
             'Number of Dice',
             'num_dice',
@@ -64,6 +68,22 @@ class SettingsPageState extends State<SettingsPage> {
           CheckboxPreference(
             'Confirm Delete',
             'confirm_delete',
+            defaultVal: true,
+          ),
+          PreferenceTitle('Display Options'),
+          CheckboxPreference(
+            'Show HP',
+            'show_hp',
+            defaultVal: true,
+          ),
+          CheckboxPreference(
+            'Show initiative',
+            'show_init',
+            defaultVal: true,
+          ),
+          CheckboxPreference(
+            'Show Notes',
+            'show_notes',
             defaultVal: true,
           ),
         ],

@@ -54,8 +54,14 @@ class TestHelper {
   }
 
   static Future<void> setMockPrefs(Map<String, dynamic> values) async {
-    SharedPreferences.setMockInitialValues(values);
-    await PreferenceManger.getPreferences();
+    if (PreferenceManger.prefs == null) {
+      SharedPreferences.setMockInitialValues(values);
+      await PreferenceManger.getPreferences();
+    } else {
+      values.entries.forEach((i) async {
+        await PreferenceManger.setVal(i.key, i.value);
+      });
+    }
   }
 
   static Future<void> selectItemInDropdown(

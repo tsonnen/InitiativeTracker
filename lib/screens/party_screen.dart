@@ -97,6 +97,9 @@ class PartyScreenState extends State<PartyScreen> {
         ),
         body: Container(
             child: CharacterListWidget(
+                showHP: PreferenceManger.getShowHP(),
+                showInitiative: PreferenceManger.getShowInitiative(),
+                showNotes: PreferenceManger.getShowNotes(),
                 onLongPress: (characterModel) {
                   partyBloc.add(
                       DeletePartyCharacter(characterModel: characterModel));

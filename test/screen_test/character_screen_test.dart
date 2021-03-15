@@ -46,6 +46,8 @@ void main() {
       when(partyBloc.add(argThat(MatchType<AddPartyCharacter>())))
           .thenReturn(null);
 
+      await TestHelper.setMockPrefs({'pref_should_roll_init': false});
+
       var charToAdd = CharacterModel(
           characterName: 'Test Char', initiative: 12, hp: 12, notes: 'None');
 
@@ -81,6 +83,8 @@ void main() {
           .thenReturn(null);
       var charToAdd = CharacterModel(characterName: 'Test Char', hp: 12);
       var numCharacters = 2;
+
+      await TestHelper.setMockPrefs({'pref_should_roll_init': true});
 
       await tester.pumpWidget(createCharacterScreen(partyBloc));
 
