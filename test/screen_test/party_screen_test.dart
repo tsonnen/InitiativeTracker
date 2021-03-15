@@ -7,6 +7,7 @@ import 'package:initiative_tracker/bloc/party/party_bloc.dart';
 import 'package:initiative_tracker/models/character_model.dart';
 import 'package:initiative_tracker/models/encounter.dart';
 import 'package:initiative_tracker/models/character_list.dart';
+import 'package:initiative_tracker/screens/party_management_screen.dart';
 import 'package:initiative_tracker/screens/party_screen.dart';
 import 'package:initiative_tracker/widgets/party_screen_dialogs.dart';
 import 'package:mockito/mockito.dart';
@@ -186,10 +187,6 @@ void main() {
       when(partiesBloc.add(argThat(MatchType<AddParty>()))).thenReturn(null);
 
       await tester.pumpWidget(createHomeScreen(partiesBloc, partyBloc));
-
-      await tester.pumpAndSettle();
-
-      await tester.tap(find.byType(PopupMenuButton));
       await tester.pumpAndSettle();
 
       await tester.tap(find.byIcon(Icons.save, skipOffstage: false));
@@ -213,16 +210,15 @@ void main() {
       when(partiesBloc.add(argThat(MatchType<DeleteParty>()))).thenReturn(null);
 
       await tester.pumpWidget(createHomeScreen(partiesBloc, partyBloc));
-
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byType(PopupMenuButton));
+      await tester.tap(find.byTooltip('Open navigation menu'));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byIcon(Icons.view_list, skipOffstage: false));
+      await tester.tap(find.text('Saved Parties'));
       await tester.pumpAndSettle();
 
-      expect(find.byType(PartiesDialog), findsOneWidget);
+      expect(find.byType(PartyManagementScreen), findsOneWidget);
     });
 
     testWidgets('Test Help Route', (WidgetTester tester) async {
@@ -230,13 +226,13 @@ void main() {
       when(partiesBloc.state)
           .thenAnswer((_) => PartiesLoadedSuccessful([partyModel]));
       await tester.pumpWidget(createHomeScreen(partiesBloc, partyBloc));
-
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byType(PopupMenuButton));
+      
+      await tester.tap(find.byTooltip('Open navigation menu'));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byIcon(Icons.help_outline, skipOffstage: false));
+      await tester.tap(find.byIcon(Icons.help, skipOffstage: false));
       await tester.pumpAndSettle();
 
       expect(find.widgetWithText(AppBar, 'Help'), findsOneWidget);
@@ -246,11 +242,11 @@ void main() {
       when(partyBloc.state).thenAnswer((_) => PartyLoadedSucess(partyModel));
       when(partiesBloc.state)
           .thenAnswer((_) => PartiesLoadedSuccessful([partyModel]));
+      
       await tester.pumpWidget(createHomeScreen(partiesBloc, partyBloc));
-
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byType(PopupMenuButton));
+      await tester.tap(find.byTooltip('Open navigation menu'));
       await tester.pumpAndSettle();
 
       await tester.tap(find.byIcon(Icons.settings, skipOffstage: false));

@@ -4,8 +4,8 @@ import 'package:initiative_tracker/bloc/parties/parties_bloc.dart';
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
 import 'package:initiative_tracker/helpers/preference_manger.dart';
 import 'package:initiative_tracker/screens/character_screen.dart';
+import 'package:initiative_tracker/screens/party_management_screen.dart';
 import 'package:initiative_tracker/widgets/character_list.dart';
-import 'package:initiative_tracker/widgets/menu_item.dart';
 
 import 'package:initiative_tracker/screens/help_screen.dart';
 import 'package:initiative_tracker/screens/settings_screen.dart';
@@ -42,6 +42,7 @@ class PartyScreenState extends State<PartyScreen> {
       }
       var partyModel = state.encounterModel;
       return Scaffold(
+        drawer: PartyScreenDrawer(),
         appBar: AppBar(
           title: Text('Round ${partyModel.round}'),
           actions: <Widget>[
@@ -51,91 +52,47 @@ class PartyScreenState extends State<PartyScreen> {
                 partyBloc.add(GenerateParty());
               },
             ),
-            PopupMenuButton(
-              itemBuilder: (BuildContext context) {
-                return [
-                  PopupMenuItem(
-                    child: MenuItem(
-                        label: 'Save Party',
-                        icon: Icons.save,
-                        onTap: () {
-                          if (partyModel.partyName == null ||
-                              partyModel.partyName.isEmpty) {
-                            showDialog<String>(
-                                context: context,
-                                builder: (context) {
-                                  return PartyNameDialog();
-                                }).then((value) {
-                              if (value != null) {
-                                partyModel =
-                                    partyModel.copyWith(partyName: value);
-                                partiesBloc.add(AddParty(partyModel));
-                              }
-                            });
-                          } else if (PreferenceManger.getConfirmOverwrite()) {
-                            showDialog<bool>(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return PartyOverwriteDialog(
-                                      name: partyModel.partyName);
-                                }).then((value) {
-                              if (value) {
-                                partiesBloc.add(AddParty(partyModel));
-                              } else if (!value) {
-                                showDialog<String>(
-                                    context: context,
-                                    builder: (context) {
-                                      return PartyNameDialog();
-                                    }).then((value) {
-                                  if (value != null) {
-                                    partyModel =
-                                        partyModel.copyWith(partyName: value);
-                                    partiesBloc.add(AddParty(partyModel));
-                                  }
-                                });
-                              }
-                            });
-                          } else {
-                            partiesBloc.add(AddParty(partyModel));
-                          }
-                        }),
-                  ),
-                  PopupMenuItem(
-                    child: MenuItem(
-                      icon: Icons.view_list,
-                      label: 'Manage Saved Parties',
-                      onTap: () {
-                        showDialog(
+            IconButton(
+                icon: Icon(Icons.save),
+                onPressed: () {
+                  if (partyModel.partyName == null ||
+                      partyModel.partyName.isEmpty) {
+                    showDialog<String>(
+                        context: context,
+                        builder: (context) {
+                          return PartyNameDialog();
+                        }).then((value) {
+                      if (value != null) {
+                        partyModel = partyModel.copyWith(partyName: value);
+                        partiesBloc.add(AddParty(partyModel));
+                      }
+                    });
+                  } else if (PreferenceManger.getConfirmOverwrite()) {
+                    showDialog<bool>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return PartyOverwriteDialog(
+                              name: partyModel.partyName);
+                        }).then((value) {
+                      if (value) {
+                        partiesBloc.add(AddParty(partyModel));
+                      } else if (!value) {
+                        showDialog<String>(
                             context: context,
                             builder: (context) {
-                              return PartiesDialog();
-                            });
-                      },
-                    ),
-                  ),
-                  PopupMenuItem(
-                    child: MenuItem(
-                      label: 'Settings',
-                      icon: Icons.settings,
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => SettingsPage()));
-                      },
-                    ),
-                  ),
-                  PopupMenuItem(
-                    child: MenuItem(
-                      label: 'Help',
-                      icon: Icons.help_outline,
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => HelpPage()));
-                      },
-                    ),
-                  ),
-                ];
-              },
-            ),
+                              return PartyNameDialog();
+                            }).then((value) {
+                          if (value != null) {
+                            partyModel = partyModel.copyWith(partyName: value);
+                            partiesBloc.add(AddParty(partyModel));
+                          }
+                        });
+                      }
+                    });
+                  } else {
+                    partiesBloc.add(AddParty(partyModel));
+                  }
+                }),
           ],
         ),
         body: Container(
@@ -177,5 +134,51 @@ class PartyScreenState extends State<PartyScreen> {
         ),
       );
     });
+  }
+}
+
+class PartyScreenDrawer extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          DrawerHeader(
+            child: Text('Initiative Tracker'),
+          ),
+          ListTile(
+              title: Text('Saved Parties'),
+              onTap: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => PartyManagementScreen(),
+                  ),
+                );
+              }),
+          ListTile(
+              leading: Icon(Icons.settings),
+              title: Text('Settings'),
+              onTap: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => SettingsPage(),
+                  ),
+                );
+              }),
+          ListTile(
+            leading: Icon(Icons.help),
+            title: Text('Help'),
+            onTap: () {
+              Navigator.of(context).pop();
+              Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (context) => HelpPage()));
+            },
+          )
+        ],
+      ),
+    );
   }
 }

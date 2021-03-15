@@ -5,7 +5,7 @@ abstract class PartiesEvent extends Equatable {
 }
 
 class DeleteParty extends PartiesEvent {
-  final Encounter party;
+  final Party party;
 
   DeleteParty(this.party);
 
