@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:initiative_tracker/uuid.dart';
+import 'package:initiative_tracker/helpers/uuid.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'character_model.g.dart';

@@ -1,6 +1,6 @@
 import 'package:initiative_tracker/models/encounter.dart';
 import 'package:test/test.dart';
-import 'package:initiative_tracker/party_list_model.dart';
+import 'package:initiative_tracker/models/party_list_model.dart';
 
 void main() {
   group('Party List Model', () {

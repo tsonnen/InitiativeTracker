@@ -1,5 +1,5 @@
 import 'package:initiative_tracker/moor/parties_dao.dart';
-import 'package:initiative_tracker/uuid.dart';
+import 'package:initiative_tracker/helpers/uuid.dart';
 import 'package:moor/moor.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 import 'package:initiative_tracker/moor/parties.dart';

@@ -5,7 +5,7 @@ import 'package:initiative_tracker/bloc/parties/parties_bloc.dart';
 import 'package:preferences/preferences.dart';
 
 import 'package:initiative_tracker/screens/party_screen.dart';
-import 'package:initiative_tracker/preference_manger.dart';
+import 'package:initiative_tracker/helpers/preference_manger.dart';
 
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
 

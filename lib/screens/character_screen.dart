@@ -5,8 +5,8 @@ import 'package:initiative_tracker/helpers/keys.dart';
 import 'package:initiative_tracker/widgets/form_widgets.dart';
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
 import 'package:initiative_tracker/models/character_model.dart';
-import 'package:initiative_tracker/preference_manger.dart';
-import 'package:initiative_tracker/random_generator.dart';
+import 'package:initiative_tracker/helpers/preference_manger.dart';
+import 'package:initiative_tracker/helpers/random_generator.dart';
 
 class CharacterScreen extends StatefulWidget {
   static final String route = 'Character-Screen';
@@ -154,6 +154,7 @@ class CharacterScreenState extends State<CharacterScreen> {
                                   : rollDice(PreferenceManger.getNumberDice(),
                                           PreferenceManger.getNumberSides()) +
                                       (_initMod.value ?? 0),
+                              initMod: _initMod.value,
                               notes: noteController.text);
                           character = character.copyWith(color: color);
                           partyBloc.add(AddPartyCharacter(character));

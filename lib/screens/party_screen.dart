@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:initiative_tracker/bloc/parties/parties_bloc.dart';
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
-import 'package:initiative_tracker/preference_manger.dart';
+import 'package:initiative_tracker/helpers/preference_manger.dart';
 import 'package:initiative_tracker/screens/character_screen.dart';
 import 'package:initiative_tracker/widgets/character_list.dart';
 import 'package:initiative_tracker/widgets/menu_item.dart';

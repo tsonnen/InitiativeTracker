@@ -1,4 +1,4 @@
-import 'package:initiative_tracker/uuid.dart';
+import 'package:initiative_tracker/helpers/uuid.dart';
 
 class System {
   String systemUUID;

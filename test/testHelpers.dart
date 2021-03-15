@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:initiative_tracker/bloc/parties/parties_bloc.dart';
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
 import 'package:bloc_test/bloc_test.dart';
-import 'package:initiative_tracker/preference_manger.dart';
+import 'package:initiative_tracker/helpers/preference_manger.dart';
 import 'package:initiative_tracker/widgets/form_widgets.dart';
 import 'package:mockito/mockito.dart';
 import 'package:numberpicker/numberpicker.dart';

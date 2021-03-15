@@ -1,7 +1,7 @@
 import 'package:initiative_tracker/models/character_list.dart';
 import 'package:initiative_tracker/models/character_model.dart';
 import 'package:initiative_tracker/moor/database.dart';
-import 'package:initiative_tracker/uuid.dart';
+import 'package:initiative_tracker/helpers/uuid.dart';
 
 class Encounter extends Party {
   int round;

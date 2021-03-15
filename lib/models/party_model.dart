@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:initiative_tracker/models/character_model.dart';
-import 'package:initiative_tracker/uuid.dart';
+import 'package:initiative_tracker/helpers/uuid.dart';
 import 'package:collection/collection.dart';
 
 class OLDPartyModel {
