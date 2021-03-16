@@ -22,6 +22,15 @@ subprojects {
 }
 subprojects {
     project.evaluationDependsOn(':app')
+
+    afterEvaluate {project ->
+        if (project.hasProperty("android")) {
+            android {
+                compileSdkVersion 28
+                buildToolsVersion "28.0.3" 
+            }
+        }
+    }
 }
 
 task clean(type: Delete) {
