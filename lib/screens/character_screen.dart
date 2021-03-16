@@ -103,7 +103,7 @@ class CharacterScreenState extends State<CharacterScreen> {
                   ),
                 Row(
                   children: <Widget>[
-                    if (!PreferenceManger.getRollInititative())
+                    if (!PreferenceManger.getRollInititative() || widget.isEdit)
                       Flexible(
                         child: TextFormField(
                           decoration: Styles.textFieldDecoration('Initiative'),
@@ -153,11 +153,13 @@ class CharacterScreenState extends State<CharacterScreen> {
                                       ? ' ' + i.toString()
                                       : ''),
                               hp: int.tryParse(hpController.text) ?? 0,
-                              initiative: PreferenceManger.getRollInititative()
+                              initiative: PreferenceManger
+                                          .getRollInititative() &&
+                                      !widget.isEdit
                                   ? rollDice(PreferenceManger.getNumberDice(),
                                           PreferenceManger.getNumberSides()) +
                                       (_initMod.value ?? 0)
-                                  : int.parse(initController.text),
+                                  : int.tryParse(initController.text) ?? 0,
                               initMod: _initMod.value,
                               notes: noteController.text);
                           character = character.copyWith(color: color);
