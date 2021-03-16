@@ -19,28 +19,49 @@ class PreferenceManger {
     return 20;
   }
 
-  static bool getConfirmDelete(){
+  static bool getConfirmDelete() {
     if (prefs != null) {
       return prefs.getBool('pref_confirm_delete') ?? true;
     }
     return true;
   }
 
-  static bool getConfirmOverwrite(){
+  static bool getConfirmOverwrite() {
     if (prefs != null) {
       return prefs.getBool('pref_confirm_overwrite') ?? true;
     }
     return true;
   }
 
-  static bool getConfirmLoad(){
+  static bool getConfirmLoad() {
     if (prefs != null) {
       return prefs.getBool('pref_confirm_load') ?? true;
     }
     return true;
   }
 
-  static String getSystemUUID(){
+  static bool getShowHP() {
+    if (prefs != null) {
+      return prefs.getBool('pref_show_hp') ?? true;
+    }
+    return true;
+  }
+
+  static bool getShowNotes() {
+    if (prefs != null) {
+      return prefs.getBool('pref_show_notes') ?? true;
+    }
+    return true;
+  }
+
+  static bool getShowInitiative() {
+    if (prefs != null) {
+      return prefs.getBool('pref_show_initiative') ?? true;
+    }
+    return true;
+  }
+
+  static String getSystemUUID() {
     return prefs?.getString('pref_systemuuid');
   }
 
@@ -48,30 +69,58 @@ class PreferenceManger {
     prefs ??= await SharedPreferences.getInstance();
   }
 
+  static bool getRollInititative() {
+    if (prefs != null) {
+      return prefs.getBool('pref_should_roll_init') ?? true;
+    }
+    return true;
+  }
+
   static Future<void> setSystemUUID(String systemUUID) async {
-    if(prefs != null){
+    if (prefs != null) {
       await prefs.setString('pref_systemuuid', systemUUID);
-    }else{
+    } else {
       await getPreferences();
       await setSystemUUID(systemUUID);
     }
   }
 
   static Future<void> setConfirmLoad(bool confirm) async {
-    if(prefs != null){
+    if (prefs != null) {
       await prefs.setBool('pref_confirm_load', confirm);
-    }else{
+    } else {
       await getPreferences();
       await setConfirmLoad(confirm);
     }
   }
 
   static Future<void> setConfirmDelete(bool confirm) async {
-    if(prefs != null){
+    if (prefs != null) {
       await prefs.setBool('pref_confirm_delete', confirm);
-    }else{
+    } else {
       await getPreferences();
       await setConfirmDelete(confirm);
+    }
+  }
+
+  static Future<void> setRollInititative(bool roll) async {
+    if (prefs != null) {
+      await prefs.setBool('pref_should_roll_init', roll);
+    } else {
+      await getPreferences();
+      await setConfirmDelete(roll);
+    }
+  }
+
+  static Future<void> setVal(String key, dynamic val) async {
+    if (val is bool) {
+      await prefs.setBool(key, val);
+    } else if (val is double) {
+      await prefs.setDouble(key, val);
+    } else if (val is int) {
+      await prefs.setInt(key, val);
+    } else {
+      throw UnimplementedError;
     }
   }
 }

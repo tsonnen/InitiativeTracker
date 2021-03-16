@@ -1,4 +1,4 @@
-class DataException implements Exception{
+class DataException implements Exception {
   String cause;
   DataException(this.cause);
 }
