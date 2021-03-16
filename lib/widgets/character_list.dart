@@ -31,64 +31,67 @@ class CharacterCardState extends State<CharacterCard> {
   Widget build(BuildContext context) {
     var item = widget.item;
     return Card(
-      child: ExpansionTile(
-        title: Text(
-          item.characterName,
-          style: TextStyle(color: item.color),
-        ),
-        subtitle: widget.showInitiative ? Text('${item.initiative}') : null,
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
+      child: Padding(
+        padding: EdgeInsets.zero,
+        child: ExpansionTile(
+          title: Text(
+            item.characterName,
+            style: TextStyle(color: item.color),
+          ),
+          subtitle: widget.showInitiative ? Text('${item.initiative}') : null,
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (widget.showHp)
+                Container(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      IconButton(
+                        icon: Icon(Icons.remove),
+                        color: Colors.red,
+                        onPressed: () {
+                          setState(() {
+                            item.reduceHP();
+                          });
+                        },
+                      ),
+                      Text(
+                        item.hp.toString(),
+                        textAlign: TextAlign.right,
+                        style: TextStyle(
+                          color: item.hp < 0
+                              ? Colors.red
+                              : Theme.of(context).textTheme.bodyText2.color,
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.add),
+                        onPressed: () {
+                          setState(() {
+                            item.increaseHP();
+                          });
+                        },
+                        color: Colors.green,
+                      )
+                    ],
+                  ),
+                ),
+              IconButton(
+                icon: Icon(Icons.edit),
+                onPressed: widget.onTap,
+              ),
+              IconButton(
+                icon: Icon(Icons.delete),
+                onPressed: widget.onLongPress,
+              )
+            ],
+          ),
           children: [
-            IconButton(
-              icon: Icon(Icons.edit),
-              onPressed: widget.onTap,
-            ),
-            IconButton(
-              icon: Icon(Icons.delete),
-              onPressed: widget.onLongPress,
-            )
+            if (widget.showNotes) Text(item.notes ?? ''),
           ],
         ),
-        children: [
-          if (widget.showHp)
-            Container(
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  IconButton(
-                    icon: Icon(Icons.remove),
-                    color: Colors.red,
-                    onPressed: () {
-                      setState(() {
-                        item.reduceHP();
-                      });
-                    },
-                  ),
-                  Text(
-                    item.hp.toString(),
-                    textAlign: TextAlign.right,
-                    style: TextStyle(
-                      color: item.hp < 0
-                          ? Colors.red
-                          : Theme.of(context).textTheme.bodyText2.color,
-                    ),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.add),
-                    onPressed: () {
-                      setState(() {
-                        item.increaseHP();
-                      });
-                    },
-                    color: Colors.green,
-                  )
-                ],
-              ),
-            ),
-          if (widget.showNotes) Text(item.notes ?? ''),
-        ],
       ),
     );
   }
