@@ -52,6 +52,7 @@ class CharacterScreenState extends State<CharacterScreen> {
       initController.text = character.initiative.toString();
       noteController.text = (character.notes ?? '').toString();
       color = character.color;
+      _initMod.value = character.initMod;
     }
   }
 
@@ -142,7 +143,8 @@ class CharacterScreenState extends State<CharacterScreen> {
                             initiative: initController.text != ''
                                 ? int.parse(initController.text)
                                 : null,
-                            notes: noteController.text);
+                            notes: noteController.text,
+                            color: color);
                         partyBloc.add(AddPartyCharacter(character));
                         Navigator.of(context).pop();
                       } else {
@@ -161,8 +163,8 @@ class CharacterScreenState extends State<CharacterScreen> {
                                       (_initMod.value ?? 0)
                                   : int.tryParse(initController.text) ?? 0,
                               initMod: _initMod.value,
-                              notes: noteController.text);
-                          character = character.copyWith(color: color);
+                              notes: noteController.text,
+                              color: color);
                           partyBloc.add(AddPartyCharacter(character));
                         }
                         character = null;
