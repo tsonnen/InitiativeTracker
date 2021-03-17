@@ -144,7 +144,7 @@ void main() {
 
       await tester.pumpWidget(createHomeScreen(partiesBloc, partyBloc));
       await tester.pumpAndSettle();
-      await tester.tap(find.widgetWithIcon(IconButton, Icons.refresh));
+      await tester.tap(find.widgetWithIcon(IconButton, Icons.clear));
       await tester.pumpAndSettle();
 
       verify(partyBloc.add(argThat(MatchType<GenerateParty>()))).called(1);

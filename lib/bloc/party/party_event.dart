@@ -44,3 +44,13 @@ class LoadParty extends PartyEvent {
   @override
   List<Object> get props => [partyModel];
 }
+
+class RollParty extends PartyEvent {
+  final int numSides;
+  final int numDice;
+
+  RollParty(this.numDice, this.numSides);
+
+  @override
+  List<Object> get props => [numSides];
+}

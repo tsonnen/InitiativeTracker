@@ -46,8 +46,15 @@ class PartyScreenState extends State<PartyScreen> {
         appBar: AppBar(
           title: Text('Round ${partyModel.round}'),
           actions: <Widget>[
+            if (PreferenceManger.getRollInititative())
+              IconButton(
+                  icon: Icon(Icons.refresh_outlined),
+                  onPressed: () {
+                    partyBloc.add(RollParty(PreferenceManger.getNumberDice(),
+                        PreferenceManger.getNumberSides()));
+                  }),
             IconButton(
-              icon: Icon(Icons.refresh),
+              icon: Icon(Icons.clear),
               onPressed: () {
                 partyBloc.add(GenerateParty());
               },

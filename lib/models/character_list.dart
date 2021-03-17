@@ -25,6 +25,12 @@ class CharacterList {
     l.add(characterModel);
   }
 
+  void forEach(Function(CharacterModel) f) {
+    l.forEach((i) {
+      f(i);
+    });
+  }
+
   void sort([int Function(CharacterModel, CharacterModel) compare]) {
     return l.sort(compare);
   }

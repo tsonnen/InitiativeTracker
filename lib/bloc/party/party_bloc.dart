@@ -33,6 +33,10 @@ class PartyBloc extends Bloc<PartyEvent, PartyState> {
     } else if (event is ChangeRound) {
       event.roundForward ? partyModel.nextRound() : partyModel.prevRound();
       yield PartyLoadedSucess(partyModel);
+    } else if (event is RollParty) {
+      yield PartyModCharacter();
+      partyModel.rollParty(event.numDice, event.numSides);
+      yield PartyLoadedSucess(partyModel);
     }
   }
 }

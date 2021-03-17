@@ -1,3 +1,4 @@
+import 'package:initiative_tracker/helpers/random_generator.dart';
 import 'package:initiative_tracker/models/character_list.dart';
 import 'package:initiative_tracker/models/character_model.dart';
 import 'package:initiative_tracker/moor/database.dart';
@@ -75,4 +76,10 @@ class Encounter extends Party {
             partyName: party?.partyName ?? '',
             partyUUID: party?.partyUUID ?? Uuid().generateV4(),
             characters: party?.characters ?? CharacterList());
+
+  void rollParty(int numDice, int numSides) {
+    characters.forEach((i) {
+      addCharacter(i.copyWith(initiative: rollDice(numDice, numSides)));
+    });
+  }
 }
