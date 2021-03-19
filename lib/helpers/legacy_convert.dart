@@ -6,9 +6,7 @@ import 'package:initiative_tracker/models/character_list.dart';
 import 'package:initiative_tracker/models/character_model.dart';
 import 'package:initiative_tracker/models/encounter.dart';
 import 'package:initiative_tracker/models/old_party_list.dart';
-import 'package:initiative_tracker/models/party_list_model.dart';
 import 'package:initiative_tracker/moor/database.dart';
-import 'package:initiative_tracker/moor/parties_dao.dart';
 import 'package:path_provider/path_provider.dart';
 
 class ConvertLegacy {
