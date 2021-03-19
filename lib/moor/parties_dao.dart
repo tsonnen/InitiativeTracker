@@ -5,10 +5,10 @@ import 'package:moor_flutter/moor_flutter.dart';
 part 'parties_dao.g.dart';
 
 @UseDao(tables: [Parties])
-class PartiesDao extends DatabaseAccessor<MyDatabase> with _$PartiesDaoMixin {
+class PartiesDao extends DatabaseAccessor<Database> with _$PartiesDaoMixin {
   // this constructor is required so that the main database can create an instance
   // of this object.
-  PartiesDao(MyDatabase db) : super(db);
+  PartiesDao(Database db) : super(db);
 
   Future<List<Party>> get allParties => select(parties).get();
 

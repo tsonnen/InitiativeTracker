@@ -9,9 +9,9 @@ part 'parties_event.dart';
 part 'parties_state.dart';
 
 class PartiesBloc extends Bloc<PartiesEvent, PartiesState> {
-  final partiesDao = MyDatabase().partiesDao;
+  final partiesDao;
 
-  PartiesBloc() : super(PartiesInitial());
+  PartiesBloc(this.partiesDao) : super(PartiesInitial());
 
   @override
   Stream<PartiesState> mapEventToState(

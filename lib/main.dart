@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:initiative_tracker/bloc/parties/parties_bloc.dart';
 import 'package:initiative_tracker/helpers/legacy_convert.dart';
+import 'package:initiative_tracker/moor/database.dart';
 import 'package:preferences/preferences.dart';
 
 import 'package:initiative_tracker/screens/party_screen.dart';
@@ -16,8 +17,6 @@ void main() async {
 
   await PreferenceManger.getPreferences();
 
-  ConvertLegacy.addLegacyParties(Colors.blueGrey);
-
   runApp(App());
 }
 
@@ -27,8 +26,17 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
-  final PartyBloc _partyBloc = PartyBloc();
-  final PartiesBloc _partiesBloc = PartiesBloc();
+  PartyBloc _partyBloc;
+  PartiesBloc _partiesBloc;
+  final partiesDao = Database().partiesDao;
+
+  @override
+  void initState() {
+    _partiesBloc = PartiesBloc(partiesDao);
+    _partyBloc = PartyBloc();
+    ConvertLegacy.addLegacyParties(Colors.blueGrey, partiesDao);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
