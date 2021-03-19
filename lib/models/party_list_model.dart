@@ -1,23 +1,11 @@
-import 'dart:convert';
-import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:initiative_tracker/models/encounter.dart';
-import 'package:path_provider/path_provider.dart';
 
 class PartyListModel {
   List<Encounter> parties;
 
-  PartyListModel.json({this.parties});
-
-  PartyListModel() {
-    parties = <Encounter>[];
-  }
-
-  List<dynamic> toMap({bool legacy = false}) {
-    var jsonList = [];
-    parties.map((i) => jsonList.add(i.toJson())).toList();
-    return jsonList;
-  }
+  PartyListModel({List<Encounter> parties})
+      : parties = parties ?? <Encounter>[];
 
   bool containsParty(Encounter partyModel) {
     var matches =
@@ -39,24 +27,6 @@ class PartyListModel {
 
   void remove(Encounter item) {
     parties.remove(item);
-  }
-
-  static Future<String> get _localPath async {
-    final directory = await getApplicationDocumentsDirectory();
-
-    return directory.path;
-  }
-
-  static Future<File> get _localFile async {
-    final path = await _localPath;
-    return File('$path/savedParties.txt');
-  }
-
-  Future<File> write() async {
-    final file = await _localFile;
-
-    // Write the file.
-    return file.writeAsString(json.encode(toMap(legacy: true)));
   }
 
   PartyListModel clone() {
