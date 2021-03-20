@@ -10,22 +10,23 @@ import 'package:initiative_tracker/moor/parties_dao.dart';
 import 'package:path_provider/path_provider.dart';
 
 class ConvertLegacy {
-  static void addLegacyParties(Color color, PartiesDao partiesDao) {
-    var legacyParties = readSavedPartiesSync();
+  static void addLegacyParties(Color color, PartiesDao partiesDao) async {
+    var legacyParties = await readSavedParties();
     legacyParties.parties.map<Encounter>((encounter) {
+      var characters = encounter.characters.map<CharacterModel>((character) {
+        return CharacterModel(
+            characterName: character.characterName,
+            characterUUID: character.characterUUID,
+            color: color,
+            hp: character.hp,
+            initiative: character.initiative,
+            notes: character.notes);
+      }).toList();
+
       return Encounter(
           partyName: encounter.partyName,
           partyUUID: encounter.partyUUID,
-          characters: CharacterList(
-              list: encounter.characters.map<CharacterModel>((character) {
-            return CharacterModel(
-                characterName: character.characterName,
-                characterUUID: character.characterUUID,
-                color: color,
-                hp: character.hp,
-                initiative: character.initiative,
-                notes: character.notes);
-          })));
+          characters: CharacterList(list: characters));
     }).forEach((i) {
       partiesDao.addParty(i);
     });
@@ -54,8 +55,11 @@ class ConvertLegacy {
     final file = await _localFile;
     try {
       var jsonData = await file.readAsString();
+      print(jsonData);
+      var tmp =
+          OLDPartyListModel.fromJson(json.decode(jsonData), legacyRead: true);
 
-      return OLDPartyListModel.fromJson(json.decode(jsonData));
+      return tmp;
     } catch (e) {
       print('Failed to load legacy JSON: ${file.path}');
       // If encountering an error, return 0.

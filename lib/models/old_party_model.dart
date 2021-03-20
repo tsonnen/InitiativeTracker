@@ -36,7 +36,8 @@ class OLDPartyModel {
         systemUUID: json['systemUUID'],
         round: json['round'],
         characters: charJSON
-            .map<OLDCharacterModel>((i) => OLDCharacterModel.fromJson(i))
+            .map<OLDCharacterModel>(
+                (i) => OLDCharacterModel.fromJson(i, legacyRead: legacyRead))
             .toList());
   }
 

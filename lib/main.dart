@@ -32,9 +32,10 @@ class _AppState extends State<App> {
 
   @override
   void initState() {
+    ConvertLegacy.addLegacyParties(Colors.blueGrey, partiesDao);
+
     _partiesBloc = PartiesBloc(partiesDao);
     _partyBloc = PartyBloc();
-    ConvertLegacy.addLegacyParties(Colors.blueGrey, partiesDao);
     super.initState();
   }
 
