@@ -54,14 +54,20 @@ class ConvertLegacy {
   static Future<OLDPartyListModel> readSavedParties() async {
     final file = await _localFile;
     try {
-      var jsonData = await file.readAsString();
-      print(jsonData);
-      var tmp =
-          OLDPartyListModel.fromJson(json.decode(jsonData), legacyRead: true);
+      if (await file.exists()) {
+        var jsonData = await file.readAsString();
+        print(jsonData);
+        var tmp =
+            OLDPartyListModel.fromJson(json.decode(jsonData), legacyRead: true);
 
-      return tmp;
+        await file.delete();
+
+        return tmp;
+      } else {
+        return OLDPartyListModel();
+      }
     } catch (e) {
-      print('Failed to load legacy JSON: ${file.path}');
+      print('${e.toString()}');
       // If encountering an error, return 0.
       return OLDPartyListModel();
     }
