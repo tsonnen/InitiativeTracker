@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -12,6 +13,7 @@ import 'package:initiative_tracker/widgets/character_list.dart';
 import 'package:initiative_tracker/screens/help_screen.dart';
 import 'package:initiative_tracker/screens/settings_screen.dart';
 import 'package:initiative_tracker/widgets/party_screen_dialogs.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PartyScreen extends StatefulWidget {
   static final String route = 'Home-Screen';
@@ -199,6 +201,30 @@ class PartyScreenDrawer extends StatelessWidget {
               scale: 15,
             ),
             applicationVersion: AppInfo.version ?? 'TESTING',
+            applicationLegalese: '\u{a9} 2021',
+            aboutBoxChildren: [
+              const SizedBox(height: 24),
+              RichText(
+                text: TextSpan(
+                  children: <TextSpan>[
+                    TextSpan(
+                        style: Theme.of(context).textTheme.bodyText2,
+                        text: 'This is a simple initiative tracker. Please'
+                            ' send any questions or suggestions to '),
+                    TextSpan(
+                        style: TextStyle(color: Colors.blue),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            launch('mailto:tsonnenapps@gmail.com');
+                          },
+                        text: 'tsonnenapps@gmail.com'),
+                    TextSpan(
+                        style: Theme.of(context).textTheme.bodyText2,
+                        text: '.'),
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
       ),
