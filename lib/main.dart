@@ -2,6 +2,7 @@ import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:initiative_tracker/bloc/parties/parties_bloc.dart';
+import 'package:initiative_tracker/helpers/app_info.dart';
 import 'package:initiative_tracker/helpers/legacy_convert.dart';
 import 'package:initiative_tracker/moor/database.dart';
 import 'package:preferences/preferences.dart';
@@ -16,6 +17,7 @@ void main() async {
   await PrefService.init(prefix: 'pref_');
 
   await PreferenceManger.getPreferences();
+  await AppInfo.getAppInfo();
 
   runApp(App());
 }
