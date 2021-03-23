@@ -4,12 +4,13 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:initiative_tracker/models/encounter.dart';
 import 'package:initiative_tracker/moor/database.dart';
+import 'package:initiative_tracker/moor/parties_dao.dart';
 
 part 'parties_event.dart';
 part 'parties_state.dart';
 
 class PartiesBloc extends Bloc<PartiesEvent, PartiesState> {
-  final partiesDao;
+  final PartiesDao partiesDao;
 
   PartiesBloc(this.partiesDao) : super(PartiesInitial());
 
@@ -32,7 +33,7 @@ class PartiesBloc extends Bloc<PartiesEvent, PartiesState> {
 
   Stream<PartiesState> _mapPartiesAddedToState(event) async* {
     Encounter partyModel = event.encounterModel;
-    await partiesDao.addParty(partyModel);
+    await partiesDao.upsert(partyModel);
     yield* _loadParties();
   }
 

@@ -79,7 +79,8 @@ class Encounter extends Party {
 
   void rollParty(int numDice, int numSides) {
     characters.forEach((i) {
-      addCharacter(i.copyWith(initiative: rollDice(numDice, numSides)));
+      addCharacter(
+          i.copyWith(initiative: rollDice(numDice, numSides) + i.initMod));
     });
   }
 }

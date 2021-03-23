@@ -28,7 +28,7 @@ class ConvertLegacy {
           partyUUID: encounter.partyUUID,
           characters: CharacterList(list: characters));
     }).forEach((i) {
-      partiesDao.addParty(i);
+      partiesDao.upsert(i);
     });
   }
 
