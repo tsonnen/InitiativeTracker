@@ -3,10 +3,26 @@ import 'package:shared_preferences/shared_preferences.dart';
 class PreferenceManger {
   static SharedPreferences prefs;
 
+  static bool getFirstRun() {
+    if (prefs != null) {
+      return prefs.getBool('pref_first_run') ?? true;
+    }
+    return true;
+  }
+
+  static void setFirstRun(bool value) async {
+    if (prefs != null) {
+      await prefs.setBool('pref_first_run', value);
+    } else {
+      await getPreferences();
+      await setFirstRun(value);
+    }
+  }
+
   static int getNumberDice() {
     if (prefs != null) {
       var numDice = prefs.getString('pref_num_dice');
-      return numDice != null ? int.parse(numDice) : 1;
+      return int.tryParse(numDice) ?? 1;
     }
     return 1;
   }
@@ -14,7 +30,7 @@ class PreferenceManger {
   static int getNumberSides() {
     if (prefs != null) {
       var numSides = prefs.getString('pref_num_sides');
-      return numSides != null ? int.parse(numSides) : 20;
+      return int.tryParse(numSides) ?? 20;
     }
     return 20;
   }
