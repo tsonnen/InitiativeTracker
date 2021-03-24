@@ -12,6 +12,7 @@ import 'package:initiative_tracker/screens/party_management_screen.dart';
 import 'package:initiative_tracker/widgets/character_list.dart';
 import 'package:initiative_tracker/screens/help_screen.dart';
 import 'package:initiative_tracker/screens/settings_screen.dart';
+import 'package:initiative_tracker/widgets/dialogs.dart';
 import 'package:initiative_tracker/widgets/party_screen_dialogs.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -32,6 +33,16 @@ class PartyScreenState extends State<PartyScreen> {
   @override
   void initState() {
     super.initState();
+    if (PreferenceManger.getFirstRun()) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await showDialog(
+            context: context,
+            builder: (context) {
+              return IntroDialog();
+            });
+      });
+      PreferenceManger.setFirstRun(false);
+    }
 
     partyBloc = BlocProvider.of<PartyBloc>(context);
     partiesBloc = BlocProvider.of<PartiesBloc>(context);
@@ -164,9 +175,9 @@ class PartyScreenDrawer extends StatelessWidget {
             child: Text('Initiative Tracker'),
           ),
           ListTile(
+              leading: Icon(Icons.archive_rounded),
               title: Text('Saved Parties'),
               onTap: () {
-                Navigator.of(context).pop();
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => PartyManagementScreen(),
@@ -177,7 +188,6 @@ class PartyScreenDrawer extends StatelessWidget {
               leading: Icon(Icons.settings),
               title: Text('Settings'),
               onTap: () {
-                Navigator.of(context).pop();
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => SettingsPage(),
@@ -188,7 +198,6 @@ class PartyScreenDrawer extends StatelessWidget {
             leading: Icon(Icons.help),
             title: Text('Help'),
             onTap: () {
-              Navigator.of(context).pop();
               Navigator.of(context)
                   .push(MaterialPageRoute(builder: (context) => HelpPage()));
             },
@@ -203,7 +212,7 @@ class PartyScreenDrawer extends StatelessWidget {
             applicationVersion: AppInfo.version ?? 'TESTING',
             applicationLegalese: '\u{a9} 2021',
             aboutBoxChildren: [
-              const SizedBox(height: 24),
+              const SizedBox(height: 12),
               RichText(
                 text: TextSpan(
                   children: <TextSpan>[
