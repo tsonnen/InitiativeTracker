@@ -19,6 +19,10 @@ import 'package:url_launcher/url_launcher.dart';
 class PartyScreen extends StatefulWidget {
   static final String route = 'Home-Screen';
 
+  final bool firstLaunch;
+
+  PartyScreen({this.firstLaunch = false});
+
   @override
   State<StatefulWidget> createState() {
     return PartyScreenState();
@@ -33,7 +37,7 @@ class PartyScreenState extends State<PartyScreen> {
   @override
   void initState() {
     super.initState();
-    if (PreferenceManger.getFirstRun()) {
+    if (widget.firstLaunch) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         await showDialog(
             context: context,
@@ -41,7 +45,6 @@ class PartyScreenState extends State<PartyScreen> {
               return IntroDialog();
             });
       });
-      PreferenceManger.setFirstRun(false);
     }
 
     partyBloc = BlocProvider.of<PartyBloc>(context);

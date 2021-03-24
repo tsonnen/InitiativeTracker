@@ -21,7 +21,7 @@ class PreferenceManger {
 
   static int getNumberDice() {
     if (prefs != null) {
-      var numDice = prefs.getString('pref_num_dice');
+      var numDice = prefs.getString('pref_num_dice') ?? '';
       return int.tryParse(numDice) ?? 1;
     }
     return 1;
@@ -29,7 +29,7 @@ class PreferenceManger {
 
   static int getNumberSides() {
     if (prefs != null) {
-      var numSides = prefs.getString('pref_num_sides');
+      var numSides = prefs.getString('pref_num_sides') ?? '';
       return int.tryParse(numSides) ?? 20;
     }
     return 20;

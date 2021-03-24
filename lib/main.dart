@@ -43,6 +43,8 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
+    var firstLaunch = PreferenceManger.getFirstRun();
+    PreferenceManger.setFirstRun(false);
     return DynamicTheme(
         defaultBrightness: Brightness.dark,
         data: (brightness) => ThemeData(brightness: brightness),
@@ -58,7 +60,7 @@ class _AppState extends State<App> {
               child: MaterialApp(
                 title: 'Initiative Tracker',
                 theme: theme,
-                home: PartyScreen(),
+                home: PartyScreen(firstLaunch: firstLaunch),
               ));
         });
   }
