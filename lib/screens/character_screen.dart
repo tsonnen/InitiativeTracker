@@ -174,7 +174,7 @@ class CharacterScreenState extends State<CharacterScreen> {
                       }
                     }
                   },
-                  child: Text(title),
+                  child: Text(widget.isEdit ? 'Save Changes' : 'Add Character'),
                 )
               ],
             ),

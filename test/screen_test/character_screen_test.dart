@@ -155,7 +155,7 @@ void main() {
 }
 
 Future<void> tapButton(WidgetTester tester, {CharacterModel character}) async {
-  var btnText = character == null ? 'Add Character' : 'Edit Character';
+  var btnText = character == null ? 'Add Character' : 'Save Changes';
   await tester.tap(find.widgetWithText(ElevatedButton, btnText));
   await tester.pumpAndSettle();
 }

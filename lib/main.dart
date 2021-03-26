@@ -58,6 +58,7 @@ class _AppState extends State<App> {
                 )
               ],
               child: MaterialApp(
+                debugShowCheckedModeBanner: false,
                 title: 'Initiative Tracker',
                 theme: theme,
                 home: PartyScreen(firstLaunch: firstLaunch),

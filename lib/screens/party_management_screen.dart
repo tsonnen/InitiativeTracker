@@ -38,37 +38,46 @@ class PartyManagementScreenState extends State<PartyManagementScreen> {
                     .map(
                       (item) => ListTile(
                         title: Text(item.partyName ?? 'No Name'),
-                        onLongPress: () {
-                          if (PreferenceManger.getConfirmDelete()) {
-                            showDialog<bool>(
-                                context: context,
-                                builder: (context) {
-                                  return PartyDeleteDialog(
-                                      name: item.partyName);
-                                }).then((value) {
-                              if (value) {
-                                partiesBloc.add(DeleteParty(item));
-                              }
-                            });
-                          } else {
-                            partiesBloc.add(DeleteParty(item));
-                          }
-                        },
-                        onTap: () {
-                          if (PreferenceManger.getConfirmLoad()) {
-                            showDialog<bool>(
-                                context: context,
-                                builder: (context) {
-                                  return PartyLoadDialog(name: item.partyName);
-                                }).then((value) {
-                              if (value) {
+                        trailing:
+                            Row(mainAxisSize: MainAxisSize.min, children: [
+                          IconButton(
+                              icon: Icon(Icons.delete),
+                              onPressed: () {
+                                if (PreferenceManger.getConfirmDelete()) {
+                                  showDialog<bool>(
+                                      context: context,
+                                      builder: (context) {
+                                        return PartyDeleteDialog(
+                                            name: item.partyName);
+                                      }).then((value) {
+                                    if (value) {
+                                      partiesBloc.add(DeleteParty(item));
+                                    }
+                                  });
+                                } else {
+                                  partiesBloc.add(DeleteParty(item));
+                                }
+                              }),
+                          IconButton(
+                            icon: Icon(Icons.open_in_browser),
+                            onPressed: () {
+                              if (PreferenceManger.getConfirmLoad()) {
+                                showDialog<bool>(
+                                    context: context,
+                                    builder: (context) {
+                                      return PartyLoadDialog(
+                                          name: item.partyName);
+                                    }).then((value) {
+                                  if (value) {
+                                    partyBloc.add(LoadParty(item));
+                                  }
+                                });
+                              } else {
                                 partyBloc.add(LoadParty(item));
                               }
-                            });
-                          } else {
-                            partyBloc.add(LoadParty(item));
-                          }
-                        },
+                            },
+                          ),
+                        ]),
                       ),
                     )
                     .toList(),
