@@ -3,19 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:initiative_tracker/models/character_model.dart';
 import 'package:initiative_tracker/models/encounter.dart';
 import 'package:initiative_tracker/screens/character_screen.dart';
+import 'package:initiative_tracker/widgets/tile_delete_action_row.dart';
 
 class CharacterCard extends StatefulWidget {
   final CharacterModel item;
-  final VoidCallback onLongPress;
-  final VoidCallback onTap;
+  final VoidCallback onDeleteTap;
+  final VoidCallback onEditTap;
   final bool showHp;
   final bool showInitiative;
   final bool showNotes;
 
   CharacterCard(
       {this.item,
-      this.onTap,
-      this.onLongPress,
+      this.onEditTap,
+      this.onDeleteTap,
       this.showHp,
       this.showNotes,
       this.showInitiative});
@@ -78,14 +79,10 @@ class CharacterCardState extends State<CharacterCard> {
                     ],
                   ),
                 ),
-              IconButton(
-                icon: Icon(Icons.edit),
-                onPressed: widget.onTap,
-              ),
-              IconButton(
-                icon: Icon(Icons.delete),
-                onPressed: widget.onLongPress,
-              )
+              TileDeleteActionRow(
+                  onDeleteTap: widget.onDeleteTap,
+                  actionIcon: Icon(Icons.edit),
+                  onActionTap: widget.onEditTap),
             ],
           ),
           children: [
@@ -123,13 +120,13 @@ class CharacterListWidget extends StatelessWidget {
                   showNotes: showNotes,
                   showInitiative: showInitiative,
                   item: item,
-                  onTap: () {
+                  onEditTap: () {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => CharacterScreen(
                               character: item,
                             )));
                   },
-                  onLongPress: () {
+                  onDeleteTap: () {
                     onLongPress(item);
                   },
                 ))

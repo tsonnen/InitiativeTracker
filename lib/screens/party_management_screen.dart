@@ -4,6 +4,7 @@ import 'package:initiative_tracker/bloc/parties/parties_bloc.dart';
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
 import 'package:initiative_tracker/helpers/preference_manger.dart';
 import 'package:initiative_tracker/widgets/party_screen_dialogs.dart';
+import 'package:initiative_tracker/widgets/tile_delete_action_row.dart';
 
 class PartyManagementScreen extends StatefulWidget {
   @override
@@ -38,46 +39,41 @@ class PartyManagementScreenState extends State<PartyManagementScreen> {
                     .map(
                       (item) => ListTile(
                         title: Text(item.partyName ?? 'No Name'),
-                        trailing:
-                            Row(mainAxisSize: MainAxisSize.min, children: [
-                          IconButton(
-                              icon: Icon(Icons.delete),
-                              onPressed: () {
-                                if (PreferenceManger.getConfirmDelete()) {
-                                  showDialog<bool>(
-                                      context: context,
-                                      builder: (context) {
-                                        return PartyDeleteDialog(
-                                            name: item.partyName);
-                                      }).then((value) {
-                                    if (value) {
-                                      partiesBloc.add(DeleteParty(item));
-                                    }
-                                  });
-                                } else {
+                        trailing: TileDeleteActionRow(
+                          onDeleteTap: () {
+                            if (PreferenceManger.getConfirmDelete()) {
+                              showDialog<bool>(
+                                  context: context,
+                                  builder: (context) {
+                                    return PartyDeleteDialog(
+                                        name: item.partyName);
+                                  }).then((value) {
+                                if (value) {
                                   partiesBloc.add(DeleteParty(item));
                                 }
-                              }),
-                          IconButton(
-                            icon: Icon(Icons.open_in_browser),
-                            onPressed: () {
-                              if (PreferenceManger.getConfirmLoad()) {
-                                showDialog<bool>(
-                                    context: context,
-                                    builder: (context) {
-                                      return PartyLoadDialog(
-                                          name: item.partyName);
-                                    }).then((value) {
-                                  if (value) {
-                                    partyBloc.add(LoadParty(item));
-                                  }
-                                });
-                              } else {
-                                partyBloc.add(LoadParty(item));
-                              }
-                            },
-                          ),
-                        ]),
+                              });
+                            } else {
+                              partiesBloc.add(DeleteParty(item));
+                            }
+                          },
+                          onActionTap: () {
+                            if (PreferenceManger.getConfirmLoad()) {
+                              showDialog<bool>(
+                                  context: context,
+                                  builder: (context) {
+                                    return PartyLoadDialog(
+                                        name: item.partyName);
+                                  }).then((value) {
+                                if (value) {
+                                  partyBloc.add(LoadParty(item));
+                                }
+                              });
+                            } else {
+                              partyBloc.add(LoadParty(item));
+                            }
+                          },
+                          actionIcon: Icon(Icons.open_in_browser),
+                        ),
                       ),
                     )
                     .toList(),
