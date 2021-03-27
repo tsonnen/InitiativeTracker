@@ -28,6 +28,7 @@ class CharacterCard extends StatefulWidget {
 }
 
 class CharacterCardState extends State<CharacterCard> {
+  bool isExpanded = false;
   @override
   Widget build(BuildContext context) {
     var item = widget.item;
@@ -39,6 +40,16 @@ class CharacterCardState extends State<CharacterCard> {
             item.characterName,
             style: TextStyle(color: item.color),
           ),
+          onExpansionChanged: (val) {
+            setState(() {
+              isExpanded = val;
+            });
+          },
+          leading: widget.showNotes
+              ? (isExpanded
+                  ? Icon(Icons.arrow_drop_up)
+                  : Icon(Icons.arrow_drop_down))
+              : null,
           subtitle: widget.showInitiative ? Text('${item.initiative}') : null,
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
@@ -85,8 +96,16 @@ class CharacterCardState extends State<CharacterCard> {
                   onActionTap: widget.onEditTap),
             ],
           ),
+          expandedAlignment: Alignment.centerLeft,
           children: [
-            if (widget.showNotes) Text(item.notes ?? ''),
+            if (widget.showNotes)
+              Padding(
+                padding: EdgeInsets.fromLTRB(15.0, 0.0, 0.0, 10.0),
+                child: Text(
+                  item.notes ?? '',
+                  textAlign: TextAlign.left,
+                ),
+              ),
           ],
         ),
       ),

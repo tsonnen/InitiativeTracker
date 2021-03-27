@@ -7,6 +7,7 @@ import 'package:initiative_tracker/bloc/parties/parties_bloc.dart';
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
 import 'package:initiative_tracker/helpers/preference_manger.dart';
 import 'package:initiative_tracker/helpers/uuid.dart';
+import 'package:initiative_tracker/models/encounter.dart';
 import 'package:initiative_tracker/screens/character_screen.dart';
 import 'package:initiative_tracker/screens/party_management_screen.dart';
 import 'package:initiative_tracker/widgets/character_list.dart';
@@ -82,16 +83,7 @@ class PartyScreenState extends State<PartyScreen> {
                 onPressed: () {
                   if (partyModel.partyName == null ||
                       partyModel.partyName.isEmpty) {
-                    showDialog<String>(
-                        context: context,
-                        builder: (context) {
-                          return PartyNameDialog();
-                        }).then((value) {
-                      if (value != null) {
-                        partyModel = partyModel.copyWith(partyName: value);
-                        partiesBloc.add(AddParty(partyModel));
-                      }
-                    });
+                    saveParty(partyModel);
                   } else if (PreferenceManger.getConfirmOverwrite()) {
                     showDialog<bool>(
                         context: context,
@@ -102,18 +94,7 @@ class PartyScreenState extends State<PartyScreen> {
                       if (value) {
                         partiesBloc.add(AddParty(partyModel));
                       } else if (!value) {
-                        showDialog<String>(
-                            context: context,
-                            builder: (context) {
-                              return PartyNameDialog();
-                            }).then((value) {
-                          if (value != null) {
-                            partyModel = partyModel.copyWith(
-                                partyName: value,
-                                partyUUID: Uuid().generateV4());
-                            partiesBloc.add(AddParty(partyModel));
-                          }
-                        });
+                        saveParty(partyModel);
                       }
                     });
                   } else {
@@ -163,6 +144,15 @@ class PartyScreenState extends State<PartyScreen> {
               ]),
         ),
       );
+    });
+  }
+
+  void saveParty(Encounter encounterModel) {
+    PartyScreenDialog.showPartyNameDialog(context).then((value) {
+      if (value != null) {
+        encounterModel = encounterModel.copyWith(partyName: value);
+        partiesBloc.add(AddParty(encounterModel));
+      }
     });
   }
 }
