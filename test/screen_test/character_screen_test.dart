@@ -98,7 +98,8 @@ void main() {
           find.widgetWithText(TextField, 'HP'), charToAdd.hp.toString());
       await tester.pumpAndSettle();
 
-      var spinner = tester.widget<SpinnerButton>(find.byKey(Keys.numUnitKey));
+      var spinner =
+          tester.widget<SpinnerButton>(find.byKey(Key(Keys.numUnitKey)));
 
       await TestHelper.selectItemInSpinner(tester, spinner, numCharacters);
 

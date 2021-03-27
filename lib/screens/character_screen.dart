@@ -89,7 +89,7 @@ class CharacterScreenState extends State<CharacterScreen> {
                       visible: !widget.isEdit,
                       child: Flexible(
                         child: SpinnerButton(1, 1000, _number, '# Units',
-                            key: Keys.numUnitKey),
+                            key: Key(Keys.numUnitKey)),
                       ),
                     ),
                   ],
@@ -115,7 +115,7 @@ class CharacterScreenState extends State<CharacterScreen> {
                     if (PreferenceManger.getRollInititative())
                       Flexible(
                         child: SpinnerButton(-100, 100, _initMod, 'INIT MOD',
-                            key: Keys.initModKey),
+                            key: Key(Keys.initModKey)),
                       ),
                   ],
                 ),

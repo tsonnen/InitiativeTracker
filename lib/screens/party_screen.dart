@@ -5,8 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:initiative_tracker/helpers/app_info.dart';
 import 'package:initiative_tracker/bloc/parties/parties_bloc.dart';
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
+import 'package:initiative_tracker/helpers/keys.dart';
 import 'package:initiative_tracker/helpers/preference_manger.dart';
-import 'package:initiative_tracker/helpers/uuid.dart';
 import 'package:initiative_tracker/models/encounter.dart';
 import 'package:initiative_tracker/screens/character_screen.dart';
 import 'package:initiative_tracker/screens/party_management_screen.dart';
@@ -63,7 +63,10 @@ class PartyScreenState extends State<PartyScreen> {
       return Scaffold(
         drawer: PartyScreenDrawer(),
         appBar: AppBar(
-          title: Text('Round ${partyModel.round}'),
+          title: Text(
+            'Round ${partyModel.round}',
+            key: Key(Keys.roundCounterKey),
+          ),
           actions: <Widget>[
             if (PreferenceManger.getRollInititative())
               IconButton(
@@ -130,12 +133,14 @@ class PartyScreenState extends State<PartyScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 IconButton(
+                  key: Key(Keys.prevRoundButtonKey),
                   icon: Icon(Icons.navigate_before),
                   onPressed: () {
                     partyBloc.add(ChangeRound(roundForward: false));
                   },
                 ),
                 IconButton(
+                  key: Key(Keys.nextRoundButtonKey),
                   icon: Icon(Icons.navigate_next),
                   onPressed: () {
                     partyBloc.add(ChangeRound(roundForward: true));

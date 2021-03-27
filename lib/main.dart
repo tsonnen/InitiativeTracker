@@ -6,10 +6,8 @@ import 'package:initiative_tracker/helpers/app_info.dart';
 import 'package:initiative_tracker/helpers/legacy_convert.dart';
 import 'package:initiative_tracker/moor/database.dart';
 import 'package:preferences/preferences.dart';
-
 import 'package:initiative_tracker/screens/party_screen.dart';
 import 'package:initiative_tracker/helpers/preference_manger.dart';
-
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
 
 void main() async {

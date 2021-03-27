@@ -73,7 +73,7 @@ class SpinnerButton extends StatefulWidget {
   final int max;
   final int min;
 
-  SpinnerButton(this.min, this.max, this.primWrap, this.label, {key})
+  SpinnerButton(this.min, this.max, this.primWrap, this.label, {Key key})
       : super(key: key);
 
   @override

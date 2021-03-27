@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_circle_color_picker/flutter_circle_color_picker.dart';
+import 'package:initiative_tracker/helpers/keys.dart';
 
 class ConfirmationDialog extends StatelessWidget {
   final body;
@@ -79,13 +80,14 @@ class IntroDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      key: Key(Keys.welcomeDialogKey),
       title: Text('Welcome'),
       content: Text('Thank you for donwloading the Initiative '
           'Tracker App! To get started, tap the plus sign to add a '
           'character. To control what is displayed, or if intiative '
           'should be generated, check the settings'),
       actions: [
-        FlatButton(
+        FlatButton( key: Key(Keys.getStartedButtonKey),
           child: Text('Get Started'),
           onPressed: () {
             Navigator.of(context).pop();
