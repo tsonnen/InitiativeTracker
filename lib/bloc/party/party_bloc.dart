@@ -17,26 +17,29 @@ class PartyBloc extends Bloc<PartyEvent, PartyState> {
   Stream<PartyState> mapEventToState(
     PartyEvent event,
   ) async* {
-    var partyModel = state.encounterModel?.clone();
+    var encounterModel = state.encounterModel?.clone();
     if (event is GenerateParty) {
       yield PartyLoadedSucess(Encounter());
     } else if (event is AddPartyCharacter) {
       yield PartyModCharacter();
-      partyModel.addCharacter(event.characterModel);
-      yield PartyLoadedSucess(partyModel);
+      encounterModel.addCharacter(event.characterModel);
+      yield PartyLoadedSucess(encounterModel);
     } else if (event is DeletePartyCharacter) {
       yield PartyModCharacter();
-      partyModel.removeCharacterByUUID(event.characterModel.characterUUID);
-      yield PartyLoadedSucess(partyModel);
+      encounterModel.removeCharacterByUUID(event.characterModel.characterUUID);
+      yield PartyLoadedSucess(encounterModel);
     } else if (event is LoadParty) {
       yield PartyLoadedSucess(event.partyModel);
     } else if (event is ChangeRound) {
-      event.roundForward ? partyModel.nextRound() : partyModel.prevRound();
-      yield PartyLoadedSucess(partyModel);
+      yield PartyModCharacter();
+      event.roundForward
+          ? encounterModel.nextRound()
+          : encounterModel.prevRound();
+      yield PartyLoadedSucess(encounterModel);
     } else if (event is RollParty) {
       yield PartyModCharacter();
-      partyModel.rollParty(event.numDice, event.numSides);
-      yield PartyLoadedSucess(partyModel);
+      encounterModel.rollParty(event.numDice, event.numSides);
+      yield PartyLoadedSucess(encounterModel);
     }
   }
 }

@@ -95,7 +95,7 @@ class CharacterCardState extends State<CharacterCard> {
 }
 
 class CharacterListWidget extends StatelessWidget {
-  final Encounter partyModel;
+  final Encounter encounterModel;
   final Function(CharacterModel) onLongPress;
   final Function(CharacterModel) onTap;
 
@@ -104,7 +104,7 @@ class CharacterListWidget extends StatelessWidget {
   final bool showNotes;
 
   CharacterListWidget(
-      {this.partyModel,
+      {this.encounterModel,
       this.onTap,
       this.onLongPress,
       this.showHP,
@@ -114,7 +114,7 @@ class CharacterListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-        children: partyModel.characters.list
+        children: encounterModel.characters.list
             .map((item) => CharacterCard(
                   showHp: showHP,
                   showNotes: showNotes,

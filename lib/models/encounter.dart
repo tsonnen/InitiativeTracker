@@ -15,7 +15,7 @@ class Encounter extends Party {
       : super(
             partyName: partyName,
             partyUUID: partyUUID ?? Uuid().generateV4(),
-            characters: characters);
+            characters: characters ?? CharacterList());
 
   void nextRound() {
     round++;

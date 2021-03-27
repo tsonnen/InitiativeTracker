@@ -131,7 +131,7 @@ class PartyScreenState extends State<PartyScreen> {
                   partyBloc.add(
                       DeletePartyCharacter(characterModel: characterModel));
                 },
-                partyModel: partyModel)),
+                encounterModel: partyModel)),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: FloatingActionButton(
           onPressed: () {

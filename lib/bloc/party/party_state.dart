@@ -1,10 +1,9 @@
 part of 'party_bloc.dart';
 
 abstract class PartyState extends Equatable {
-  final Party _party;
-  Encounter get encounterModel => Encounter.fromParty(_party);
+  final Encounter encounterModel;
 
-  const PartyState(this._party);
+  const PartyState(this.encounterModel);
 }
 
 class PartyInitial extends PartyState {
@@ -22,7 +21,7 @@ class PartyModCharacter extends PartyState {
 }
 
 class PartyLoadedSucess extends PartyState {
-  PartyLoadedSucess(_partyModel) : super(_partyModel);
+  PartyLoadedSucess(encounterModel) : super(encounterModel);
 
   @override
   List<Object> get props => [encounterModel];
