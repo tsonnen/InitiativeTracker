@@ -29,7 +29,7 @@ class PartyBloc extends Bloc<PartyEvent, PartyState> {
       encounterModel.removeCharacterByUUID(event.characterModel.characterUUID);
       yield PartyLoadedSucess(encounterModel);
     } else if (event is LoadParty) {
-      yield PartyLoadedSucess(event.partyModel);
+      yield PartyLoadedSucess(Encounter.fromParty(event.partyModel));
     } else if (event is ChangeRound) {
       yield PartyModCharacter();
       event.roundForward
