@@ -6,6 +6,18 @@ import 'package:initiative_tracker/bloc/party/party_bloc.dart';
 import '../helpers/preference_manger.dart';
 import 'dialogs.dart';
 
+class PartyScreenDialog {
+  static Future<String> showPartyNameDialog(BuildContext context) async {
+    var name = await showDialog<String>(
+        context: context,
+        builder: (context) {
+          return PartyNameDialog();
+        });
+
+    return name;
+  }
+}
+
 class PartyNameDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
