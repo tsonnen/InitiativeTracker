@@ -77,7 +77,18 @@ class PartyScreenState extends State<PartyScreen> {
                   }),
             IconButton(
               icon: Icon(Icons.clear),
-              onPressed: () {
+              onPressed: () async {
+                if (PreferenceManger.getConfirmClearParty()) {
+                  var clear = await showDialog<bool>(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return ConfirmClearPartyDialog(partyModel);
+                      });
+
+                  if (!clear) {
+                    return;
+                  }
+                }
                 partyBloc.add(GenerateParty());
               },
             ),
@@ -156,6 +167,7 @@ class PartyScreenState extends State<PartyScreen> {
     PartyScreenDialog.showPartyNameDialog(context).then((value) {
       if (value != null) {
         encounterModel = encounterModel.copyWith(partyName: value);
+        partyBloc.add(RefreshEncounter(encounterModel));
         partiesBloc.add(AddParty(encounterModel));
       }
     });

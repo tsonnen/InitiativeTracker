@@ -32,6 +32,8 @@ class PartyBloc extends Bloc<PartyEvent, PartyState> {
       yield* _mapRollParty(event, encounterModel);
     } else if (event is ForcePartyRebuild) {
       yield* _mapForceRebuild(encounterModel);
+    } else if (event is RefreshEncounter) {
+      yield* _mapForceRebuild(event.encounter);
     }
   }
 

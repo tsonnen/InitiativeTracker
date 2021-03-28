@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
+import 'package:initiative_tracker/helpers/preference_manger.dart';
 import 'package:preferences/preferences.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -26,7 +27,9 @@ class SettingsPageState extends State<SettingsPage> {
             'light',
             'ui_theme',
             onSelect: () {
-              DynamicTheme.of(context).setBrightness(Brightness.light);
+              if (DynamicTheme.of(context)?.brightness != Brightness.light) {
+                DynamicTheme.of(context).setBrightness(Brightness.light);
+              }
             },
           ),
           RadioPreference(
@@ -34,7 +37,9 @@ class SettingsPageState extends State<SettingsPage> {
             'dark',
             'ui_theme',
             onSelect: () {
-              DynamicTheme.of(context).setBrightness(Brightness.dark);
+              if (DynamicTheme.of(context)?.brightness != Brightness.dark) {
+                DynamicTheme.of(context).setBrightness(Brightness.dark);
+              }
             },
             isDefault: true,
           ),
@@ -48,15 +53,22 @@ class SettingsPageState extends State<SettingsPage> {
             'Number of Dice',
             'num_dice',
             defaultVal: '1',
+            disabled: !PreferenceManger.getRollInititative(),
             values: List<String>.generate(10, (i) => (i + 1).toString()),
           ),
           DropdownPreference(
             'Number of Sides',
             'num_sides',
             defaultVal: '20',
+            disabled: !PreferenceManger.getRollInititative(),
             values: ['2', '3', '4', '6', '8', '10', '12', '20'],
           ),
           PreferenceTitle('Party Management'),
+          CheckboxPreference(
+            'Confirm Clear Party',
+            'confirm_clear',
+            defaultVal: true,
+          ),
           CheckboxPreference(
             'Confirm Overwrite',
             'confirm_overwrite',

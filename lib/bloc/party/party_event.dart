@@ -36,6 +36,15 @@ class ChangeRound extends PartyEvent {
   List<Object> get props => [roundForward];
 }
 
+class RefreshEncounter extends PartyEvent {
+  final Encounter encounter;
+
+  RefreshEncounter(this.encounter);
+
+  @override
+  List<Object> get props => [encounter];
+}
+
 class LoadParty extends PartyEvent {
   final Party partyModel;
 

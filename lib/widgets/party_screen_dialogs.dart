@@ -2,9 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:initiative_tracker/bloc/parties/parties_bloc.dart';
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
+import 'package:initiative_tracker/models/encounter.dart';
 
 import '../helpers/preference_manger.dart';
 import 'dialogs.dart';
+
+class ConfirmClearPartyDialog extends StatelessWidget {
+  final Encounter encounterModel;
+
+  const ConfirmClearPartyDialog(this.encounterModel, {Key key})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ConfirmationDialog(
+        title: 'Clear Active Party',
+        body: 'Would you like to clear the current party '
+            '${encounterModel.partyName ?? 'UNSAVED'}?');
+  }
+}
 
 class PartyScreenDialog {
   static Future<String> showPartyNameDialog(BuildContext context) async {

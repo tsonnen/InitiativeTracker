@@ -1,3 +1,4 @@
+import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -137,11 +138,11 @@ void main() {
     });
 
     testWidgets('Test Party Reset', (WidgetTester tester) async {
+      await TestHelper.setMockPrefs({'pref_confirm_clear': false});
       when(partyBloc.state).thenAnswer((_) => PartyLoadedSucess(partyModel));
       when(partiesBloc.state)
           .thenAnswer((_) => PartiesLoadedSuccessful([partyModel]));
       when(partyBloc.add(argThat(MatchType<GenerateParty>()))).thenReturn(null);
-
       await tester.pumpWidget(createHomeScreen(partiesBloc, partyBloc));
       await tester.pumpAndSettle();
       await tester.tap(find.widgetWithIcon(IconButton, Icons.clear));
@@ -267,8 +268,14 @@ void checkTitleText(Encounter partyModel) {
 }
 
 Widget createHomeScreen(MockPartiesBloc partiesBloc, MockPartyBloc partyBloc) {
-  return MultiBlocProvider(providers: [
-    BlocProvider<PartyBloc>(create: (BuildContext context) => partyBloc),
-    BlocProvider<PartiesBloc>(create: (BuildContext context) => partiesBloc)
-  ], child: MaterialApp(home: PartyScreen()));
+  return DynamicTheme(
+      defaultBrightness: Brightness.dark,
+      data: (brightness) => ThemeData(brightness: brightness),
+      themedWidgetBuilder: (context, theme) {
+        return MultiBlocProvider(providers: [
+          BlocProvider<PartyBloc>(create: (BuildContext context) => partyBloc),
+          BlocProvider<PartiesBloc>(
+              create: (BuildContext context) => partiesBloc)
+        ], child: MaterialApp(home: PartyScreen()));
+      });
 }

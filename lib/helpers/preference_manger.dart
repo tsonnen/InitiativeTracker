@@ -70,6 +70,13 @@ class PreferenceManger {
     return true;
   }
 
+  static bool getConfirmClearParty() {
+    if (prefs != null) {
+      return prefs.getBool('pref_confirm_clear') ?? true;
+    }
+    return true;
+  }
+
   static bool getShowInitiative() {
     if (prefs != null) {
       return prefs.getBool('pref_show_initiative') ?? true;
