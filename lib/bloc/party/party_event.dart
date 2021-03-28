@@ -54,3 +54,8 @@ class RollParty extends PartyEvent {
   @override
   List<Object> get props => [numSides];
 }
+
+class ForcePartyRebuild extends PartyEvent {
+  @override
+  List<Object> get props => [];
+}

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:initiative_tracker/bloc/party/party_bloc.dart';
 import 'package:preferences/preferences.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -58,7 +60,6 @@ class SettingsPageState extends State<SettingsPage> {
           CheckboxPreference(
             'Confirm Overwrite',
             'confirm_overwrite',
-            defaultVal: true,
           ),
           CheckboxPreference(
             'Confirm Load',
@@ -75,16 +76,25 @@ class SettingsPageState extends State<SettingsPage> {
             'Show HP',
             'show_hp',
             defaultVal: true,
+            onChange: () {
+              BlocProvider.of<PartyBloc>(context).add(ForcePartyRebuild());
+            },
           ),
           CheckboxPreference(
             'Show initiative',
             'show_init',
             defaultVal: true,
+            onChange: () {
+              BlocProvider.of<PartyBloc>(context).add(ForcePartyRebuild());
+            },
           ),
           CheckboxPreference(
             'Show Notes',
             'show_notes',
             defaultVal: true,
+            onChange: () {
+              BlocProvider.of<PartyBloc>(context).add(ForcePartyRebuild());
+            },
           ),
         ],
       ),

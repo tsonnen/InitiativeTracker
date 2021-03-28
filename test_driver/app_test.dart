@@ -14,6 +14,7 @@ void main() {
     final welcomeDialogFinder = find.byValueKey(Keys.welcomeDialogKey);
     final welcomeDialogGetStartedFinder =
         find.byValueKey(Keys.getStartedButtonKey);
+    final addCharacterButtonFinder = find.byTooltip('Add Character');
 
     FlutterDriver driver;
 
@@ -40,6 +41,10 @@ void main() {
 
       await driver.tap(prevRoundButtonFinder);
       expect(await driver.getText(roundTextFinder), 'Round 1');
+    });
+
+    test('Test Adding Character', () async {
+      await driver.tap(addCharacterButtonFinder);
     });
   });
 }

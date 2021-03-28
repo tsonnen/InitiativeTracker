@@ -56,20 +56,19 @@ class PartyManagementScreenState extends State<PartyManagementScreen> {
                               partiesBloc.add(DeleteParty(item));
                             }
                           },
-                          onActionTap: () {
+                          onActionTap: () async {
+                            var loadParty = true;
                             if (PreferenceManger.getConfirmLoad()) {
-                              showDialog<bool>(
+                              loadParty = await showDialog<bool>(
                                   context: context,
                                   builder: (context) {
                                     return PartyLoadDialog(
                                         name: item.partyName);
-                                  }).then((value) {
-                                if (value) {
-                                  partyBloc.add(LoadParty(item));
-                                }
-                              });
-                            } else {
+                                  });
+                            }
+                            if (loadParty) {
                               partyBloc.add(LoadParty(item));
+                              Navigator.of(context).pop();
                             }
                           },
                           actionIcon: Icon(Icons.open_in_browser),
