@@ -101,6 +101,15 @@ class TestHelper {
     );
   }
 
+  static Widget createWidgetTestScreen(Widget widget,
+      {List<NavigatorObserver> navigatorObservers =
+          const <NavigatorObserver>[]}) {
+    return MaterialApp(
+      home: WidgetTestScreen(widget: widget),
+      navigatorObservers: navigatorObservers,
+    );
+  }
+
   static void selectItemInSpinner(
       WidgetTester tester, SpinnerButton spinner, int targetVal) async {
     await tester.tap(find.byWidget(spinner));
@@ -187,5 +196,16 @@ class DialogTestScreen extends StatelessWidget {
                   });
             },
             child: Text('Open Dialog')));
+  }
+}
+
+class WidgetTestScreen extends StatelessWidget {
+  final Widget widget;
+
+  WidgetTestScreen({@required this.widget});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(body: widget);
   }
 }

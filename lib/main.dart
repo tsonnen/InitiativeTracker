@@ -1,23 +1,34 @@
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pref/pref.dart';
 import 'package:initiative_tracker/bloc/parties/parties_bloc.dart';
 import 'package:initiative_tracker/helpers/app_info.dart';
 import 'package:initiative_tracker/helpers/legacy_convert.dart';
 import 'package:initiative_tracker/moor/database.dart';
-import 'package:preferences/preferences.dart';
 import 'package:initiative_tracker/screens/party_screen.dart';
 import 'package:initiative_tracker/helpers/preference_manger.dart';
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await PrefService.init(prefix: 'pref_');
+
+  final service = await PrefServiceShared.init(prefix: 'pref_', defaults: {
+    'ui_theme': 'dark',
+    'should_roll_init': true,
+    'num_dice': '1',
+    'num_sides': '20',
+    'confirm_clear': true,
+    'confirm_delete': true,
+    'show_hp': true,
+    'show_init': true,
+    'show_notes': false
+  });
 
   await PreferenceManger.getPreferences();
   await AppInfo.getAppInfo();
 
-  runApp(App());
+  runApp(PrefService(service: service, child: App()));
 }
 
 class App extends StatefulWidget {

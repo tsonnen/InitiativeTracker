@@ -243,22 +243,23 @@ void main() {
       expect(find.widgetWithText(AppBar, 'Help'), findsOneWidget);
     });
 
-    testWidgets('Test Settings Route', (WidgetTester tester) async {
-      when(partyBloc.state).thenAnswer((_) => PartyLoadedSucess(partyModel));
-      when(partiesBloc.state)
-          .thenAnswer((_) => PartiesLoadedSuccessful([partyModel]));
+    // TODO: Move this to an integration test
+    // testWidgets('Test Settings Route', (WidgetTester tester) async {
+    //   when(partyBloc.state).thenAnswer((_) => PartyLoadedSucess(partyModel));
+    //   when(partiesBloc.state)
+    //       .thenAnswer((_) => PartiesLoadedSuccessful([partyModel]));
 
-      await tester.pumpWidget(createHomeScreen(partiesBloc, partyBloc));
-      await tester.pumpAndSettle();
+    //   await tester.pumpWidget(createHomeScreen(partiesBloc, partyBloc));
+    //   await tester.pumpAndSettle();
 
-      await tester.tap(find.byTooltip('Open navigation menu'));
-      await tester.pumpAndSettle();
+    //   await tester.tap(find.byTooltip('Open navigation menu'));
+    //   await tester.pumpAndSettle();
 
-      await tester.tap(find.byIcon(Icons.settings, skipOffstage: false));
-      await tester.pumpAndSettle();
+    //   await tester.tap(find.byIcon(Icons.settings, skipOffstage: false));
+    //   await tester.pumpAndSettle();
 
-      expect(find.widgetWithText(AppBar, 'Preferences'), findsOneWidget);
-    });
+    //   expect(find.widgetWithText(AppBar, 'Preferences'), findsOneWidget);
+    // });
   });
 }
 
