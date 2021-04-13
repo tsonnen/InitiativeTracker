@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 
 class TileDeleteActionRow extends StatelessWidget {
   final Icon actionIcon;
-  final Function() onDeleteTap;
-  final Function() onActionTap;
+  final Function()? onDeleteTap;
+  final Function()? onActionTap;
 
   TileDeleteActionRow(
-      {@required this.onDeleteTap,
-      @required this.actionIcon,
-      @required this.onActionTap});
+      {required this.onDeleteTap,
+      required this.actionIcon,
+      required this.onActionTap});
   @override
   Widget build(BuildContext context) {
     return Container(

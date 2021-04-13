@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 
 void main() {
   group('Character Model Test', () {
-    CharacterModel character;
+    late CharacterModel character;
     const charName = 'TEST';
 
     setUp(() {

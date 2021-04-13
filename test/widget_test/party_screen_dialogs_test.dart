@@ -33,7 +33,7 @@ void main() {
     testWidgets('Check Save', (WidgetTester tester) async {
       var mockObserver = MockNavigatorObserver();
 
-      when(mockObserver.didPop(any, any)).thenAnswer((realInvocation) async {
+      when(mockObserver.didPop(any!, any)).thenAnswer((realInvocation) async {
         var value =
             await (realInvocation.positionalArguments.first as Route).popped;
         expect(value, name);
@@ -54,7 +54,7 @@ void main() {
     testWidgets('Check Cancel', (WidgetTester tester) async {
       var mockObserver = MockNavigatorObserver();
 
-      when(mockObserver.didPop(any, any)).thenAnswer((realInvocation) async {
+      when(mockObserver.didPop(any!, any)).thenAnswer((realInvocation) async {
         var value =
             await (realInvocation.positionalArguments.first as Route).popped;
         expect(value, null);
@@ -134,10 +134,10 @@ void main() {
   });
 
   group('Parties Dialog', () {
-    PartyBloc partyBloc;
-    PartiesBloc partiesBloc;
-    Encounter partyModel;
-    List<Encounter> partyList;
+    late PartyBloc partyBloc;
+    late PartiesBloc partiesBloc;
+    Encounter? partyModel;
+    List<Encounter?>? partyList;
     SharedPreferences.setMockInitialValues({});
 
     setUp(() {
@@ -184,9 +184,9 @@ void main() {
 
       expect(find.byType(PartiesDialog), findsOneWidget);
       expect(find.text('Manage Parties'), findsOneWidget);
-      partyList.forEach((element) {
+      partyList!.forEach((element) {
         expect(
-            find.widgetWithText(ListTile, element.partyName), findsOneWidget);
+            find.widgetWithText(ListTile, element!.partyName!), findsOneWidget);
       });
       expect(find.widgetWithText(TextButton, 'Done'), findsOneWidget);
     });
@@ -207,7 +207,7 @@ void main() {
 
       expect(find.byType(PartiesDialog), findsOneWidget);
       await tester
-          .longPress(find.widgetWithText(ListTile, partyModel.partyName));
+          .longPress(find.widgetWithText(ListTile, partyModel!.partyName!));
 
       await tester.pumpAndSettle();
 
@@ -231,7 +231,7 @@ void main() {
 
       expect(find.byType(PartiesDialog), findsOneWidget);
       await tester
-          .longPress(find.widgetWithText(ListTile, partyModel.partyName));
+          .longPress(find.widgetWithText(ListTile, partyModel!.partyName!));
 
       await tester.pumpAndSettle();
 
@@ -262,7 +262,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(PartiesDialog), findsOneWidget);
-      await tester.tap(find.widgetWithText(ListTile, partyModel.partyName));
+      await tester.tap(find.widgetWithText(ListTile, partyModel!.partyName!));
 
       await tester.pumpAndSettle();
 
@@ -285,7 +285,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(PartiesDialog), findsOneWidget);
-      await tester.tap(find.widgetWithText(ListTile, partyModel.partyName));
+      await tester.tap(find.widgetWithText(ListTile, partyModel!.partyName!));
 
       await tester.pumpAndSettle();
 

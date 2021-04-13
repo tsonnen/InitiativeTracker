@@ -16,7 +16,7 @@ void main() {
         find.byValueKey(Keys.getStartedButtonKey);
     final addCharacterButtonFinder = find.byTooltip('Add Character');
 
-    FlutterDriver driver;
+    FlutterDriver? driver;
 
     // Connect to the Flutter driver before running any tests.
     setUpAll(() async {
@@ -26,25 +26,25 @@ void main() {
     // Close the connection to the driver after the tests have completed.
     tearDownAll(() async {
       if (driver != null) {
-        await driver.close();
+        await driver!.close();
       }
     });
 
     test('Test Round Counter', () async {
-      await driver.waitFor(welcomeDialogFinder);
-      await driver.tap(welcomeDialogGetStartedFinder);
+      await driver!.waitFor(welcomeDialogFinder);
+      await driver!.tap(welcomeDialogGetStartedFinder);
 
-      expect(await driver.getText(roundTextFinder), 'Round 1');
+      expect(await driver!.getText(roundTextFinder), 'Round 1');
 
-      await driver.tap(nextRoundButtonFinder);
-      expect(await driver.getText(roundTextFinder), 'Round 2');
+      await driver!.tap(nextRoundButtonFinder);
+      expect(await driver!.getText(roundTextFinder), 'Round 2');
 
-      await driver.tap(prevRoundButtonFinder);
-      expect(await driver.getText(roundTextFinder), 'Round 1');
+      await driver!.tap(prevRoundButtonFinder);
+      expect(await driver!.getText(roundTextFinder), 'Round 1');
     });
 
     test('Test Adding Character', () async {
-      await driver.tap(addCharacterButtonFinder);
+      await driver!.tap(addCharacterButtonFinder);
     });
   });
 }

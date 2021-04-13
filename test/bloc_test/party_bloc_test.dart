@@ -3,7 +3,7 @@ import 'package:test/test.dart';
 
 void main() {
   group('Party Bloc', () {
-    var partyBloc;
+    late var partyBloc;
 
     setUp(() {
       partyBloc = PartyBloc();

@@ -13,7 +13,7 @@ class HelpPage extends StatefulWidget {
 
 class HelpPageState extends State<HelpPage> {
   String markdown = '';
-  String _currentPage;
+  String? _currentPage;
   Queue backStack = Queue();
   Queue forwardStack = Queue();
 

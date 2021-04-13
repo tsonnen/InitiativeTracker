@@ -7,7 +7,7 @@ import 'package:test/test.dart';
 
 void main() {
   group('Party Test', () {
-    Party party;
+    late Party party;
     const partyName = 'TEST';
 
     setUp(() {

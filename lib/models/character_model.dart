@@ -9,15 +9,15 @@ part 'character_model.g.dart';
 @JsonSerializable()
 class CharacterModel {
   String characterUUID;
-  String characterName;
-  int initiative;
-  String notes;
-  int hp;
-  int initMod;
-  bool isExpanded = false;
+  String? characterName;
+  int? initiative;
+  String? notes;
+  int? hp;
+  int? initMod;
+  bool? isExpanded = false;
 
   @ColorConverter()
-  Color color;
+  Color? color;
 
   CharacterModel(
       {this.characterName = 'TEST',
@@ -26,7 +26,7 @@ class CharacterModel {
       this.notes,
       this.initMod = 0,
       this.color = Colors.white,
-      String characterUUID})
+      String? characterUUID})
       : characterUUID = characterUUID ?? Uuid().generateV4();
 
   void setName(String name) {
@@ -34,11 +34,11 @@ class CharacterModel {
   }
 
   void increaseHP() {
-    setHP(++hp);
+    setHP(hp! + 1);
   }
 
   void reduceHP() {
-    setHP(--hp);
+    setHP(hp! - 1);
   }
 
   void setHP(int hp) {
@@ -50,11 +50,11 @@ class CharacterModel {
   }
 
   void edit(
-      {String characterName,
-      int hp,
-      int initiative,
-      String notes,
-      Color color}) {
+      {String? characterName,
+      int? hp,
+      int? initiative,
+      String? notes,
+      Color? color}) {
     this.characterName = characterName ?? this.characterName;
     this.hp = hp ?? this.hp;
     this.initiative = initiative ?? this.initiative;
@@ -80,13 +80,13 @@ class CharacterModel {
   }
 
   CharacterModel copyWith(
-          {String characterName,
-          int hp,
-          int initiative,
-          String notes,
-          Color color,
-          String characterUUID,
-          int initMod}) =>
+          {String? characterName,
+          int? hp,
+          int? initiative,
+          String? notes,
+          Color? color,
+          String? characterUUID,
+          int? initMod}) =>
       CharacterModel(
           characterName: characterName ?? this.characterName,
           characterUUID: characterUUID ?? this.characterUUID,
@@ -97,11 +97,11 @@ class CharacterModel {
           initMod: initMod ?? this.initMod);
 }
 
-class ColorConverter implements JsonConverter<Color, String> {
+class ColorConverter implements JsonConverter<Color?, String> {
   const ColorConverter();
 
   @override
-  Color fromJson(String json) {
+  Color? fromJson(String? json) {
     if (json is String) {
       return Color(jsonDecode(json));
     }
@@ -110,7 +110,7 @@ class ColorConverter implements JsonConverter<Color, String> {
   }
 
   @override
-  String toJson(Color object) {
-    return jsonEncode(object.value);
+  String toJson(Color? object) {
+    return jsonEncode(object!.value);
   }
 }

@@ -7,7 +7,7 @@ import '../testHelpers.dart';
 
 void main() {
   group('ColorPickerButton Tests', () {
-    Color color;
+    Color? color;
 
     setUp(() {
       color = Colors.green;

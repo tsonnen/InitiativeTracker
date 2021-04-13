@@ -5,7 +5,7 @@ import 'package:numberpicker/numberpicker.dart';
 
 class Styles {
   static InputDecoration textFieldDecoration(String labelText,
-      {Color fillColor}) {
+      {Color? fillColor}) {
     return InputDecoration(
         border: InputBorder.none,
         labelText: labelText,
@@ -15,7 +15,7 @@ class Styles {
 }
 
 class ColorPickerButton extends StatefulWidget {
-  final Color color;
+  final Color? color;
   final String label;
   final Function(Color) updateFunc;
 
@@ -27,7 +27,7 @@ class ColorPickerButton extends StatefulWidget {
 }
 
 class ColorPickerButtonState extends State<ColorPickerButton> {
-  Color color;
+  Color? color;
 
   @override
   void initState() {
@@ -73,7 +73,7 @@ class SpinnerButton extends StatefulWidget {
   final int max;
   final int min;
 
-  SpinnerButton(this.min, this.max, this.primWrap, this.label, {Key key})
+  SpinnerButton(this.min, this.max, this.primWrap, this.label, {Key? key})
       : super(key: key);
 
   @override

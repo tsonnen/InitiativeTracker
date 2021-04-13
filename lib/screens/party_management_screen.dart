@@ -12,8 +12,8 @@ class PartyManagementScreen extends StatefulWidget {
 }
 
 class PartyManagementScreenState extends State<PartyManagementScreen> {
-  var partiesBloc;
-  var partyBloc;
+  late var partiesBloc;
+  late var partyBloc;
   @override
   void initState() {
     partiesBloc = BlocProvider.of<PartiesBloc>(context);
@@ -33,12 +33,12 @@ class PartyManagementScreenState extends State<PartyManagementScreen> {
             if (state is PartiesInitial) {
               partiesBloc.add(LoadParties());
             } else if (state is PartiesLoadedSuccessful) {
-              var partyList = state.parties;
+              var partyList = state.parties!;
               return ListView(
                 children: partyList
                     .map(
                       (item) => ListTile(
-                        title: Text(item.partyName ?? 'No Name'),
+                        title: Text(item!.partyName ?? 'No Name'),
                         trailing: TileDeleteActionRow(
                           onDeleteTap: () {
                             if (PreferenceManger.getConfirmDelete()) {
@@ -48,7 +48,7 @@ class PartyManagementScreenState extends State<PartyManagementScreen> {
                                     return PartyDeleteDialog(
                                         name: item.partyName);
                                   }).then((value) {
-                                if (value) {
+                                if (value!) {
                                   partiesBloc.add(DeleteParty(item));
                                 }
                               });
@@ -57,7 +57,7 @@ class PartyManagementScreenState extends State<PartyManagementScreen> {
                             }
                           },
                           onActionTap: () async {
-                            var loadParty = true;
+                            bool? loadParty = true;
                             if (PreferenceManger.getConfirmLoad()) {
                               loadParty = await showDialog<bool>(
                                   context: context,
@@ -66,7 +66,7 @@ class PartyManagementScreenState extends State<PartyManagementScreen> {
                                         name: item.partyName);
                                   });
                             }
-                            if (loadParty) {
+                            if (loadParty!) {
                               partyBloc.add(LoadParty(item));
                               Navigator.of(context).pop();
                             }

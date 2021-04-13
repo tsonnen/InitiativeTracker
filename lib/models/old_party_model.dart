@@ -4,11 +4,11 @@ import 'package:collection/collection.dart';
 import 'package:initiative_tracker/models/old_character_model.dart';
 
 class OLDPartyModel {
-  List<OLDCharacterModel> characters;
-  String partyName;
-  String partyUUID;
-  String systemUUID;
-  int round = 1;
+  List<OLDCharacterModel>? characters;
+  String? partyName;
+  String? partyUUID;
+  String? systemUUID;
+  int? round = 1;
 
   OLDPartyModel({this.characters, this.partyName}) {
     characters ??= [];
@@ -22,7 +22,7 @@ class OLDPartyModel {
       this.systemUUID});
 
   void nextRound() {
-    round++;
+    round = round! + 1;
   }
 
   factory OLDPartyModel.fromMap(Map<String, dynamic> json,
@@ -43,8 +43,9 @@ class OLDPartyModel {
 
   @override
   bool operator ==(rhs) {
-    return partyName == rhs.partyName &&
-        partyUUID == rhs.party &&
+    return rhs is OLDPartyModel &&
+        partyName == rhs.partyName &&
+        partyUUID == rhs.partyUUID &&
         round == rhs.round &&
         ListEquality().equals(characters, rhs.characters);
   }

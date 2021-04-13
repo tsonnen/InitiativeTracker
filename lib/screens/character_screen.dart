@@ -10,8 +10,8 @@ import 'package:initiative_tracker/helpers/random_generator.dart';
 
 class CharacterScreen extends StatefulWidget {
   static final String route = 'Character-Screen';
-  final CharacterModel character;
-  final String partyUUID;
+  final CharacterModel? character;
+  final String? partyUUID;
   final bool isEdit;
 
   CharacterScreen({this.character, this.partyUUID})
@@ -26,13 +26,13 @@ class CharacterScreenState extends State<CharacterScreen> {
   final TextEditingController hpController = TextEditingController();
   final TextEditingController initController = TextEditingController();
   final TextEditingController noteController = TextEditingController();
-  PartyBloc partyBloc;
+  late PartyBloc partyBloc;
 
   final PrimitiveWrapper _number = PrimitiveWrapper(1);
   final PrimitiveWrapper _initMod = PrimitiveWrapper(0);
-  String title;
-  CharacterModel character;
-  Color color;
+  late String title;
+  CharacterModel? character;
+  Color? color;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -47,18 +47,18 @@ class CharacterScreenState extends State<CharacterScreen> {
     title = widget.isEdit ? 'Edit Character' : 'Add Character';
 
     if (widget.isEdit) {
-      nameController.text = character.characterName.toString();
-      hpController.text = character.hp.toString();
-      initController.text = character.initiative.toString();
-      noteController.text = (character.notes ?? '').toString();
-      color = character.color;
-      _initMod.value = character.initMod;
+      nameController.text = character!.characterName.toString();
+      hpController.text = character!.hp.toString();
+      initController.text = character!.initiative.toString();
+      noteController.text = (character!.notes ?? '').toString();
+      color = character!.color;
+      _initMod.value = character!.initMod;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    color ??= Theme.of(context).textTheme.bodyText1.color;
+    color ??= Theme.of(context).textTheme.bodyText1!.color;
 
     return Scaffold(
       appBar: AppBar(
@@ -78,7 +78,7 @@ class CharacterScreenState extends State<CharacterScreen> {
                         decoration: Styles.textFieldDecoration('Name'),
                         controller: nameController,
                         validator: (value) {
-                          if (value.isEmpty) {
+                          if (value!.isEmpty) {
                             return 'Please enter a name';
                           }
                           return null;
@@ -135,9 +135,9 @@ class CharacterScreenState extends State<CharacterScreen> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    if (_formKey.currentState.validate()) {
+                    if (_formKey.currentState!.validate()) {
                       if (widget.isEdit) {
-                        character.edit(
+                        character!.edit(
                             characterName: nameController.text,
                             hp: int.parse(hpController.text),
                             initiative: initController.text != ''
@@ -160,7 +160,7 @@ class CharacterScreenState extends State<CharacterScreen> {
                                       !widget.isEdit
                                   ? rollDice(PreferenceManger.getNumberDice(),
                                           PreferenceManger.getNumberSides()) +
-                                      (_initMod.value ?? 0)
+                                      (_initMod.value ?? 0) as int?
                                   : int.tryParse(initController.text) ?? 0,
                               initMod: _initMod.value,
                               notes: noteController.text,

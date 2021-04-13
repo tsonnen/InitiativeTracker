@@ -46,8 +46,8 @@ class TestHelper {
       return true;
     }());
     debugPrint('${WidgetsBinding.instance.runtimeType} - $mode');
-    if (WidgetsBinding.instance.renderViewElement != null) {
-      debugPrint(WidgetsBinding.instance.renderViewElement.toStringDeep());
+    if (WidgetsBinding.instance!.renderViewElement != null) {
+      debugPrint(WidgetsBinding.instance!.renderViewElement!.toStringDeep());
     } else {
       debugPrint('<no tree currently mounted>');
     }
@@ -182,7 +182,7 @@ class MatchType<T> extends Matcher {
 class DialogTestScreen extends StatelessWidget {
   final Widget dialog;
 
-  DialogTestScreen({@required this.dialog});
+  DialogTestScreen({required this.dialog});
 
   @override
   Widget build(BuildContext context) {
@@ -202,7 +202,7 @@ class DialogTestScreen extends StatelessWidget {
 class WidgetTestScreen extends StatelessWidget {
   final Widget widget;
 
-  WidgetTestScreen({@required this.widget});
+  WidgetTestScreen({required this.widget});
 
   @override
   Widget build(BuildContext context) {

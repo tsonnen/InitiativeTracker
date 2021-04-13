@@ -44,8 +44,8 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
-  PartyBloc _partyBloc;
-  PartiesBloc _partiesBloc;
+  late PartyBloc _partyBloc;
+  late PartiesBloc _partiesBloc;
   final partiesDao = Database().partiesDao;
 
   @override

@@ -1,9 +1,9 @@
 import 'package:initiative_tracker/helpers/uuid.dart';
 
 class System {
-  String systemUUID;
-  String systemName;
-  Map<String, String> systemAttributes;
+  String? systemUUID;
+  String? systemName;
+  Map<String, String>? systemAttributes;
 
   System(this.systemName , {this.systemAttributes}){
     systemUUID = Uuid().generateV4();

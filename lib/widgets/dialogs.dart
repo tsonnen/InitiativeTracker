@@ -6,7 +6,7 @@ class ConfirmationDialog extends StatelessWidget {
   final body;
   final title;
 
-  ConfirmationDialog({@required this.title, @required this.body});
+  ConfirmationDialog({required this.title, required this.body});
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +33,7 @@ class ConfirmationDialog extends StatelessWidget {
 }
 
 class ColorPickerDialog extends StatefulWidget {
-  final Color color;
+  final Color? color;
 
   ColorPickerDialog(this.color);
   @override
@@ -41,7 +41,7 @@ class ColorPickerDialog extends StatefulWidget {
 }
 
 class ColorPickerDialogState extends State<ColorPickerDialog> {
-  Color color;
+  Color? color;
 
   @override
   void initState() {
@@ -55,7 +55,7 @@ class ColorPickerDialogState extends State<ColorPickerDialog> {
       title: Text('Pick a Color'),
       content: SingleChildScrollView(
         child: CircleColorPicker(
-          initialColor: color,
+          initialColor: color!,
           onChanged: (val) {
             color = val;
           },

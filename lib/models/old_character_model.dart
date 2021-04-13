@@ -1,12 +1,12 @@
 class OLDCharacterModel {
-  String characterUUID;
-  String characterName;
-  int initiative;
-  String notes;
-  int hp;
+  String? characterUUID;
+  String? characterName;
+  int? initiative;
+  String? notes;
+  int? hp;
   bool isExpanded = false;
-  Map<String, int> attributes = <String, int>{};
-  String systemUUID;
+  Map<String, int>? attributes = <String, int>{};
+  String? systemUUID;
 
   OLDCharacterModel(
       {this.characterName,
@@ -31,7 +31,8 @@ class OLDCharacterModel {
 
   @override
   bool operator ==(rhs) {
-    return characterUUID == rhs.characterUUID &&
+    return rhs is OLDCharacterModel &&
+        characterUUID == rhs.characterUUID &&
         characterName == rhs.characterName &&
         initiative == rhs.initiative &&
         notes == rhs.notes &&
