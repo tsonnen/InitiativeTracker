@@ -79,7 +79,7 @@ class TestHelper {
   }
 
   static Future<void> openDialog(WidgetTester tester) async {
-    await tester.tap(find.widgetWithText(FlatButton, 'Open Dialog'));
+    await tester.tap(find.widgetWithText(TextButton, 'Open Dialog'));
   }
 
   static Future<File> getProjectFile(String path) async {
@@ -110,13 +110,13 @@ class TestHelper {
     );
   }
 
-  static void selectItemInSpinner(
+  static Future<void> selectItemInSpinner(
       WidgetTester tester, SpinnerButton spinner, int targetVal) async {
     await tester.tap(find.byWidget(spinner));
 
     await tester.pumpAndSettle();
 
-    var picker = await tester.widget<NumberPicker>(find.byType(NumberPicker));
+    var picker = tester.widget<NumberPicker>(find.byType(NumberPicker));
 
     await scrollNumberPicker(
         tester.getTopLeft(find.byWidget(picker)), tester, 1, Axis.vertical);
@@ -134,7 +134,7 @@ class TestHelper {
   }
 
   // copied from: https://raw.githubusercontent.com/MarcinusX/NumberPicker/master/test/decimal_numberpicker_test.dart
-  static void scrollNumberPicker(
+  static Future<void> scrollNumberPicker(
     Offset pickerPosition,
     WidgetTester tester,
     int scrollBy,
@@ -187,7 +187,7 @@ class DialogTestScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: FlatButton(
+        body: TextButton(
             onPressed: () {
               showDialog(
                   context: context,

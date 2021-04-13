@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:initiative_tracker/helpers/theme.dart';
 import 'package:pref/pref.dart';
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
 import 'package:initiative_tracker/helpers/preference_manger.dart';
+import 'package:provider/provider.dart';
 
 class SettingsPage extends StatefulWidget {
   static final String route = 'Settings-Page';
@@ -17,7 +18,7 @@ class SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Preferences'),
+        title: Text('Settings'),
       ),
       body: PrefPage(
         children: [
@@ -27,9 +28,8 @@ class SettingsPageState extends State<SettingsPage> {
             value: 'light',
             pref: 'ui_theme',
             onSelect: () {
-              if (DynamicTheme.of(context)?.brightness != Brightness.light) {
-                DynamicTheme.of(context).setBrightness(Brightness.light);
-              }
+              Provider.of<ThemeNotifier>(context, listen: false)
+                  .setTheme(CustomTheme.light);
             },
           ),
           PrefRadio(
@@ -37,9 +37,8 @@ class SettingsPageState extends State<SettingsPage> {
             value: 'dark',
             pref: 'ui_theme',
             onSelect: () {
-              if (DynamicTheme.of(context)?.brightness != Brightness.dark) {
-                DynamicTheme.of(context).setBrightness(Brightness.dark);
-              }
+              Provider.of<ThemeNotifier>(context, listen: false)
+                  .setTheme(CustomTheme.dark);
             },
           ),
           PrefTitle(

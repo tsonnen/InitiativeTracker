@@ -1,4 +1,3 @@
-import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -269,14 +268,8 @@ void checkTitleText(Encounter partyModel) {
 }
 
 Widget createHomeScreen(MockPartiesBloc partiesBloc, MockPartyBloc partyBloc) {
-  return DynamicTheme(
-      defaultBrightness: Brightness.dark,
-      data: (brightness) => ThemeData(brightness: brightness),
-      themedWidgetBuilder: (context, theme) {
-        return MultiBlocProvider(providers: [
-          BlocProvider<PartyBloc>(create: (BuildContext context) => partyBloc),
-          BlocProvider<PartiesBloc>(
-              create: (BuildContext context) => partiesBloc)
-        ], child: MaterialApp(home: PartyScreen()));
-      });
+  return MultiBlocProvider(providers: [
+    BlocProvider<PartyBloc>(create: (BuildContext context) => partyBloc),
+    BlocProvider<PartiesBloc>(create: (BuildContext context) => partiesBloc)
+  ], child: MaterialApp(home: PartyScreen()));
 }

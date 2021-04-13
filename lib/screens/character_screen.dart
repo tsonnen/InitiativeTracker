@@ -168,7 +168,7 @@ class CharacterScreenState extends State<CharacterScreen> {
                           partyBloc.add(AddPartyCharacter(character));
                         }
                         character = null;
-                        Scaffold.of(context).showSnackBar(SnackBar(
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             content: Text(
                                 'Added ${_number.value > 1 ? '${_number.value} Characters' : 'Character'}')));
                       }

@@ -65,7 +65,7 @@ class ColorPickerDialogState extends State<ColorPickerDialog> {
         ),
       ),
       actions: <Widget>[
-        FlatButton(
+        TextButton(
           onPressed: () {
             Navigator.of(context).pop(color);
           },
@@ -87,11 +87,12 @@ class IntroDialog extends StatelessWidget {
           'character. To control what is displayed, or if intiative '
           'should be generated, check the settings'),
       actions: [
-        FlatButton( key: Key(Keys.getStartedButtonKey),
-          child: Text('Get Started'),
+        TextButton(
+          key: Key(Keys.getStartedButtonKey),
           onPressed: () {
             Navigator.of(context).pop();
           },
+          child: Text('Get Started'),
         )
       ],
     );

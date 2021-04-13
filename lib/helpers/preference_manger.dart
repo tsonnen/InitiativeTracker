@@ -15,7 +15,7 @@ class PreferenceManger {
       await prefs.setBool('pref_first_run', value);
     } else {
       await getPreferences();
-      await setFirstRun(value);
+      setFirstRun(value);
     }
   }
 
