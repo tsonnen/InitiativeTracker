@@ -4,6 +4,7 @@ import 'package:initiative_tracker/widgets/dialogs.dart';
 import 'package:mockito/mockito.dart';
 
 import '../testHelpers.dart';
+import '../testHelpers.mocks.dart';
 
 void main() {
   group('Confirmation Dialog', () {
@@ -27,7 +28,7 @@ void main() {
     testWidgets('Check Yes', (WidgetTester tester) async {
       var mockObserver = MockNavigatorObserver();
 
-      when(mockObserver.didPop(any!, any)).thenAnswer((realInvocation) async {
+      when(mockObserver.didPop(any, any)).thenAnswer((realInvocation) async {
         var value =
             await (realInvocation.positionalArguments.first as Route).popped;
         expect(value, true);
@@ -47,7 +48,7 @@ void main() {
     testWidgets('Check No', (WidgetTester tester) async {
       var mockObserver = MockNavigatorObserver();
 
-      when(mockObserver.didPop(any!, any)).thenAnswer((realInvocation) async {
+      when(mockObserver.didPop(any, any)).thenAnswer((realInvocation) async {
         var value =
             await (realInvocation.positionalArguments.first as Route).popped;
         expect(value, false);

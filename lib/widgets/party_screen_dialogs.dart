@@ -92,7 +92,7 @@ class PartiesDialogState extends State<PartiesDialog> {
       content: Container(
           width: double.maxFinite,
           child: BlocBuilder<PartiesBloc, PartiesState>(
-              cubit: partiesBloc,
+              bloc: partiesBloc,
               builder: (context, state) {
                 if (state is PartiesInitial) {
                   partiesBloc.add(LoadParties());

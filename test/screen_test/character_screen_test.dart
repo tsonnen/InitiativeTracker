@@ -7,13 +7,14 @@ import 'package:initiative_tracker/models/character_model.dart';
 import 'package:initiative_tracker/models/encounter.dart';
 import 'package:initiative_tracker/screens/character_screen.dart';
 import 'package:initiative_tracker/widgets/form_widgets.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mockito/mockito.dart' show argThat, verify, verifyNever, when;
 
 import '../testHelpers.dart';
+import '../testHelpers.mocks.dart';
 
 void main() {
   group('Character Screen Form Tests', () {
-    PartyBloc? partyBloc;
+    MockPartyBloc? partyBloc;
 
     setUp(() {
       partyBloc = MockPartyBloc();
@@ -36,7 +37,7 @@ void main() {
   });
 
   group('Character Screen-Add Character', () {
-    PartyBloc? partyBloc;
+    MockPartyBloc? partyBloc;
 
     setUp(() {
       partyBloc = MockPartyBloc();
@@ -112,7 +113,7 @@ void main() {
   });
 
   group('Character Screen Edit Tests', () {
-    PartyBloc? partyBloc;
+    MockPartyBloc? partyBloc;
 
     setUp(() {
       partyBloc = MockPartyBloc();
@@ -161,9 +162,10 @@ Future<void> tapButton(WidgetTester tester, {CharacterModel? character}) async {
   await tester.pumpAndSettle();
 }
 
-Widget createCharacterScreen(PartyBloc? partyBloc, {CharacterModel? character}) {
-  return BlocProvider(
-      create: (BuildContext context) => partyBloc,
+Widget createCharacterScreen(PartyBloc? partyBloc,
+    {CharacterModel? character}) {
+  return BlocProvider<PartyBloc>(
+      create: (BuildContext context) => partyBloc!,
       child: MaterialApp(
           home: CharacterScreen(
         character: character,

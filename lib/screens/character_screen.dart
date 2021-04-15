@@ -11,11 +11,9 @@ import 'package:initiative_tracker/helpers/random_generator.dart';
 class CharacterScreen extends StatefulWidget {
   static final String route = 'Character-Screen';
   final CharacterModel? character;
-  final String? partyUUID;
   final bool isEdit;
 
-  CharacterScreen({this.character, this.partyUUID})
-      : isEdit = character != null;
+  CharacterScreen({this.character}) : isEdit = character != null;
 
   @override
   CharacterScreenState createState() => CharacterScreenState();

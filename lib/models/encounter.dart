@@ -54,7 +54,7 @@ class Encounter extends Party {
     var cloned = Encounter(
         partyName: partyName,
         partyUUID: partyUUID,
-        characters: characters?.clone() ?? CharacterList(),
+        characters: characters!.clone(),
         round: round);
     return cloned;
   }
@@ -64,11 +64,16 @@ class Encounter extends Party {
   }
 
   @override
-  Encounter copyWith({round, partyName, characters, partyUUID}) => Encounter(
-      round: round ?? this.round,
-      partyName: partyName ?? this.partyName,
-      characters: characters ?? this.characters,
-      partyUUID: partyUUID ?? this.partyUUID);
+  Encounter copyWith(
+          {int? round,
+          String? partyName,
+          CharacterList? characters,
+          String? partyUUID}) =>
+      Encounter(
+          round: round ?? this.round,
+          partyName: partyName ?? this.partyName,
+          characters: characters ?? this.characters,
+          partyUUID: partyUUID ?? this.partyUUID);
 
   Encounter.fromParty(Party? party)
       : round = 1,

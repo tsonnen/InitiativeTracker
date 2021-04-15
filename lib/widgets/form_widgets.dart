@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:initiative_tracker/helpers/helpers.dart';
 import 'package:initiative_tracker/widgets/dialogs.dart';
-import 'package:numberpicker/numberpicker.dart';
+import 'package:initiative_tracker/widgets/numberpicker_dialog.dart';
 
 class Styles {
   static InputDecoration textFieldDecoration(String labelText,
@@ -101,7 +101,7 @@ class SpinnerButtonState extends State<SpinnerButton> {
             barrierDismissible: false,
             context: context,
             builder: (BuildContext context) {
-              return NumberPickerDialog.integer(
+              return NumberPickerDialog(
                 minValue: widget.min,
                 maxValue: widget.max,
                 initialIntegerValue: widget.primWrap.value ?? 0,

@@ -11,6 +11,7 @@ import 'package:mockito/mockito.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../testHelpers.dart';
+import '../testHelpers.mocks.dart';
 
 void main() {
   group('PartyName Dialog', () {
@@ -33,7 +34,7 @@ void main() {
     testWidgets('Check Save', (WidgetTester tester) async {
       var mockObserver = MockNavigatorObserver();
 
-      when(mockObserver.didPop(any!, any)).thenAnswer((realInvocation) async {
+      when(mockObserver.didPop(any, any)).thenAnswer((realInvocation) async {
         var value =
             await (realInvocation.positionalArguments.first as Route).popped;
         expect(value, name);
@@ -54,7 +55,7 @@ void main() {
     testWidgets('Check Cancel', (WidgetTester tester) async {
       var mockObserver = MockNavigatorObserver();
 
-      when(mockObserver.didPop(any!, any)).thenAnswer((realInvocation) async {
+      when(mockObserver.didPop(any, any)).thenAnswer((realInvocation) async {
         var value =
             await (realInvocation.positionalArguments.first as Route).popped;
         expect(value, null);
@@ -134,8 +135,8 @@ void main() {
   });
 
   group('Parties Dialog', () {
-    late PartyBloc partyBloc;
-    late PartiesBloc partiesBloc;
+    late MockPartyBloc partyBloc;
+    late MockPartiesBloc partiesBloc;
     Encounter? partyModel;
     List<Encounter?>? partyList;
     SharedPreferences.setMockInitialValues({});

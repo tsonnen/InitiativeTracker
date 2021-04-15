@@ -130,10 +130,11 @@ class PartyScreenState extends State<PartyScreen> {
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => CharacterScreen(
-                    partyUUID:
-                        partyModel != null ? partyModel.partyUUID : null)));
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => CharacterScreen(),
+              ),
+            );
           },
           tooltip: 'Add Character',
           child: const Icon(Icons.add),

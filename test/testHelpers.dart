@@ -4,39 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:initiative_tracker/bloc/parties/parties_bloc.dart';
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
-import 'package:bloc_test/bloc_test.dart';
 import 'package:initiative_tracker/helpers/preference_manger.dart';
 import 'package:initiative_tracker/widgets/form_widgets.dart';
-import 'package:mockito/mockito.dart';
+import 'package:initiative_tracker/widgets/numberpicker_dialog.dart';
+import 'package:mockito/annotations.dart';
 import 'package:numberpicker/numberpicker.dart';
-import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
-import 'package:plugin_platform_interface/plugin_platform_interface.dart';
-import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class MockPartyBloc extends MockBloc<PartyState> implements PartyBloc {}
-
-class MockPartiesBloc extends MockBloc<PartiesState> implements PartiesBloc {
-  MockPartiesBloc();
-}
-
-class MockNavigatorObserver extends Mock implements NavigatorObserver {}
-
-class MockPathProviderPlatform extends Mock
-    with MockPlatformInterfaceMixin
-    implements PathProviderPlatform {
-  @override
-  Future<String> getApplicationDocumentsPath() async {
-    var dir = Directory.current;
-    while (!await dir
-        .list()
-        .any((entity) => entity.path.endsWith('pubspec.yaml'))) {
-      dir = dir.parent;
-    }
-    return join(dir.path, 'test_resources');
-  }
-}
-
+@GenerateMocks([PartyBloc, PartiesBloc, NavigatorObserver])
 class TestHelper {
   static void dumpTree() {
     assert(WidgetsBinding.instance != null);
@@ -53,7 +28,7 @@ class TestHelper {
     }
   }
 
-  static Future<void> setMockPrefs(Map<String, dynamic> values) async {
+  static Future<void> setMockPrefs(Map<String, Object> values) async {
     if (PreferenceManger.prefs == null) {
       SharedPreferences.setMockInitialValues(values);
       await PreferenceManger.getPreferences();
@@ -141,17 +116,17 @@ class TestHelper {
     Axis axis,
   ) async {
     double pickerCenterX, pickerCenterY, offsetX, offsetY;
-    var pickerCenterMainAxis = 1.5 * NumberPicker.kDefaultItemExtent;
-    var pickerCenterCrossAxis = NumberPicker.kDefaultListViewCrossAxisSize / 2;
+    var pickerCenterMainAxis = 1.5 * 50;
+    var pickerCenterCrossAxis = (axis == Axis.vertical ? 100 : 50) / 2;
     if (axis == Axis.vertical) {
       pickerCenterX = pickerCenterCrossAxis;
       pickerCenterY = pickerCenterMainAxis;
       offsetX = 0.0;
-      offsetY = -scrollBy * NumberPicker.kDefaultItemExtent;
+      offsetY = -scrollBy * 50;
     } else {
       pickerCenterX = pickerCenterMainAxis;
       pickerCenterY = pickerCenterCrossAxis;
-      offsetX = -scrollBy * NumberPicker.kDefaultItemExtent;
+      offsetX = -scrollBy * 50;
       offsetY = 0.0;
     }
     var pickerCenter = Offset(

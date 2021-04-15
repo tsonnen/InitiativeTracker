@@ -84,7 +84,7 @@ class CharacterConverter implements JsonConverter<CharacterModel?, String> {
   }
 }
 
-class CharacterListConverter extends TypeConverter<CharacterList?, String?> {
+class CharacterListConverter extends TypeConverter<CharacterList?, String> {
   const CharacterListConverter();
   @override
   CharacterList? mapToDart(String? fromDb) {

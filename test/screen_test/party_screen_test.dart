@@ -13,6 +13,7 @@ import 'package:initiative_tracker/widgets/party_screen_dialogs.dart';
 import 'package:mockito/mockito.dart';
 
 import '../testHelpers.dart';
+import '../testHelpers.mocks.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -22,8 +23,8 @@ void main() {
     return 'test_resources';
   });
   group('Home Screen Tests', () {
-    PartiesBloc? partiesBloc;
-    PartyBloc? partyBloc;
+    MockPartiesBloc? partiesBloc;
+    MockPartyBloc? partyBloc;
     Encounter? partyModel;
 
     setUp(() {
@@ -41,7 +42,7 @@ void main() {
       when(partiesBloc!.state)
           .thenAnswer((_) => PartiesLoadedSuccessful([partyModel]));
 
-      await tester.pumpWidget(createHomeScreen(partiesBloc as MockPartiesBloc?, partyBloc as MockPartyBloc?));
+      await tester.pumpWidget(createHomeScreen(partiesBloc, partyBloc));
       await tester.pumpAndSettle();
 
       expect(
@@ -62,7 +63,7 @@ void main() {
       when(partiesBloc!.state)
           .thenAnswer((_) => PartiesLoadedSuccessful([partyModel]));
 
-      await tester.pumpWidget(createHomeScreen(partiesBloc as MockPartiesBloc?, partyBloc as MockPartyBloc?));
+      await tester.pumpWidget(createHomeScreen(partiesBloc, partyBloc));
 
       await tester.pumpAndSettle();
 
@@ -89,7 +90,7 @@ void main() {
       when(partyBloc!.add(argThat(MatchType<DeletePartyCharacter>())))
           .thenReturn(null);
 
-      await tester.pumpWidget(createHomeScreen(partiesBloc as MockPartiesBloc?, partyBloc as MockPartyBloc?));
+      await tester.pumpWidget(createHomeScreen(partiesBloc, partyBloc));
 
       await tester.pumpAndSettle();
 
@@ -116,7 +117,7 @@ void main() {
           .thenAnswer((_) => PartiesLoadedSuccessful([partyModel]));
       when(partyBloc!.add(argThat(MatchType<ChangeRound>()))).thenReturn(null);
 
-      await tester.pumpWidget(createHomeScreen(partiesBloc as MockPartiesBloc?, partyBloc as MockPartyBloc?));
+      await tester.pumpWidget(createHomeScreen(partiesBloc, partyBloc));
 
       await tester.pumpAndSettle();
 
@@ -141,8 +142,9 @@ void main() {
       when(partyBloc!.state).thenAnswer((_) => PartyLoadedSucess(partyModel));
       when(partiesBloc!.state)
           .thenAnswer((_) => PartiesLoadedSuccessful([partyModel]));
-      when(partyBloc!.add(argThat(MatchType<GenerateParty>()))).thenReturn(null);
-      await tester.pumpWidget(createHomeScreen(partiesBloc as MockPartiesBloc?, partyBloc as MockPartyBloc?));
+      when(partyBloc!.add(argThat(MatchType<GenerateParty>())))
+          .thenReturn(null);
+      await tester.pumpWidget(createHomeScreen(partiesBloc, partyBloc));
       await tester.pumpAndSettle();
       await tester.tap(find.widgetWithIcon(IconButton, Icons.clear));
       await tester.pumpAndSettle();
@@ -155,7 +157,7 @@ void main() {
       when(partyBloc!.state).thenAnswer((_) => PartyLoadedSucess(partyModel));
       when(partiesBloc!.state)
           .thenAnswer((_) => PartiesLoadedSuccessful([partyModel]));
-      await tester.pumpWidget(createHomeScreen(partiesBloc as MockPartiesBloc?, partyBloc as MockPartyBloc?));
+      await tester.pumpWidget(createHomeScreen(partiesBloc, partyBloc));
 
       await tester.pumpAndSettle();
 
@@ -191,7 +193,7 @@ void main() {
           .thenAnswer((_) => PartiesLoadedSuccessful([partyModel]));
       when(partiesBloc!.add(argThat(MatchType<AddParty>()))).thenReturn(null);
 
-      await tester.pumpWidget(createHomeScreen(partiesBloc as MockPartiesBloc?, partyBloc as MockPartyBloc?));
+      await tester.pumpWidget(createHomeScreen(partiesBloc, partyBloc));
       await tester.pumpAndSettle();
 
       await tester.tap(find.byIcon(Icons.save, skipOffstage: false));
@@ -212,9 +214,10 @@ void main() {
       when(partyBloc!.state).thenAnswer((_) => PartyLoadedSucess(partyModel));
       when(partiesBloc!.state)
           .thenAnswer((_) => PartiesLoadedSuccessful([partyModel]));
-      when(partiesBloc!.add(argThat(MatchType<DeleteParty>()))).thenReturn(null);
+      when(partiesBloc!.add(argThat(MatchType<DeleteParty>())))
+          .thenReturn(null);
 
-      await tester.pumpWidget(createHomeScreen(partiesBloc as MockPartiesBloc?, partyBloc as MockPartyBloc?));
+      await tester.pumpWidget(createHomeScreen(partiesBloc, partyBloc));
       await tester.pumpAndSettle();
 
       await tester.tap(find.byTooltip('Open navigation menu'));
@@ -230,7 +233,7 @@ void main() {
       when(partyBloc!.state).thenAnswer((_) => PartyLoadedSucess(partyModel));
       when(partiesBloc!.state)
           .thenAnswer((_) => PartiesLoadedSuccessful([partyModel]));
-      await tester.pumpWidget(createHomeScreen(partiesBloc as MockPartiesBloc?, partyBloc as MockPartyBloc?));
+      await tester.pumpWidget(createHomeScreen(partiesBloc, partyBloc));
       await tester.pumpAndSettle();
 
       await tester.tap(find.byTooltip('Open navigation menu'));
@@ -267,7 +270,8 @@ void checkTitleText(Encounter partyModel) {
       findsOneWidget);
 }
 
-Widget createHomeScreen(MockPartiesBloc? partiesBloc, MockPartyBloc? partyBloc) {
+Widget createHomeScreen(
+    MockPartiesBloc? partiesBloc, MockPartyBloc? partyBloc) {
   return MultiBlocProvider(providers: [
     BlocProvider<PartyBloc>(create: (BuildContext context) => partyBloc!),
     BlocProvider<PartiesBloc>(create: (BuildContext context) => partiesBloc!)
