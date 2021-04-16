@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_circle_color_picker/flutter_circle_color_picker.dart';
 import 'package:initiative_tracker/helpers/keys.dart';
+
+import 'package:flex_color_picker/flex_color_picker.dart';
 
 class ConfirmationDialog extends StatelessWidget {
   final body;
@@ -54,14 +55,16 @@ class ColorPickerDialogState extends State<ColorPickerDialog> {
     return AlertDialog(
       title: Text('Pick a Color'),
       content: SingleChildScrollView(
-        child: CircleColorPicker(
-          initialColor: color!,
-          onChanged: (val) {
+        child: ColorPicker(
+          color: color!,
+          onColorChanged: (val) {
             color = val;
           },
-          size: const Size(240, 240),
-          strokeWidth: 4,
-          thumbSize: 36,
+          pickersEnabled: {
+            ColorPickerType.wheel: true,
+            ColorPickerType.accent: false,
+            ColorPickerType.primary: false
+          },
         ),
       ),
       actions: <Widget>[
