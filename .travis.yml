@@ -12,7 +12,7 @@ addons:
 before_script:
   - git clone https://github.com/flutter/flutter.git -b master
   - cd ./flutter/
-  - git checkout 1.22.5
+  - git checkout 2.0.4
   - cd ..
   - ./flutter/bin/flutter doctor
   - ./flutter/bin/flutter version
