@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:initiative_tracker/bloc/parties/parties_bloc.dart';
@@ -7,12 +8,33 @@ import 'package:initiative_tracker/bloc/party/party_bloc.dart';
 import 'package:initiative_tracker/helpers/preference_manger.dart';
 import 'package:initiative_tracker/widgets/form_widgets.dart';
 import 'package:initiative_tracker/widgets/numberpicker_dialog.dart';
-import 'package:mockito/annotations.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-@GenerateMocks([PartyBloc, PartiesBloc, NavigatorObserver])
+class MockPartyBloc extends MockBloc<PartyEvent, PartyState>
+    implements PartyBloc {}
+
+class MockPartiesBloc extends MockBloc<PartiesEvent, PartiesState>
+    implements PartiesBloc {
+  MockPartiesBloc();
+}
+
+class MockNavigatorObserver extends Mock implements NavigatorObserver {}
+
+class FakeRoute<T> extends Fake implements Route<T> {}
+
 class TestHelper {
+  static void registerFallbacks() {
+    registerFallbackValue<PartyState>(PartyInitial());
+    registerFallbackValue<PartyEvent>(GenerateParty());
+
+    registerFallbackValue<PartiesState>(PartiesInitial());
+    registerFallbackValue<PartiesEvent>(LoadParties());
+
+    registerFallbackValue<Route<dynamic>>(FakeRoute());
+  }
+
   static void dumpTree() {
     assert(WidgetsBinding.instance != null);
     var mode = 'RELEASE MODE';

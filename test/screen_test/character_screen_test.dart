@@ -7,21 +7,25 @@ import 'package:initiative_tracker/models/character_model.dart';
 import 'package:initiative_tracker/models/encounter.dart';
 import 'package:initiative_tracker/screens/character_screen.dart';
 import 'package:initiative_tracker/widgets/form_widgets.dart';
-import 'package:mockito/mockito.dart' show argThat, verify, verifyNever, when;
+import 'package:mocktail/mocktail.dart';
 
 import '../testHelpers.dart';
-import '../testHelpers.mocks.dart';
 
 void main() {
+  setUpAll(() {
+    TestHelper.registerFallbacks();
+  });
+
   group('Character Screen Form Tests', () {
-    MockPartyBloc? partyBloc;
+    late PartyBloc partyBloc;
 
     setUp(() {
       partyBloc = MockPartyBloc();
     });
     testWidgets('Test Validators-EMPTY', (WidgetTester tester) async {
-      when(partyBloc!.state).thenAnswer((_) => PartyLoadedSucess(Encounter()));
-      when(partyBloc!.add(argThat(MatchType<AddPartyCharacter>())))
+      when(() => partyBloc.state)
+          .thenAnswer((_) => PartyLoadedSucess(Encounter()));
+      when(() => partyBloc.add(any(that: MatchType<AddPartyCharacter>())))
           .thenReturn(null);
 
       await tester.pumpWidget(createCharacterScreen(partyBloc));
@@ -32,7 +36,8 @@ void main() {
 
       expect(find.text('Please enter a name'), findsOneWidget);
 
-      verifyNever(partyBloc!.add(argThat(MatchType<AddPartyCharacter>())));
+      verifyNever(
+          () => partyBloc.add(any(that: MatchType<AddPartyCharacter>())));
     });
   });
 
@@ -43,8 +48,9 @@ void main() {
       partyBloc = MockPartyBloc();
     });
     testWidgets('Add Character-No Gen', (WidgetTester tester) async {
-      when(partyBloc!.state).thenAnswer((_) => PartyLoadedSucess(Encounter()));
-      when(partyBloc!.add(argThat(MatchType<AddPartyCharacter>())))
+      when(() => partyBloc!.state)
+          .thenAnswer((_) => PartyLoadedSucess(Encounter()));
+      when(() => partyBloc!.add(any(that: MatchType<AddPartyCharacter>())))
           .thenReturn(null);
 
       await TestHelper.setMockPrefs({'pref_should_roll_init': false});
@@ -75,12 +81,14 @@ void main() {
       await tapButton(tester);
       await tester.pumpAndSettle();
 
-      verify(partyBloc!.add(argThat(MatchType<AddPartyCharacter>()))).called(1);
+      verify(() => partyBloc!.add(any(that: MatchType<AddPartyCharacter>())))
+          .called(1);
     });
 
     testWidgets('Add Character-Gen', (WidgetTester tester) async {
-      when(partyBloc!.state).thenAnswer((_) => PartyLoadedSucess(Encounter()));
-      when(partyBloc!.add(argThat(MatchType<AddPartyCharacter>())))
+      when(() => partyBloc!.state)
+          .thenAnswer((_) => PartyLoadedSucess(Encounter()));
+      when(() => partyBloc!.add(any(that: MatchType<AddPartyCharacter>())))
           .thenReturn(null);
       var charToAdd = CharacterModel(characterName: 'Test Char', hp: 12);
       var numCharacters = 2;
@@ -107,7 +115,7 @@ void main() {
       await tapButton(tester);
       await tester.pumpAndSettle();
 
-      verify(partyBloc!.add(argThat(MatchType<AddPartyCharacter>())))
+      verify(() => partyBloc!.add(any(that: MatchType<AddPartyCharacter>())))
           .called(numCharacters);
     });
   });
@@ -119,8 +127,9 @@ void main() {
       partyBloc = MockPartyBloc();
     });
     testWidgets('Test Edit', (WidgetTester tester) async {
-      when(partyBloc!.state).thenAnswer((_) => PartyLoadedSucess(Encounter()));
-      when(partyBloc!.add(argThat(MatchType<AddPartyCharacter>())))
+      when(() => partyBloc!.state)
+          .thenAnswer((_) => PartyLoadedSucess(Encounter()));
+      when(() => partyBloc!.add(any(that: MatchType<AddPartyCharacter>())))
           .thenReturn(null);
 
       var charToEdit = CharacterModel(
@@ -151,7 +160,7 @@ void main() {
       await tapButton(tester, character: charToEdit);
       await tester.pumpAndSettle();
 
-      verify(partyBloc!.add(AddPartyCharacter(editedChar))).called(1);
+      verify(() => partyBloc!.add(AddPartyCharacter(editedChar))).called(1);
     });
   });
 }

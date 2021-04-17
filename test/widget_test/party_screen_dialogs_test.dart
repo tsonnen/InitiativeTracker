@@ -5,18 +5,20 @@ import 'package:initiative_tracker/bloc/parties/parties_bloc.dart';
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
 import 'package:initiative_tracker/models/encounter.dart';
 import 'package:initiative_tracker/helpers/preference_manger.dart';
+import 'package:initiative_tracker/moor/parties.dart';
 import 'package:initiative_tracker/widgets/dialogs.dart';
 import 'package:initiative_tracker/widgets/party_screen_dialogs.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../testHelpers.dart';
-import '../testHelpers.mocks.dart';
 
 void main() {
+  setUpAll(() {
+    TestHelper.registerFallbacks();
+  });
   group('PartyName Dialog', () {
     final name = 'coolParty';
-    setUp(() {});
 
     testWidgets('Check Content', (WidgetTester tester) async {
       await tester
@@ -34,7 +36,8 @@ void main() {
     testWidgets('Check Save', (WidgetTester tester) async {
       var mockObserver = MockNavigatorObserver();
 
-      when(mockObserver.didPop(any, any)).thenAnswer((realInvocation) async {
+      when(() => mockObserver.didPop(any(), any()))
+          .thenAnswer((realInvocation) async {
         var value =
             await (realInvocation.positionalArguments.first as Route).popped;
         expect(value, name);
@@ -55,7 +58,8 @@ void main() {
     testWidgets('Check Cancel', (WidgetTester tester) async {
       var mockObserver = MockNavigatorObserver();
 
-      when(mockObserver.didPop(any, any)).thenAnswer((realInvocation) async {
+      when(() => mockObserver.didPop(any(), any()))
+          .thenAnswer((realInvocation) async {
         var value =
             await (realInvocation.positionalArguments.first as Route).popped;
         expect(value, null);
@@ -135,8 +139,8 @@ void main() {
   });
 
   group('Parties Dialog', () {
-    late MockPartyBloc partyBloc;
-    late MockPartiesBloc partiesBloc;
+    late PartyBloc partyBloc;
+    late PartiesBloc partiesBloc;
     Encounter? partyModel;
     List<Encounter?>? partyList;
     SharedPreferences.setMockInitialValues({});
@@ -150,9 +154,10 @@ void main() {
     });
 
     testWidgets('Check Content - PartiesInitial', (WidgetTester tester) async {
-      when(partyBloc.state).thenAnswer((_) => PartyLoadedSucess(partyModel));
-      when(partiesBloc.state).thenAnswer((_) => PartiesInitial());
-      when(partiesBloc.add(argThat(MatchType<LoadParties>()))).thenReturn(null);
+      when(() => partyBloc.state)
+          .thenAnswer((_) => PartyLoadedSucess(partyModel));
+      when(() => partiesBloc.state).thenAnswer((_) => PartiesInitial());
+      when(() => partiesBloc.add(any())).thenReturn(null);
 
       await tester.pumpWidget(MultiBlocProvider(providers: [
         BlocProvider<PartyBloc>(create: (BuildContext context) => partyBloc),
@@ -167,13 +172,14 @@ void main() {
       expect(find.text('Loading'), findsOneWidget);
       expect(find.widgetWithText(TextButton, 'Done'), findsOneWidget);
 
-      verify(partiesBloc.add(LoadParties())).called(1);
+      verify(() => partiesBloc.add(LoadParties())).called(1);
     });
 
     testWidgets('Check Content - PartiesLoadedSuccessful',
         (WidgetTester tester) async {
-      when(partyBloc.state).thenAnswer((_) => PartyLoadedSucess(partyModel));
-      when(partiesBloc.state)
+      when(() => partyBloc.state)
+          .thenAnswer((_) => PartyLoadedSucess(partyModel));
+      when(() => partiesBloc.state)
           .thenAnswer((_) => PartiesLoadedSuccessful(partyList));
       await tester.pumpWidget(MultiBlocProvider(providers: [
         BlocProvider<PartyBloc>(create: (BuildContext context) => partyBloc),
@@ -194,10 +200,11 @@ void main() {
 
     testWidgets('Check Delete - No Confirm', (WidgetTester tester) async {
       await PreferenceManger.setConfirmDelete(false);
-      when(partyBloc.state).thenAnswer((_) => PartyLoadedSucess(partyModel));
-      when(partiesBloc.state)
+      when(() => partyBloc.state)
+          .thenAnswer((_) => PartyLoadedSucess(partyModel));
+      when(() => partiesBloc.state)
           .thenAnswer((_) => PartiesLoadedSuccessful(partyList));
-      when(partiesBloc.add(DeleteParty(partyModel))).thenReturn(null);
+      when(() => partiesBloc.add(DeleteParty(partyModel))).thenReturn(null);
       await tester.pumpWidget(MultiBlocProvider(providers: [
         BlocProvider<PartyBloc>(create: (BuildContext context) => partyBloc),
         BlocProvider<PartiesBloc>(create: (BuildContext context) => partiesBloc)
@@ -212,15 +219,16 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      verify(partiesBloc.add(DeleteParty(partyModel))).called(1);
+      verify(() => partiesBloc.add(DeleteParty(partyModel))).called(1);
     });
 
     testWidgets('Check Delete - Confirm', (WidgetTester tester) async {
       await PreferenceManger.setConfirmDelete(true);
-      when(partyBloc.state).thenAnswer((_) => PartyLoadedSucess(partyModel));
-      when(partiesBloc.state)
+      when(() => partyBloc.state)
+          .thenAnswer((_) => PartyLoadedSucess(partyModel));
+      when(() => partiesBloc.state)
           .thenAnswer((_) => PartiesLoadedSuccessful(partyList));
-      when(partiesBloc.add(DeleteParty(partyModel))).thenReturn(null);
+      when(() => partiesBloc.add(DeleteParty(partyModel))).thenReturn(null);
 
       await tester.pumpWidget(MultiBlocProvider(providers: [
         BlocProvider<PartyBloc>(create: (BuildContext context) => partyBloc),
@@ -236,7 +244,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      verifyNever(partiesBloc.add(DeleteParty(partyModel)));
+      verifyNever(() => partiesBloc.add(DeleteParty(partyModel)));
 
       expect(find.byType(PartyDeleteDialog), findsOneWidget);
 
@@ -244,15 +252,16 @@ void main() {
           of: find.byType(PartyDeleteDialog),
           matching: find.widgetWithText(TextButton, 'Yes')));
 
-      verify(partiesBloc.add(DeleteParty(partyModel))).called(1);
+      verify(() => partiesBloc.add(DeleteParty(partyModel))).called(1);
     });
 
     testWidgets('Check Load - No Confirm', (WidgetTester tester) async {
       await PreferenceManger.setConfirmLoad(false);
-      when(partyBloc.state).thenAnswer((_) => PartyLoadedSucess(partyModel));
-      when(partiesBloc.state)
+      when(() => partyBloc.state)
+          .thenAnswer((_) => PartyLoadedSucess(partyModel));
+      when(() => partiesBloc.state)
           .thenAnswer((_) => PartiesLoadedSuccessful(partyList));
-      when(partyBloc.add(LoadParty(partyModel))).thenReturn(null);
+      when(() => partyBloc.add(LoadParty(partyModel))).thenReturn(null);
 
       await tester.pumpWidget(MultiBlocProvider(providers: [
         BlocProvider<PartyBloc>(create: (BuildContext context) => partyBloc),
@@ -267,15 +276,16 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      verify(partyBloc.add(LoadParty(partyModel))).called(1);
+      verify(() => partyBloc.add(LoadParty(partyModel))).called(1);
     });
 
     testWidgets('Check Load - Confirm', (WidgetTester tester) async {
       await PreferenceManger.setConfirmLoad(true);
-      when(partyBloc.state).thenAnswer((_) => PartyLoadedSucess(partyModel));
-      when(partiesBloc.state)
+      when(() => partyBloc.state)
+          .thenAnswer((_) => PartyLoadedSucess(partyModel));
+      when(() => partiesBloc.state)
           .thenAnswer((_) => PartiesLoadedSuccessful(partyList));
-      when(partyBloc.add(LoadParty(partyModel))).thenReturn(null);
+      when(() => partyBloc.add(LoadParty(partyModel))).thenReturn(null);
 
       await tester.pumpWidget(MultiBlocProvider(providers: [
         BlocProvider<PartyBloc>(create: (BuildContext context) => partyBloc),
@@ -290,7 +300,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      verifyNever(partyBloc.add(LoadParty(partyModel)));
+      verifyNever(() => partyBloc.add(LoadParty(partyModel)));
 
       expect(find.byType(PartyLoadDialog), findsOneWidget);
 
@@ -298,7 +308,7 @@ void main() {
           of: find.byType(PartyLoadDialog),
           matching: find.widgetWithText(TextButton, 'Yes')));
 
-      verify(partyBloc.add(LoadParty(partyModel))).called(1);
+      verify(() => partyBloc.add(LoadParty(partyModel))).called(1);
     });
   });
 }
