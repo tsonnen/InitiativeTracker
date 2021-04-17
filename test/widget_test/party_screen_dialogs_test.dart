@@ -5,7 +5,6 @@ import 'package:initiative_tracker/bloc/parties/parties_bloc.dart';
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
 import 'package:initiative_tracker/models/encounter.dart';
 import 'package:initiative_tracker/helpers/preference_manger.dart';
-import 'package:initiative_tracker/moor/parties.dart';
 import 'package:initiative_tracker/widgets/dialogs.dart';
 import 'package:initiative_tracker/widgets/party_screen_dialogs.dart';
 import 'package:mocktail/mocktail.dart';
