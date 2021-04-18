@@ -10,5 +10,5 @@ class Parties extends Table {
       text().map(const CharacterListConverter()).nullable()();
 
   @override
-  Set<Column> get primaryKey => {partyUUID};
+  Set<Column>? get primaryKey => {partyUUID};
 }

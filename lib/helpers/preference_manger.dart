@@ -1,27 +1,27 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PreferenceManger {
-  static SharedPreferences prefs;
+  static SharedPreferences? prefs;
 
   static bool getFirstRun() {
     if (prefs != null) {
-      return prefs.getBool('pref_first_run') ?? true;
+      return prefs!.getBool('pref_first_run') ?? true;
     }
     return true;
   }
 
   static void setFirstRun(bool value) async {
     if (prefs != null) {
-      await prefs.setBool('pref_first_run', value);
+      await prefs!.setBool('pref_first_run', value);
     } else {
       await getPreferences();
-      await setFirstRun(value);
+      setFirstRun(value);
     }
   }
 
   static int getNumberDice() {
     if (prefs != null) {
-      var numDice = prefs.getString('pref_num_dice') ?? '';
+      var numDice = prefs!.getString('pref_num_dice') ?? '';
       return int.tryParse(numDice) ?? 1;
     }
     return 1;
@@ -29,7 +29,7 @@ class PreferenceManger {
 
   static int getNumberSides() {
     if (prefs != null) {
-      var numSides = prefs.getString('pref_num_sides') ?? '';
+      var numSides = prefs!.getString('pref_num_sides') ?? '';
       return int.tryParse(numSides) ?? 20;
     }
     return 20;
@@ -37,54 +37,54 @@ class PreferenceManger {
 
   static bool getConfirmDelete() {
     if (prefs != null) {
-      return prefs.getBool('pref_confirm_delete') ?? true;
+      return prefs!.getBool('pref_confirm_delete') ?? true;
     }
     return true;
   }
 
   static bool getConfirmOverwrite() {
     if (prefs != null) {
-      return prefs.getBool('pref_confirm_overwrite') ?? true;
+      return prefs!.getBool('pref_confirm_overwrite') ?? true;
     }
     return true;
   }
 
   static bool getConfirmLoad() {
     if (prefs != null) {
-      return prefs.getBool('pref_confirm_load') ?? true;
+      return prefs!.getBool('pref_confirm_load') ?? true;
     }
     return true;
   }
 
   static bool getShowHP() {
     if (prefs != null) {
-      return prefs.getBool('pref_show_hp') ?? true;
+      return prefs!.getBool('pref_show_hp') ?? true;
     }
     return true;
   }
 
   static bool getShowNotes() {
     if (prefs != null) {
-      return prefs.getBool('pref_show_notes') ?? true;
+      return prefs!.getBool('pref_show_notes') ?? true;
     }
     return true;
   }
 
   static bool getConfirmClearParty() {
     if (prefs != null) {
-      return prefs.getBool('pref_confirm_clear') ?? true;
+      return prefs!.getBool('pref_confirm_clear') ?? true;
     }
     return true;
   }
 
   static bool getShowInitiative() {
     if (prefs != null) {
-      return prefs.getBool('pref_show_initiative') ?? true;
+      return prefs!.getBool('pref_show_initiative') ?? true;
     }
     return true;
   }
 
-  static String getSystemUUID() {
+  static String? getSystemUUID() {
     return prefs?.getString('pref_systemuuid');
   }
 
@@ -94,14 +94,14 @@ class PreferenceManger {
 
   static bool getRollInititative() {
     if (prefs != null) {
-      return prefs.getBool('pref_should_roll_init') ?? true;
+      return prefs!.getBool('pref_should_roll_init') ?? true;
     }
     return true;
   }
 
   static Future<void> setSystemUUID(String systemUUID) async {
     if (prefs != null) {
-      await prefs.setString('pref_systemuuid', systemUUID);
+      await prefs!.setString('pref_systemuuid', systemUUID);
     } else {
       await getPreferences();
       await setSystemUUID(systemUUID);
@@ -110,7 +110,7 @@ class PreferenceManger {
 
   static Future<void> setConfirmLoad(bool confirm) async {
     if (prefs != null) {
-      await prefs.setBool('pref_confirm_load', confirm);
+      await prefs!.setBool('pref_confirm_load', confirm);
     } else {
       await getPreferences();
       await setConfirmLoad(confirm);
@@ -119,7 +119,7 @@ class PreferenceManger {
 
   static Future<void> setConfirmDelete(bool confirm) async {
     if (prefs != null) {
-      await prefs.setBool('pref_confirm_delete', confirm);
+      await prefs!.setBool('pref_confirm_delete', confirm);
     } else {
       await getPreferences();
       await setConfirmDelete(confirm);
@@ -128,7 +128,7 @@ class PreferenceManger {
 
   static Future<void> setRollInititative(bool roll) async {
     if (prefs != null) {
-      await prefs.setBool('pref_should_roll_init', roll);
+      await prefs!.setBool('pref_should_roll_init', roll);
     } else {
       await getPreferences();
       await setConfirmDelete(roll);
@@ -137,11 +137,11 @@ class PreferenceManger {
 
   static Future<void> setVal(String key, dynamic val) async {
     if (val is bool) {
-      await prefs.setBool(key, val);
+      await prefs!.setBool(key, val);
     } else if (val is double) {
-      await prefs.setDouble(key, val);
+      await prefs!.setDouble(key, val);
     } else if (val is int) {
-      await prefs.setInt(key, val);
+      await prefs!.setInt(key, val);
     } else {
       throw UnimplementedError;
     }

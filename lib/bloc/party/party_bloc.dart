@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/foundation.dart';
 import 'package:initiative_tracker/models/character_model.dart';
 import 'package:initiative_tracker/moor/database.dart';
 import 'package:initiative_tracker/models/encounter.dart';

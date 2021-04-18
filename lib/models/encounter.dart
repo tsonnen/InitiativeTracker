@@ -9,9 +9,9 @@ class Encounter extends Party {
 
   Encounter(
       {this.round = 1,
-      String partyName,
-      CharacterList characters,
-      String partyUUID})
+      String? partyName,
+      CharacterList? characters,
+      String? partyUUID})
       : super(
             partyName: partyName,
             partyUUID: partyUUID ?? Uuid().generateV4(),
@@ -22,28 +22,28 @@ class Encounter extends Party {
   }
 
   void addCharacter(CharacterModel character) {
-    var index = characters.indexWhere(
-        (element) => element.characterUUID == character.characterUUID);
+    var index = characters!.indexWhere(
+        (element) => element!.characterUUID == character.characterUUID);
 
-    index != -1 ? characters[index] = character : characters.add(character);
+    index != -1 ? characters![index] = character : characters!.add(character);
 
     sortCharacters();
   }
 
   void sortCharacters() {
-    characters.sort((a, b) => b.initiative.compareTo(a.initiative));
+    characters!.sort((a, b) => b!.initiative!.compareTo(a!.initiative!));
   }
 
   void removeCharacterByUUID(String characterUUID) {
-    characters.removeWhere((item) => item.characterUUID == characterUUID);
+    characters!.removeWhere((item) => item!.characterUUID == characterUUID);
   }
 
   void reduceHP(CharacterModel item) {
-    item.setHP(--item.hp);
+    item.reduceHP();
   }
 
   void increaseHP(CharacterModel item) {
-    item.setHP(++item.hp);
+    item.increaseHP();
   }
 
   void prevRound() {
@@ -54,23 +54,28 @@ class Encounter extends Party {
     var cloned = Encounter(
         partyName: partyName,
         partyUUID: partyUUID,
-        characters: characters?.clone() ?? CharacterList(),
-        round: round ?? 1);
+        characters: characters!.clone(),
+        round: round);
     return cloned;
   }
 
-  List<CharacterModel> getCharacterList() {
-    return characters.list;
+  List<CharacterModel?>? getCharacterList() {
+    return characters!.list;
   }
 
   @override
-  Encounter copyWith({round, partyName, characters, partyUUID}) => Encounter(
-      round: round ?? this.round,
-      partyName: partyName ?? this.partyName,
-      characters: characters ?? this.characters,
-      partyUUID: partyUUID ?? this.partyUUID);
+  Encounter copyWith(
+          {int? round,
+          String? partyName,
+          CharacterList? characters,
+          String? partyUUID}) =>
+      Encounter(
+          round: round ?? this.round,
+          partyName: partyName ?? this.partyName,
+          characters: characters ?? this.characters,
+          partyUUID: partyUUID ?? this.partyUUID);
 
-  Encounter.fromParty(Party party)
+  Encounter.fromParty(Party? party)
       : round = 1,
         super(
             partyName: party?.partyName ?? '',
@@ -78,9 +83,9 @@ class Encounter extends Party {
             characters: party?.characters ?? CharacterList());
 
   void rollParty(int numDice, int numSides) {
-    characters.forEach((i) {
+    characters!.forEach((i) {
       addCharacter(
-          i.copyWith(initiative: rollDice(numDice, numSides) + i.initMod));
+          i!.copyWith(initiative: rollDice(numDice, numSides) + i.initMod!));
     });
   }
 }

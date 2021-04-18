@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:initiative_tracker/widgets/dialogs.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 
 import '../testHelpers.dart';
 
 void main() {
+  setUpAll(() {
+    TestHelper.registerFallbacks();
+  });
   group('Confirmation Dialog', () {
     final title = 'TITLE';
     final body = 'BODY';
-    setUp(() {});
 
     testWidgets('Check Content', (WidgetTester tester) async {
       await tester.pumpWidget(TestHelper.createDialogTestScreen(
@@ -27,7 +29,8 @@ void main() {
     testWidgets('Check Yes', (WidgetTester tester) async {
       var mockObserver = MockNavigatorObserver();
 
-      when(mockObserver.didPop(any, any)).thenAnswer((realInvocation) async {
+      when(() => mockObserver.didPop(any(), any()))
+          .thenAnswer((realInvocation) async {
         var value =
             await (realInvocation.positionalArguments.first as Route).popped;
         expect(value, true);
@@ -47,7 +50,8 @@ void main() {
     testWidgets('Check No', (WidgetTester tester) async {
       var mockObserver = MockNavigatorObserver();
 
-      when(mockObserver.didPop(any, any)).thenAnswer((realInvocation) async {
+      when(() => mockObserver.didPop(any(), any()))
+          .thenAnswer((realInvocation) async {
         var value =
             await (realInvocation.positionalArguments.first as Route).popped;
         expect(value, false);

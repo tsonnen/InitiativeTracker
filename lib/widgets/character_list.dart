@@ -6,12 +6,12 @@ import 'package:initiative_tracker/screens/character_screen.dart';
 import 'package:initiative_tracker/widgets/tile_delete_action_row.dart';
 
 class CharacterCard extends StatefulWidget {
-  final CharacterModel item;
-  final VoidCallback onDeleteTap;
-  final VoidCallback onEditTap;
-  final bool showHp;
-  final bool showInitiative;
-  final bool showNotes;
+  final CharacterModel? item;
+  final VoidCallback? onDeleteTap;
+  final VoidCallback? onEditTap;
+  final bool? showHp;
+  final bool? showInitiative;
+  final bool? showNotes;
 
   CharacterCard(
       {this.item,
@@ -31,13 +31,13 @@ class CharacterCardState extends State<CharacterCard> {
   bool isExpanded = false;
   @override
   Widget build(BuildContext context) {
-    var item = widget.item;
+    var item = widget.item!;
     return Card(
       child: Padding(
         padding: EdgeInsets.zero,
         child: ExpansionTile(
           title: Text(
-            item.characterName,
+            item.characterName!,
             style: TextStyle(color: item.color),
           ),
           onExpansionChanged: (val) {
@@ -45,16 +45,16 @@ class CharacterCardState extends State<CharacterCard> {
               isExpanded = val;
             });
           },
-          leading: widget.showNotes
+          leading: widget.showNotes!
               ? (isExpanded
                   ? Icon(Icons.arrow_drop_up)
                   : Icon(Icons.arrow_drop_down))
               : null,
-          subtitle: widget.showInitiative ? Text('${item.initiative}') : null,
+          subtitle: widget.showInitiative! ? Text('${item.initiative}') : null,
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (widget.showHp)
+              if (widget.showHp!)
                 Container(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -73,9 +73,9 @@ class CharacterCardState extends State<CharacterCard> {
                         item.hp.toString(),
                         textAlign: TextAlign.right,
                         style: TextStyle(
-                          color: item.hp < 0
+                          color: item.hp! < 0
                               ? Colors.red
-                              : Theme.of(context).textTheme.bodyText2.color,
+                              : Theme.of(context).textTheme.bodyText2!.color,
                         ),
                       ),
                       IconButton(
@@ -98,7 +98,7 @@ class CharacterCardState extends State<CharacterCard> {
           ),
           expandedAlignment: Alignment.centerLeft,
           children: [
-            if (widget.showNotes)
+            if (widget.showNotes!)
               Padding(
                 padding: EdgeInsets.fromLTRB(15.0, 0.0, 0.0, 10.0),
                 child: Text(
@@ -114,13 +114,13 @@ class CharacterCardState extends State<CharacterCard> {
 }
 
 class CharacterListWidget extends StatelessWidget {
-  final Encounter encounterModel;
-  final Function(CharacterModel) onLongPress;
-  final Function(CharacterModel) onTap;
+  final Encounter? encounterModel;
+  final Function(CharacterModel?)? onLongPress;
+  final Function(CharacterModel)? onTap;
 
-  final bool showHP;
-  final bool showInitiative;
-  final bool showNotes;
+  final bool? showHP;
+  final bool? showInitiative;
+  final bool? showNotes;
 
   CharacterListWidget(
       {this.encounterModel,
@@ -133,7 +133,7 @@ class CharacterListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-        children: encounterModel.characters.list
+        children: encounterModel!.characters!.list!
             .map((item) => CharacterCard(
                   showHp: showHP,
                   showNotes: showNotes,
@@ -146,7 +146,7 @@ class CharacterListWidget extends StatelessWidget {
                             )));
                   },
                   onDeleteTap: () {
-                    onLongPress(item);
+                    onLongPress!(item);
                   },
                 ))
             .toList());

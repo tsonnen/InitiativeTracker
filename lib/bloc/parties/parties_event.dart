@@ -5,12 +5,12 @@ abstract class PartiesEvent extends Equatable {
 }
 
 class DeleteParty extends PartiesEvent {
-  final Party party;
+  final Party? party;
 
   DeleteParty(this.party);
 
   @override
-  List<Object> get props => [party];
+  List<Object?> get props => [party];
 }
 
 class ChangePartiesSystem extends PartiesEvent {

@@ -10,7 +10,7 @@ import 'dialogs.dart';
 class ConfirmClearPartyDialog extends StatelessWidget {
   final Encounter encounterModel;
 
-  const ConfirmClearPartyDialog(this.encounterModel, {Key key})
+  const ConfirmClearPartyDialog(this.encounterModel, {Key? key})
       : super(key: key);
 
   @override
@@ -23,7 +23,7 @@ class ConfirmClearPartyDialog extends StatelessWidget {
 }
 
 class PartyScreenDialog {
-  static Future<String> showPartyNameDialog(BuildContext context) async {
+  static Future<String?> showPartyNameDialog(BuildContext context) async {
     var name = await showDialog<String>(
         context: context,
         builder: (context) {
@@ -66,7 +66,7 @@ class PartyNameDialog extends StatelessWidget {
 class PartyLoadDialog extends StatelessWidget {
   final name;
 
-  PartyLoadDialog({@required this.name});
+  PartyLoadDialog({required this.name});
   @override
   Widget build(BuildContext context) {
     return ConfirmationDialog(
@@ -92,17 +92,17 @@ class PartiesDialogState extends State<PartiesDialog> {
       content: Container(
           width: double.maxFinite,
           child: BlocBuilder<PartiesBloc, PartiesState>(
-              cubit: partiesBloc,
+              bloc: partiesBloc,
               builder: (context, state) {
                 if (state is PartiesInitial) {
                   partiesBloc.add(LoadParties());
                 } else if (state is PartiesLoadedSuccessful) {
-                  var partyList = state.parties;
+                  var partyList = state.parties!;
                   return ListView(
                     children: partyList
                         .map(
                           (item) => ListTile(
-                            title: Text(item.partyName ?? 'No Name'),
+                            title: Text(item!.partyName ?? 'No Name'),
                             onLongPress: () {
                               if (PreferenceManger.getConfirmDelete()) {
                                 showDialog<bool>(
@@ -111,7 +111,7 @@ class PartiesDialogState extends State<PartiesDialog> {
                                       return PartyDeleteDialog(
                                           name: item.partyName);
                                     }).then((value) {
-                                  if (value) {
+                                  if (value!) {
                                     partiesBloc.add(DeleteParty(item));
                                   }
                                 });
@@ -127,7 +127,7 @@ class PartiesDialogState extends State<PartiesDialog> {
                                       return PartyLoadDialog(
                                           name: item.partyName);
                                     }).then((value) {
-                                  if (value) {
+                                  if (value!) {
                                     partyBloc.add(LoadParty(item));
                                   }
                                 });
@@ -159,7 +159,7 @@ class PartiesDialogState extends State<PartiesDialog> {
 class PartyDeleteDialog extends StatelessWidget {
   final name;
 
-  PartyDeleteDialog({@required this.name});
+  PartyDeleteDialog({required this.name});
 
   @override
   Widget build(BuildContext context) {
@@ -171,7 +171,7 @@ class PartyDeleteDialog extends StatelessWidget {
 class PartyOverwriteDialog extends StatelessWidget {
   final name;
 
-  PartyOverwriteDialog({@required this.name});
+  PartyOverwriteDialog({required this.name});
 
   @override
   Widget build(BuildContext context) {

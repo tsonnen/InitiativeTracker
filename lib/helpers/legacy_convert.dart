@@ -13,7 +13,7 @@ class ConvertLegacy {
   static void addLegacyParties(Color color, PartiesDao partiesDao) async {
     var legacyParties = await readSavedParties();
     legacyParties.parties.map<Encounter>((encounter) {
-      var characters = encounter.characters.map<CharacterModel>((character) {
+      var characters = encounter.characters!.map<CharacterModel>((character) {
         return CharacterModel(
             characterName: character.characterName,
             characterUUID: character.characterUUID,
@@ -33,7 +33,7 @@ class ConvertLegacy {
   }
 
   static OLDPartyListModel readSavedPartiesSync() {
-    OLDPartyListModel model;
+    OLDPartyListModel? model;
     readSavedParties().then((value) {
       model = value;
     });

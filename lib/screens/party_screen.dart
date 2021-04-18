@@ -32,14 +32,14 @@ class PartyScreen extends StatefulWidget {
 
 class PartyScreenState extends State<PartyScreen> {
   var titleText = 'Round 1';
-  PartyBloc partyBloc;
-  PartiesBloc partiesBloc;
+  late PartyBloc partyBloc;
+  late PartiesBloc partiesBloc;
 
   @override
   void initState() {
     super.initState();
     if (widget.firstLaunch) {
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
+      WidgetsBinding.instance!.addPostFrameCallback((_) async {
         await showDialog(
             context: context,
             builder: (context) {
@@ -59,7 +59,7 @@ class PartyScreenState extends State<PartyScreen> {
         partyBloc.add(GenerateParty());
         return Text('Loading');
       }
-      var partyModel = state.encounterModel;
+      var partyModel = state.encounterModel!;
       return Scaffold(
         drawer: PartyScreenDrawer(),
         appBar: AppBar(
@@ -79,11 +79,11 @@ class PartyScreenState extends State<PartyScreen> {
               icon: Icon(Icons.clear),
               onPressed: () async {
                 if (PreferenceManger.getConfirmClearParty()) {
-                  var clear = await showDialog<bool>(
+                  var clear = await (showDialog<bool>(
                       context: context,
                       builder: (BuildContext context) {
                         return ConfirmClearPartyDialog(partyModel);
-                      });
+                      }) as Future<bool>);
 
                   if (!clear) {
                     return;
@@ -96,7 +96,7 @@ class PartyScreenState extends State<PartyScreen> {
                 icon: Icon(Icons.save),
                 onPressed: () {
                   if (partyModel.partyName == null ||
-                      partyModel.partyName.isEmpty) {
+                      partyModel.partyName!.isEmpty) {
                     saveParty(partyModel);
                   } else if (PreferenceManger.getConfirmOverwrite()) {
                     showDialog<bool>(
@@ -105,7 +105,7 @@ class PartyScreenState extends State<PartyScreen> {
                           return PartyOverwriteDialog(
                               name: partyModel.partyName);
                         }).then((value) {
-                      if (value) {
+                      if (value!) {
                         partiesBloc.add(AddParty(partyModel));
                       } else if (!value) {
                         saveParty(partyModel);
@@ -124,16 +124,17 @@ class PartyScreenState extends State<PartyScreen> {
                 showNotes: PreferenceManger.getShowNotes(),
                 onLongPress: (characterModel) {
                   partyBloc.add(
-                      DeletePartyCharacter(characterModel: characterModel));
+                      DeletePartyCharacter(characterModel: characterModel!));
                 },
                 encounterModel: partyModel)),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => CharacterScreen(
-                    partyUUID:
-                        partyModel != null ? partyModel.partyUUID : null)));
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => CharacterScreen(),
+              ),
+            );
           },
           tooltip: 'Add Character',
           child: const Icon(Icons.add),
@@ -219,7 +220,7 @@ class PartyScreenDrawer extends StatelessWidget {
               'assets/images/app_image.png',
               scale: 15,
             ),
-            applicationVersion: AppInfo.version ?? 'TESTING',
+            applicationVersion: AppInfo.version,
             applicationLegalese: '\u{a9} 2021',
             aboutBoxChildren: [
               const SizedBox(height: 12),

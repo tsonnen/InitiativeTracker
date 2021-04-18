@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:initiative_tracker/helpers/helpers.dart';
 import 'package:initiative_tracker/widgets/dialogs.dart';
-import 'package:numberpicker/numberpicker.dart';
+import 'package:initiative_tracker/widgets/numberpicker_dialog.dart';
 
 class Styles {
   static InputDecoration textFieldDecoration(String labelText,
-      {Color fillColor}) {
+      {Color? fillColor}) {
     return InputDecoration(
         border: InputBorder.none,
         labelText: labelText,
@@ -15,7 +15,7 @@ class Styles {
 }
 
 class ColorPickerButton extends StatefulWidget {
-  final Color color;
+  final Color? color;
   final String label;
   final Function(Color) updateFunc;
 
@@ -27,7 +27,7 @@ class ColorPickerButton extends StatefulWidget {
 }
 
 class ColorPickerButtonState extends State<ColorPickerButton> {
-  Color color;
+  Color? color;
 
   @override
   void initState() {
@@ -73,7 +73,7 @@ class SpinnerButton extends StatefulWidget {
   final int max;
   final int min;
 
-  SpinnerButton(this.min, this.max, this.primWrap, this.label, {Key key})
+  SpinnerButton(this.min, this.max, this.primWrap, this.label, {Key? key})
       : super(key: key);
 
   @override
@@ -101,7 +101,7 @@ class SpinnerButtonState extends State<SpinnerButton> {
             barrierDismissible: false,
             context: context,
             builder: (BuildContext context) {
-              return NumberPickerDialog.integer(
+              return NumberPickerDialog(
                 minValue: widget.min,
                 maxValue: widget.max,
                 initialIntegerValue: widget.primWrap.value ?? 0,

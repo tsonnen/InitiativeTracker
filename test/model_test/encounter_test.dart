@@ -7,7 +7,7 @@ import 'package:test/test.dart';
 
 void main() {
   group('Encounter Model Test', () {
-    var encounter;
+    late var encounter;
     setUp(() {
       encounter = Encounter(
           partyName: 'TEST',

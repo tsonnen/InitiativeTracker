@@ -4,7 +4,7 @@ import 'package:initiative_tracker/models/encounter.dart';
 class PartyListModel {
   List<Encounter> parties;
 
-  PartyListModel({List<Encounter> parties})
+  PartyListModel({List<Encounter>? parties})
       : parties = parties ?? <Encounter>[];
 
   bool containsParty(Encounter partyModel) {
@@ -42,7 +42,7 @@ class PartyListModel {
 
   @override
   bool operator ==(rhs) {
-    return ListEquality().equals(parties, rhs.parties);
+    return rhs is PartyListModel && ListEquality().equals(parties, rhs.parties);
   }
 
   @override

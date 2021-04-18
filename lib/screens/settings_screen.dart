@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:initiative_tracker/helpers/theme.dart';
+import 'package:pref/pref.dart';
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
 import 'package:initiative_tracker/helpers/preference_manger.dart';
-import 'package:preferences/preferences.dart';
+import 'package:provider/provider.dart';
 
 class SettingsPage extends StatefulWidget {
   static final String route = 'Settings-Page';
@@ -17,94 +18,93 @@ class SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Preferences'),
+        title: Text('Settings'),
       ),
-      body: PreferencePage(
-        [
-          PreferenceTitle('Theme'),
-          RadioPreference(
-            'Light Theme',
-            'light',
-            'ui_theme',
+      body: PrefPage(
+        children: [
+          PrefTitle(title: Text('Theme')),
+          PrefRadio(
+            title: Text('Light Theme'),
+            value: 'light',
+            pref: 'ui_theme',
             onSelect: () {
-              if (DynamicTheme.of(context)?.brightness != Brightness.light) {
-                DynamicTheme.of(context).setBrightness(Brightness.light);
-              }
+              Provider.of<ThemeNotifier>(context, listen: false)
+                  .setTheme(CustomTheme.light);
             },
           ),
-          RadioPreference(
-            'Dark Theme',
-            'dark',
-            'ui_theme',
+          PrefRadio(
+            title: Text('Dark Theme'),
+            value: 'dark',
+            pref: 'ui_theme',
             onSelect: () {
-              if (DynamicTheme.of(context)?.brightness != Brightness.dark) {
-                DynamicTheme.of(context).setBrightness(Brightness.dark);
-              }
+              Provider.of<ThemeNotifier>(context, listen: false)
+                  .setTheme(CustomTheme.dark);
             },
-            isDefault: true,
           ),
-          PreferenceTitle('Auto Roll Initiative'),
-          CheckboxPreference(
-            'Should Roll Initiative',
-            'should_roll_init',
-            defaultVal: true,
+          PrefTitle(
+            title: Text('Auto Roll Initiative'),
           ),
-          DropdownPreference(
-            'Number of Dice',
-            'num_dice',
-            defaultVal: '1',
+          PrefCheckbox(
+            title: Text('Should Roll Initiative'),
+            pref: 'should_roll_init',
+            onChange: (val) {
+              setState(() {}); // Force page to rebuild
+            },
+          ),
+          PrefDropdown(
+            title: Text('Number of Dice'),
+            pref: 'num_dice',
             disabled: !PreferenceManger.getRollInititative(),
-            values: List<String>.generate(10, (i) => (i + 1).toString()),
+            items: List<int>.generate(10, (i) => (i + 1))
+                .map<DropdownMenuItem>((i) {
+              return DropdownMenuItem(
+                  value: i.toString(), child: Text(i.toString()));
+            }).toList(),
           ),
-          DropdownPreference(
-            'Number of Sides',
-            'num_sides',
-            defaultVal: '20',
-            disabled: !PreferenceManger.getRollInititative(),
-            values: ['2', '3', '4', '6', '8', '10', '12', '20'],
+          PrefDropdown(
+              title: Text('Number of Sides'),
+              pref: 'num_sides',
+              disabled: !PreferenceManger.getRollInititative(),
+              items: ['2', '3', '4', '6', '8', '10', '12', '20']
+                  .map<DropdownMenuItem>((i) =>
+                      DropdownMenuItem(value: i, child: Text(i.toString())))
+                  .toList()),
+          PrefTitle(title: Text('Party Management')),
+          PrefCheckbox(
+            title: Text('Confirm Clear Party'),
+            pref: 'confirm_clear',
           ),
-          PreferenceTitle('Party Management'),
-          CheckboxPreference(
-            'Confirm Clear Party',
-            'confirm_clear',
-            defaultVal: true,
+          PrefCheckbox(
+            title: Text('Confirm Overwrite'),
+            pref: 'confirm_overwrite',
           ),
-          CheckboxPreference(
-            'Confirm Overwrite',
-            'confirm_overwrite',
+          PrefCheckbox(
+            title: Text('Confirm Load'),
+            pref: 'confirm_load',
           ),
-          CheckboxPreference(
-            'Confirm Load',
-            'confirm_load',
-            defaultVal: true,
+          PrefCheckbox(
+            title: Text('Confirm Delete'),
+            pref: 'confirm_delete',
           ),
-          CheckboxPreference(
-            'Confirm Delete',
-            'confirm_delete',
-            defaultVal: true,
-          ),
-          PreferenceTitle('Display Options'),
-          CheckboxPreference(
-            'Show HP',
-            'show_hp',
-            defaultVal: true,
-            onChange: () {
+          PrefTitle(title: Text('Display Options')),
+          PrefCheckbox(
+            title: Text('Show HP'),
+            pref: 'show_hp',
+            onChange: (val) {
               BlocProvider.of<PartyBloc>(context).add(ForcePartyRebuild());
             },
           ),
-          CheckboxPreference(
-            'Show initiative',
-            'show_init',
-            defaultVal: true,
-            onChange: () {
+          PrefCheckbox(
+            title: Text('Show initiative'),
+            pref: 'show_init',
+            onChange: (val) {
               BlocProvider.of<PartyBloc>(context).add(ForcePartyRebuild());
             },
           ),
-          CheckboxPreference(
-            'Show Notes',
-            'show_notes',
-            defaultVal: true,
-            onChange: () {
+          PrefCheckbox(
+            title: Text('Show Notes'),
+            pref: 'show_notes',
+            onChange: (val) {
               BlocProvider.of<PartyBloc>(context).add(ForcePartyRebuild());
             },
           ),

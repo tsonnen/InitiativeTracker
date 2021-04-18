@@ -3,7 +3,7 @@ import 'package:initiative_tracker/models/old_party_model.dart';
 class OLDPartyListModel {
   List<OLDPartyModel> parties;
 
-  OLDPartyListModel({List<OLDPartyModel> parties})
+  OLDPartyListModel({List<OLDPartyModel>? parties})
       : parties = parties ?? <OLDPartyModel>[];
 
   factory OLDPartyListModel.fromJson(List<dynamic> parsedJson,

@@ -7,20 +7,25 @@ import 'package:initiative_tracker/models/character_model.dart';
 import 'package:initiative_tracker/models/encounter.dart';
 import 'package:initiative_tracker/screens/character_screen.dart';
 import 'package:initiative_tracker/widgets/form_widgets.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 
 import '../testHelpers.dart';
 
 void main() {
+  setUpAll(() {
+    TestHelper.registerFallbacks();
+  });
+
   group('Character Screen Form Tests', () {
-    PartyBloc partyBloc;
+    late PartyBloc partyBloc;
 
     setUp(() {
       partyBloc = MockPartyBloc();
     });
     testWidgets('Test Validators-EMPTY', (WidgetTester tester) async {
-      when(partyBloc.state).thenAnswer((_) => PartyLoadedSucess(Encounter()));
-      when(partyBloc.add(argThat(MatchType<AddPartyCharacter>())))
+      when(() => partyBloc.state)
+          .thenAnswer((_) => PartyLoadedSucess(Encounter()));
+      when(() => partyBloc.add(any(that: MatchType<AddPartyCharacter>())))
           .thenReturn(null);
 
       await tester.pumpWidget(createCharacterScreen(partyBloc));
@@ -31,19 +36,21 @@ void main() {
 
       expect(find.text('Please enter a name'), findsOneWidget);
 
-      verifyNever(partyBloc.add(argThat(MatchType<AddPartyCharacter>())));
+      verifyNever(
+          () => partyBloc.add(any(that: MatchType<AddPartyCharacter>())));
     });
   });
 
   group('Character Screen-Add Character', () {
-    PartyBloc partyBloc;
+    MockPartyBloc? partyBloc;
 
     setUp(() {
       partyBloc = MockPartyBloc();
     });
     testWidgets('Add Character-No Gen', (WidgetTester tester) async {
-      when(partyBloc.state).thenAnswer((_) => PartyLoadedSucess(Encounter()));
-      when(partyBloc.add(argThat(MatchType<AddPartyCharacter>())))
+      when(() => partyBloc!.state)
+          .thenAnswer((_) => PartyLoadedSucess(Encounter()));
+      when(() => partyBloc!.add(any(that: MatchType<AddPartyCharacter>())))
           .thenReturn(null);
 
       await TestHelper.setMockPrefs({'pref_should_roll_init': false});
@@ -56,7 +63,7 @@ void main() {
       await tester.pumpAndSettle();
 
       await tester.enterText(
-          find.widgetWithText(TextFormField, 'Name'), charToAdd.characterName);
+          find.widgetWithText(TextFormField, 'Name'), charToAdd.characterName!);
       await tester.pumpAndSettle();
 
       await tester.enterText(
@@ -68,18 +75,20 @@ void main() {
       await tester.pumpAndSettle();
 
       await tester.enterText(
-          find.widgetWithText(TextFormField, 'Notes'), charToAdd.notes);
+          find.widgetWithText(TextFormField, 'Notes'), charToAdd.notes!);
       await tester.pumpAndSettle();
 
       await tapButton(tester);
       await tester.pumpAndSettle();
 
-      verify(partyBloc.add(argThat(MatchType<AddPartyCharacter>()))).called(1);
+      verify(() => partyBloc!.add(any(that: MatchType<AddPartyCharacter>())))
+          .called(1);
     });
 
     testWidgets('Add Character-Gen', (WidgetTester tester) async {
-      when(partyBloc.state).thenAnswer((_) => PartyLoadedSucess(Encounter()));
-      when(partyBloc.add(argThat(MatchType<AddPartyCharacter>())))
+      when(() => partyBloc!.state)
+          .thenAnswer((_) => PartyLoadedSucess(Encounter()));
+      when(() => partyBloc!.add(any(that: MatchType<AddPartyCharacter>())))
           .thenReturn(null);
       var charToAdd = CharacterModel(characterName: 'Test Char', hp: 12);
       var numCharacters = 2;
@@ -91,7 +100,7 @@ void main() {
       await tester.pumpAndSettle();
 
       await tester.enterText(
-          find.widgetWithText(TextFormField, 'Name'), charToAdd.characterName);
+          find.widgetWithText(TextFormField, 'Name'), charToAdd.characterName!);
       await tester.pumpAndSettle();
 
       await tester.enterText(
@@ -106,20 +115,21 @@ void main() {
       await tapButton(tester);
       await tester.pumpAndSettle();
 
-      verify(partyBloc.add(argThat(MatchType<AddPartyCharacter>())))
+      verify(() => partyBloc!.add(any(that: MatchType<AddPartyCharacter>())))
           .called(numCharacters);
     });
   });
 
   group('Character Screen Edit Tests', () {
-    PartyBloc partyBloc;
+    MockPartyBloc? partyBloc;
 
     setUp(() {
       partyBloc = MockPartyBloc();
     });
     testWidgets('Test Edit', (WidgetTester tester) async {
-      when(partyBloc.state).thenAnswer((_) => PartyLoadedSucess(Encounter()));
-      when(partyBloc.add(argThat(MatchType<AddPartyCharacter>())))
+      when(() => partyBloc!.state)
+          .thenAnswer((_) => PartyLoadedSucess(Encounter()));
+      when(() => partyBloc!.add(any(that: MatchType<AddPartyCharacter>())))
           .thenReturn(null);
 
       var charToEdit = CharacterModel(
@@ -132,13 +142,13 @@ void main() {
       editedChar.hp = 25;
 
       await tester.pumpWidget(BlocProvider<PartyBloc>(
-          create: (context) => partyBloc,
+          create: (context) => partyBloc!,
           child: createCharacterScreen(partyBloc, character: charToEdit)));
 
       await tester.pumpAndSettle();
 
-      expect(find.text(charToEdit.characterName), findsOneWidget);
-      expect(find.text(charToEdit.notes), findsOneWidget);
+      expect(find.text(charToEdit.characterName!), findsOneWidget);
+      expect(find.text(charToEdit.notes!), findsOneWidget);
       expect(find.text(charToEdit.hp.toString()), findsOneWidget);
       expect(find.text(charToEdit.initiative.toString()), findsOneWidget);
 
@@ -150,20 +160,21 @@ void main() {
       await tapButton(tester, character: charToEdit);
       await tester.pumpAndSettle();
 
-      verify(partyBloc.add(AddPartyCharacter(editedChar))).called(1);
+      verify(() => partyBloc!.add(AddPartyCharacter(editedChar))).called(1);
     });
   });
 }
 
-Future<void> tapButton(WidgetTester tester, {CharacterModel character}) async {
+Future<void> tapButton(WidgetTester tester, {CharacterModel? character}) async {
   var btnText = character == null ? 'Add Character' : 'Save Changes';
   await tester.tap(find.widgetWithText(ElevatedButton, btnText));
   await tester.pumpAndSettle();
 }
 
-Widget createCharacterScreen(PartyBloc partyBloc, {CharacterModel character}) {
-  return BlocProvider(
-      create: (BuildContext context) => partyBloc,
+Widget createCharacterScreen(PartyBloc? partyBloc,
+    {CharacterModel? character}) {
+  return BlocProvider<PartyBloc>(
+      create: (BuildContext context) => partyBloc!,
       child: MaterialApp(
           home: CharacterScreen(
         character: character,

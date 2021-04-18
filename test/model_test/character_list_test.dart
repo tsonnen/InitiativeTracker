@@ -6,7 +6,7 @@ import 'package:test/test.dart';
 
 void main() {
   group('Character List  Test', () {
-    CharacterList characterList;
+    late CharacterList characterList;
     CharacterModel character;
     const charName = 'TEST';
 

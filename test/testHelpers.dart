@@ -1,43 +1,40 @@
 import 'dart:io';
 
+import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:initiative_tracker/bloc/parties/parties_bloc.dart';
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
-import 'package:bloc_test/bloc_test.dart';
 import 'package:initiative_tracker/helpers/preference_manger.dart';
 import 'package:initiative_tracker/widgets/form_widgets.dart';
-import 'package:mockito/mockito.dart';
+import 'package:initiative_tracker/widgets/numberpicker_dialog.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:numberpicker/numberpicker.dart';
-import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
-import 'package:plugin_platform_interface/plugin_platform_interface.dart';
-import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class MockPartyBloc extends MockBloc<PartyState> implements PartyBloc {}
+class MockPartyBloc extends MockBloc<PartyEvent, PartyState>
+    implements PartyBloc {}
 
-class MockPartiesBloc extends MockBloc<PartiesState> implements PartiesBloc {
+class MockPartiesBloc extends MockBloc<PartiesEvent, PartiesState>
+    implements PartiesBloc {
   MockPartiesBloc();
 }
 
 class MockNavigatorObserver extends Mock implements NavigatorObserver {}
 
-class MockPathProviderPlatform extends Mock
-    with MockPlatformInterfaceMixin
-    implements PathProviderPlatform {
-  @override
-  Future<String> getApplicationDocumentsPath() async {
-    var dir = Directory.current;
-    while (!await dir
-        .list()
-        .any((entity) => entity.path.endsWith('pubspec.yaml'))) {
-      dir = dir.parent;
-    }
-    return join(dir.path, 'test_resources');
-  }
-}
+class FakeRoute<T> extends Fake implements Route<T> {}
 
 class TestHelper {
+  static void registerFallbacks() {
+    registerFallbackValue<PartyState>(PartyInitial());
+    registerFallbackValue<PartyEvent>(GenerateParty());
+
+    registerFallbackValue<PartiesState>(PartiesInitial());
+    registerFallbackValue<PartiesEvent>(LoadParties());
+
+    registerFallbackValue<Route<dynamic>>(FakeRoute());
+  }
+
   static void dumpTree() {
     assert(WidgetsBinding.instance != null);
     var mode = 'RELEASE MODE';
@@ -46,14 +43,14 @@ class TestHelper {
       return true;
     }());
     debugPrint('${WidgetsBinding.instance.runtimeType} - $mode');
-    if (WidgetsBinding.instance.renderViewElement != null) {
-      debugPrint(WidgetsBinding.instance.renderViewElement.toStringDeep());
+    if (WidgetsBinding.instance!.renderViewElement != null) {
+      debugPrint(WidgetsBinding.instance!.renderViewElement!.toStringDeep());
     } else {
       debugPrint('<no tree currently mounted>');
     }
   }
 
-  static Future<void> setMockPrefs(Map<String, dynamic> values) async {
+  static Future<void> setMockPrefs(Map<String, Object> values) async {
     if (PreferenceManger.prefs == null) {
       SharedPreferences.setMockInitialValues(values);
       await PreferenceManger.getPreferences();
@@ -79,7 +76,7 @@ class TestHelper {
   }
 
   static Future<void> openDialog(WidgetTester tester) async {
-    await tester.tap(find.widgetWithText(FlatButton, 'Open Dialog'));
+    await tester.tap(find.widgetWithText(TextButton, 'Open Dialog'));
   }
 
   static Future<File> getProjectFile(String path) async {
@@ -101,13 +98,22 @@ class TestHelper {
     );
   }
 
-  static void selectItemInSpinner(
+  static Widget createWidgetTestScreen(Widget widget,
+      {List<NavigatorObserver> navigatorObservers =
+          const <NavigatorObserver>[]}) {
+    return MaterialApp(
+      home: WidgetTestScreen(widget: widget),
+      navigatorObservers: navigatorObservers,
+    );
+  }
+
+  static Future<void> selectItemInSpinner(
       WidgetTester tester, SpinnerButton spinner, int targetVal) async {
     await tester.tap(find.byWidget(spinner));
 
     await tester.pumpAndSettle();
 
-    var picker = await tester.widget<NumberPicker>(find.byType(NumberPicker));
+    var picker = tester.widget<NumberPicker>(find.byType(NumberPicker));
 
     await scrollNumberPicker(
         tester.getTopLeft(find.byWidget(picker)), tester, 1, Axis.vertical);
@@ -125,24 +131,24 @@ class TestHelper {
   }
 
   // copied from: https://raw.githubusercontent.com/MarcinusX/NumberPicker/master/test/decimal_numberpicker_test.dart
-  static void scrollNumberPicker(
+  static Future<void> scrollNumberPicker(
     Offset pickerPosition,
     WidgetTester tester,
     int scrollBy,
     Axis axis,
   ) async {
     double pickerCenterX, pickerCenterY, offsetX, offsetY;
-    var pickerCenterMainAxis = 1.5 * NumberPicker.kDefaultItemExtent;
-    var pickerCenterCrossAxis = NumberPicker.kDefaultListViewCrossAxisSize / 2;
+    var pickerCenterMainAxis = 1.5 * 50;
+    var pickerCenterCrossAxis = (axis == Axis.vertical ? 100 : 50) / 2;
     if (axis == Axis.vertical) {
       pickerCenterX = pickerCenterCrossAxis;
       pickerCenterY = pickerCenterMainAxis;
       offsetX = 0.0;
-      offsetY = -scrollBy * NumberPicker.kDefaultItemExtent;
+      offsetY = -scrollBy * 50;
     } else {
       pickerCenterX = pickerCenterMainAxis;
       pickerCenterY = pickerCenterCrossAxis;
-      offsetX = -scrollBy * NumberPicker.kDefaultItemExtent;
+      offsetX = -scrollBy * 50;
       offsetY = 0.0;
     }
     var pickerCenter = Offset(
@@ -173,12 +179,12 @@ class MatchType<T> extends Matcher {
 class DialogTestScreen extends StatelessWidget {
   final Widget dialog;
 
-  DialogTestScreen({@required this.dialog});
+  DialogTestScreen({required this.dialog});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: FlatButton(
+        body: TextButton(
             onPressed: () {
               showDialog(
                   context: context,
@@ -187,5 +193,16 @@ class DialogTestScreen extends StatelessWidget {
                   });
             },
             child: Text('Open Dialog')));
+  }
+}
+
+class WidgetTestScreen extends StatelessWidget {
+  final Widget widget;
+
+  WidgetTestScreen({required this.widget});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(body: widget);
   }
 }

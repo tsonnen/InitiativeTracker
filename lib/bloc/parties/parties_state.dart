@@ -15,11 +15,11 @@ class PartiesLoadInProgress extends PartiesState {
 }
 
 class PartiesLoadedSuccessful extends PartiesState {
-  final List<Party> parties;
+  final List<Party?>? parties;
 
   PartiesLoadedSuccessful(this.parties);
   @override
-  List<Object> get props => [parties];
+  List<Object?> get props => [parties];
 }
 
 class PartiesModParty extends PartiesState {

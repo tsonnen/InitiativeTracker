@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class MenuItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
+  final IconData? icon;
+  final String? label;
+  final VoidCallback? onTap;
 
   MenuItem({this.icon, this.label, this.onTap});
 
@@ -17,7 +17,7 @@ class MenuItem extends StatelessWidget {
           Icon(icon),
           Expanded(
             child: Text(
-              label,
+              label!,
               overflow: TextOverflow.ellipsis,
             ),
           )

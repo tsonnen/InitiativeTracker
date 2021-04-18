@@ -13,7 +13,7 @@ class HelpPage extends StatefulWidget {
 
 class HelpPageState extends State<HelpPage> {
   String markdown = '';
-  String _currentPage;
+  String? _currentPage;
   Queue backStack = Queue();
   Queue forwardStack = Queue();
 
@@ -33,7 +33,7 @@ class HelpPageState extends State<HelpPage> {
       body: Markdown(
         data: markdown,
         onTapLink: (text, href, title) {
-          if (href.contains('help:')) {
+          if (href!.contains('help:')) {
             href = href.replaceAll('help:', '');
             backStack.addLast(_currentPage);
             forwardStack.clear();
