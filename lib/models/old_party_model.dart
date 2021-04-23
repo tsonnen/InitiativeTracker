@@ -1,7 +1,8 @@
 import 'dart:convert';
 
 import 'package:collection/collection.dart';
-import 'package:initiative_tracker/models/old_character_model.dart';
+
+import 'old_character_model.dart';
 
 class OLDPartyModel {
   List<OLDCharacterModel>? characters;

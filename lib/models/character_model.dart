@@ -1,8 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:initiative_tracker/helpers/uuid.dart';
 import 'package:json_annotation/json_annotation.dart';
+
+import 'package:initiative_tracker/helpers/uuid.dart';
 
 part 'character_model.g.dart';
 
@@ -95,6 +96,9 @@ class CharacterModel {
           notes: notes ?? this.notes,
           color: color ?? this.color,
           initMod: initMod ?? this.initMod);
+
+  @override
+  int get hashCode => super.hashCode;
 }
 
 class ColorConverter implements JsonConverter<Color?, String> {

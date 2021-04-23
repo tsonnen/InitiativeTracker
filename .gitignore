@@ -82,3 +82,5 @@ lib/generated_plugin_registrant.dart
 *.g.dart
 
 ios/Flutter/flutter_export_environment.sh
+
+generated_plugin_registrant.dart

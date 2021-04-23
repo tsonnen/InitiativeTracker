@@ -1,4 +1,4 @@
-import 'package:initiative_tracker/models/old_party_model.dart';
+import 'old_party_model.dart';
 
 class OLDPartyListModel {
   List<OLDPartyModel> parties;

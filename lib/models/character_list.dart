@@ -1,9 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:initiative_tracker/models/character_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:moor/moor.dart';
+
+import 'character_model.dart';
 
 part 'character_list.g.dart';
 
@@ -62,6 +63,9 @@ class CharacterList {
   bool operator ==(dynamic rhs) {
     return rhs is CharacterList && listEquals(l, rhs.l);
   }
+
+  @override
+  int get hashCode => super.hashCode;
 }
 
 class CharacterConverter implements JsonConverter<CharacterModel?, String> {
