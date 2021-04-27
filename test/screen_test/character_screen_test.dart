@@ -6,7 +6,7 @@ import 'package:initiative_tracker/helpers/keys.dart';
 import 'package:initiative_tracker/models/character_model.dart';
 import 'package:initiative_tracker/models/encounter.dart';
 import 'package:initiative_tracker/screens/character_screen.dart';
-import 'package:initiative_tracker/widgets/form_widgets.dart';
+import 'package:initiative_tracker/widgets/spinner_button.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../testHelpers.dart';

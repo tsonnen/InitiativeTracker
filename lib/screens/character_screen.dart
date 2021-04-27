@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:initiative_tracker/helpers/helpers.dart';
+
+import 'package:initiative_tracker/helpers/primitive_wrapper.dart';
 import 'package:initiative_tracker/helpers/keys.dart';
-import 'package:initiative_tracker/widgets/form_widgets.dart';
+import 'package:initiative_tracker/widgets/color_picker_button.dart';
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
 import 'package:initiative_tracker/models/character_model.dart';
 import 'package:initiative_tracker/helpers/preference_manger.dart';
 import 'package:initiative_tracker/helpers/random_generator.dart';
+import 'package:initiative_tracker/widgets/numeric_text_form_field.dart';
+import 'package:initiative_tracker/widgets/spinner_button.dart';
+import 'package:initiative_tracker/widgets/styles.dart';
 
 class CharacterScreen extends StatefulWidget {
   static final String route = 'Character-Screen';
@@ -26,8 +31,8 @@ class CharacterScreenState extends State<CharacterScreen> {
   final TextEditingController noteController = TextEditingController();
   late PartyBloc partyBloc;
 
-  final PrimitiveWrapper _number = PrimitiveWrapper(1);
-  final PrimitiveWrapper _initMod = PrimitiveWrapper(0);
+  final PrimitiveWrapper<int> _number = PrimitiveWrapper<int>(1);
+  final PrimitiveWrapper<int> _initMod = PrimitiveWrapper<int>(0);
   late String title;
   CharacterModel? character;
   Color? color;
@@ -50,7 +55,7 @@ class CharacterScreenState extends State<CharacterScreen> {
       initController.text = character!.initiative.toString();
       noteController.text = (character!.notes ?? '').toString();
       color = character!.color;
-      _initMod.value = character!.initMod;
+      _initMod.value = character!.initMod ?? 0;
     }
   }
 
@@ -94,9 +99,8 @@ class CharacterScreenState extends State<CharacterScreen> {
                 ),
                 if (PreferenceManger.getShowHP())
                   Container(
-                    child: TextFormField(
-                      decoration: Styles.textFieldDecoration('HP'),
-                      keyboardType: TextInputType.number,
+                    child: NumericTextFormField(
+                      label: 'HP',
                       controller: hpController,
                     ),
                   ),
@@ -104,9 +108,8 @@ class CharacterScreenState extends State<CharacterScreen> {
                   children: <Widget>[
                     if (!PreferenceManger.getRollInititative() || widget.isEdit)
                       Flexible(
-                        child: TextFormField(
-                          decoration: Styles.textFieldDecoration('Initiative'),
-                          keyboardType: TextInputType.number,
+                        child: NumericTextFormField(
+                          label: 'Initiative',
                           controller: initController,
                         ),
                       ),
@@ -133,44 +136,49 @@ class CharacterScreenState extends State<CharacterScreen> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      if (widget.isEdit) {
-                        character!.edit(
-                            characterName: nameController.text,
-                            hp: int.parse(hpController.text),
-                            initiative: initController.text != ''
-                                ? int.parse(initController.text)
-                                : null,
-                            notes: noteController.text,
-                            color: color);
-                        partyBloc.add(AddPartyCharacter(character));
-                        Navigator.of(context).pop();
-                      } else {
-                        for (var i = 1; i <= (_number.value ?? 1); i++) {
-                          character = CharacterModel(
-                              characterName: nameController.text +
-                                  ((_number.value ?? 1) > 1
-                                      ? ' ' + i.toString()
-                                      : ''),
-                              hp: int.tryParse(hpController.text) ?? 0,
-                              initiative: PreferenceManger
-                                          .getRollInititative() &&
-                                      !widget.isEdit
-                                  ? rollDice(PreferenceManger.getNumberDice(),
-                                          PreferenceManger.getNumberSides()) +
-                                      (_initMod.value ?? 0) as int?
-                                  : int.tryParse(initController.text) ?? 0,
-                              initMod: _initMod.value,
-                              notes: noteController.text,
-                              color: color);
-                          partyBloc.add(AddPartyCharacter(character));
-                        }
-                        character = null;
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text(
-                                'Added ${_number.value > 1 ? '${_number.value} Characters' : 'Character'}')));
-                      }
+                    if (!_formKey.currentState!.validate()) {
+                      return;
                     }
+                    if (widget.isEdit) {
+                      partyBloc.add(
+                        AddPartyCharacter(
+                          character!.copyWith(
+                              characterName: nameController.text,
+                              hp: int.tryParse(hpController.text),
+                              initiative: int.tryParse(initController.text),
+                              notes: noteController.text,
+                              color: color),
+                        ),
+                      );
+                      Navigator.of(context).pop();
+                      return;
+                    }
+
+                    var characters = CharacterModel.GenerateCharacters(
+                        characterName: nameController.text,
+                        count: _number.value,
+                        hp: int.tryParse(hpController.text),
+                        initCalc: () {
+                          if (!PreferenceManger.getRollInititative() ||
+                              widget.isEdit) {
+                            return int.tryParse(initController.text) ?? 0;
+                          }
+
+                          return rollDice(PreferenceManger.getNumberDice(),
+                                  PreferenceManger.getNumberSides()) +
+                              _initMod.value;
+                        },
+                        color: color,
+                        notes: noteController.text,
+                        initMod: _initMod.value);
+
+                    characters.forEach((element) {
+                      partyBloc.add(AddPartyCharacter(element));
+                    });
+                    character = null;
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text(
+                            'Added ${_number.value > 1 ? '${_number.value} Characters' : 'Character'}')));
                   },
                   child: Text(widget.isEdit ? 'Save Changes' : 'Add Character'),
                 )

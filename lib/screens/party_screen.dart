@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -213,39 +214,40 @@ class PartyScreenDrawer extends StatelessWidget {
                   .push(MaterialPageRoute(builder: (context) => HelpPage()));
             },
           ),
-          AboutListTile(
-            applicationName: 'Initiative Tracker',
-            icon: Icon(Icons.info),
-            applicationIcon: Image.asset(
-              'assets/images/app_image.png',
-              scale: 15,
-            ),
-            applicationVersion: AppInfo.version,
-            applicationLegalese: '\u{a9} 2021',
-            aboutBoxChildren: [
-              const SizedBox(height: 12),
-              RichText(
-                text: TextSpan(
-                  children: <TextSpan>[
-                    TextSpan(
-                        style: Theme.of(context).textTheme.bodyText2,
-                        text: 'This is a simple initiative tracker. Please'
-                            ' send any questions or suggestions to '),
-                    TextSpan(
-                        style: TextStyle(color: Colors.blue),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                            launch('mailto:tsonnenapps@gmail.com');
-                          },
-                        text: 'tsonnenapps@gmail.com'),
-                    TextSpan(
-                        style: Theme.of(context).textTheme.bodyText2,
-                        text: '.'),
-                  ],
-                ),
+          if (!kIsWeb)
+            AboutListTile(
+              applicationName: 'Initiative Tracker',
+              icon: Icon(Icons.info),
+              applicationIcon: Image.asset(
+                'assets/images/app_image.png',
+                scale: 15,
               ),
-            ],
-          ),
+              applicationVersion: AppInfo.version,
+              applicationLegalese: '\u{a9} 2021',
+              aboutBoxChildren: [
+                const SizedBox(height: 12),
+                RichText(
+                  text: TextSpan(
+                    children: <TextSpan>[
+                      TextSpan(
+                          style: Theme.of(context).textTheme.bodyText2,
+                          text: 'This is a simple initiative tracker. Please'
+                              ' send any questions or suggestions to '),
+                      TextSpan(
+                          style: TextStyle(color: Colors.blue),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              launch('mailto:tsonnenapps@gmail.com');
+                            },
+                          text: 'tsonnenapps@gmail.com'),
+                      TextSpan(
+                          style: Theme.of(context).textTheme.bodyText2,
+                          text: '.'),
+                    ],
+                  ),
+                ),
+              ],
+            ),
         ],
       ),
     );

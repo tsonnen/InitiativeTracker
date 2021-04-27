@@ -1,8 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:initiative_tracker/helpers/uuid.dart';
 import 'package:json_annotation/json_annotation.dart';
+
+import 'package:initiative_tracker/helpers/uuid.dart';
 
 part 'character_model.g.dart';
 
@@ -67,6 +68,31 @@ class CharacterModel {
 
   Map<String, dynamic> toJson() => _$CharacterModelToJson(this);
 
+  static List<CharacterModel> GenerateCharacters(
+      {required String characterName,
+      required int count,
+      required int Function() initCalc,
+      int? hp,
+      int? initMod,
+      String? notes,
+      Color? color}) {
+    var characters = <CharacterModel>[];
+    for (var i = 1; i <= count; ++i) {
+      var tmpName = characterName;
+      if (count > 1) tmpName = '$tmpName $i';
+
+      characters.add(CharacterModel(
+          characterName: tmpName,
+          initMod: initMod,
+          initiative: initCalc(),
+          color: color,
+          notes: notes,
+          hp: hp ?? 0));
+    }
+
+    return characters;
+  }
+
   @override
   bool operator ==(Object rhs) {
     return rhs is CharacterModel &&
@@ -95,6 +121,9 @@ class CharacterModel {
           notes: notes ?? this.notes,
           color: color ?? this.color,
           initMod: initMod ?? this.initMod);
+
+  @override
+  int get hashCode => super.hashCode;
 }
 
 class ColorConverter implements JsonConverter<Color?, String> {

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:initiative_tracker/widgets/color_picker_button.dart';
 import 'package:initiative_tracker/widgets/dialogs.dart';
-import 'package:initiative_tracker/widgets/form_widgets.dart';
-
 import '../testHelpers.dart';
 
 void main() {

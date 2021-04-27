@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
-import 'package:initiative_tracker/models/encounter.dart';
+
+import 'encounter.dart';
 
 class PartyListModel {
   List<Encounter> parties;

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pref/pref.dart';
@@ -10,6 +11,7 @@ import 'package:initiative_tracker/helpers/legacy_convert.dart';
 import 'package:initiative_tracker/helpers/preference_manger.dart';
 import 'package:initiative_tracker/helpers/theme.dart';
 import 'package:initiative_tracker/moor/database.dart';
+import 'package:initiative_tracker/moor/parties_dao.dart';
 import 'package:initiative_tracker/screens/party_screen.dart';
 
 void main() async {
@@ -28,7 +30,9 @@ void main() async {
   });
 
   await PreferenceManger.getPreferences();
-  AppInfo.getAppInfo();
+  if (!kIsWeb) {
+    AppInfo.getAppInfo();
+  }
 
   runApp(PrefService(
       service: service,
@@ -46,11 +50,15 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   late PartyBloc _partyBloc;
   late PartiesBloc _partiesBloc;
-  final partiesDao = Database().partiesDao;
+  final db = constructDb();
+  late PartiesDao partiesDao;
 
   @override
   void initState() {
-    ConvertLegacy.addLegacyParties(Colors.blueGrey, partiesDao);
+    partiesDao = db.partiesDao;
+    if (!kIsWeb) {
+      ConvertLegacy.addLegacyParties(Colors.blueGrey, partiesDao);
+    }
 
     _partiesBloc = PartiesBloc(partiesDao);
     _partyBloc = PartyBloc();
