@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:initiative_tracker/helpers/helpers.dart';
+import 'package:initiative_tracker/helpers/primitive_wrapper.dart';
 import 'package:initiative_tracker/helpers/keys.dart';
-import 'package:initiative_tracker/widgets/form_widgets.dart';
+import 'package:initiative_tracker/widgets/color_picker_button.dart';
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
 import 'package:initiative_tracker/models/character_model.dart';
 import 'package:initiative_tracker/helpers/preference_manger.dart';
 import 'package:initiative_tracker/helpers/random_generator.dart';
+import 'package:initiative_tracker/widgets/spinner_button.dart';
+import 'package:initiative_tracker/widgets/styles.dart';
 
 class CharacterScreen extends StatefulWidget {
   static final String route = 'Character-Screen';
@@ -26,8 +29,8 @@ class CharacterScreenState extends State<CharacterScreen> {
   final TextEditingController noteController = TextEditingController();
   late PartyBloc partyBloc;
 
-  final PrimitiveWrapper _number = PrimitiveWrapper(1);
-  final PrimitiveWrapper _initMod = PrimitiveWrapper(0);
+  final PrimitiveWrapper<int> _number = PrimitiveWrapper<int>(1);
+  final PrimitiveWrapper<int> _initMod = PrimitiveWrapper<int>(0);
   late String title;
   CharacterModel? character;
   Color? color;
@@ -50,7 +53,7 @@ class CharacterScreenState extends State<CharacterScreen> {
       initController.text = character!.initiative.toString();
       noteController.text = (character!.notes ?? '').toString();
       color = character!.color;
-      _initMod.value = character!.initMod;
+      _initMod.value = character!.initMod ?? 0;
     }
   }
 
@@ -98,6 +101,7 @@ class CharacterScreenState extends State<CharacterScreen> {
                       decoration: Styles.textFieldDecoration('HP'),
                       keyboardType: TextInputType.number,
                       controller: hpController,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     ),
                   ),
                 Row(
@@ -107,6 +111,9 @@ class CharacterScreenState extends State<CharacterScreen> {
                         child: TextFormField(
                           decoration: Styles.textFieldDecoration('Initiative'),
                           keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
                           controller: initController,
                         ),
                       ),
@@ -146,10 +153,10 @@ class CharacterScreenState extends State<CharacterScreen> {
                         partyBloc.add(AddPartyCharacter(character));
                         Navigator.of(context).pop();
                       } else {
-                        for (var i = 1; i <= (_number.value ?? 1); i++) {
+                        for (var i = 1; i <= (_number.value); i++) {
                           character = CharacterModel(
                               characterName: nameController.text +
-                                  ((_number.value ?? 1) > 1
+                                  ((_number.value) > 1
                                       ? ' ' + i.toString()
                                       : ''),
                               hp: int.tryParse(hpController.text) ?? 0,
@@ -158,7 +165,7 @@ class CharacterScreenState extends State<CharacterScreen> {
                                       !widget.isEdit
                                   ? rollDice(PreferenceManger.getNumberDice(),
                                           PreferenceManger.getNumberSides()) +
-                                      (_initMod.value ?? 0) as int?
+                                      (_initMod.value) as int?
                                   : int.tryParse(initController.text) ?? 0,
                               initMod: _initMod.value,
                               notes: noteController.text,
