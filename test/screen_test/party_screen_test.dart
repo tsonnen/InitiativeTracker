@@ -11,6 +11,7 @@ import 'package:initiative_tracker/screens/party_management_screen.dart';
 import 'package:initiative_tracker/screens/party_screen.dart';
 import 'package:initiative_tracker/widgets/party_screen_dialogs.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:pref/pref.dart';
 
 import '../testHelpers.dart';
 
@@ -161,7 +162,6 @@ void main() {
           .called(1);
     });
 
-    //TODO: Work on this
     testWidgets('Test HP Changes', (WidgetTester tester) async {
       when(() => partyBloc!.state)
           .thenAnswer((_) => PartyLoadedSucess(partyModel));
@@ -260,23 +260,23 @@ void main() {
       expect(find.widgetWithText(AppBar, 'Help'), findsOneWidget);
     });
 
-    // TODO: Move this to an integration test
-    // testWidgets('Test Settings Route', (WidgetTester tester) async {
-    //   when(partyBloc.state).thenAnswer((_) => PartyLoadedSucess(partyModel));
-    //   when(partiesBloc.state)
-    //       .thenAnswer((_) => PartiesLoadedSuccessful([partyModel]));
+    testWidgets('Test Settings Route', (WidgetTester tester) async {
+      when(() => partyBloc!.state)
+          .thenAnswer((_) => PartyLoadedSucess(partyModel));
+      when(() => partiesBloc!.state)
+          .thenAnswer((_) => PartiesLoadedSuccessful([partyModel]));
 
-    //   await tester.pumpWidget(createHomeScreen(partiesBloc, partyBloc));
-    //   await tester.pumpAndSettle();
+      await tester.pumpWidget(createHomeScreen(partiesBloc, partyBloc));
+      await tester.pumpAndSettle();
 
-    //   await tester.tap(find.byTooltip('Open navigation menu'));
-    //   await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('Open navigation menu'));
+      await tester.pumpAndSettle();
 
-    //   await tester.tap(find.byIcon(Icons.settings, skipOffstage: false));
-    //   await tester.pumpAndSettle();
+      await tester.tap(find.byIcon(Icons.settings, skipOffstage: false));
+      await tester.pumpAndSettle();
 
-    //   expect(find.widgetWithText(AppBar, 'Preferences'), findsOneWidget);
-    // });
+      expect(find.widgetWithText(AppBar, 'Settings'), findsOneWidget);
+    });
   });
 }
 
@@ -287,8 +287,12 @@ void checkTitleText(Encounter partyModel) {
 
 Widget createHomeScreen(
     MockPartiesBloc? partiesBloc, MockPartyBloc? partyBloc) {
-  return MultiBlocProvider(providers: [
-    BlocProvider<PartyBloc>(create: (BuildContext context) => partyBloc!),
-    BlocProvider<PartiesBloc>(create: (BuildContext context) => partiesBloc!)
-  ], child: MaterialApp(home: PartyScreen()));
+  var service = PrefServiceCache();
+  return PrefService(
+      service: service,
+      child: MultiBlocProvider(providers: [
+        BlocProvider<PartyBloc>(create: (BuildContext context) => partyBloc!),
+        BlocProvider<PartiesBloc>(
+            create: (BuildContext context) => partiesBloc!)
+      ], child: MaterialApp(home: PartyScreen())));
 }

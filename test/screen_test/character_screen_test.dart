@@ -110,7 +110,8 @@ void main() {
       var spinner =
           tester.widget<SpinnerButton>(find.byKey(Key(Keys.numUnitKey)));
 
-      await TestHelper.selectItemInSpinner(tester, spinner, numCharacters);
+      await TestHelper.selectItemInNumberSpinnerDialog(
+          tester, spinner, numCharacters);
 
       await tapButton(tester);
       await tester.pumpAndSettle();
@@ -127,6 +128,8 @@ void main() {
       partyBloc = MockPartyBloc();
     });
     testWidgets('Test Edit', (WidgetTester tester) async {
+      await TestHelper.setMockPrefs({'pref_should_roll_init': true});
+
       when(() => partyBloc!.state)
           .thenAnswer((_) => PartyLoadedSucess(Encounter()));
       when(() => partyBloc!.add(any(that: MatchType<AddPartyCharacter>())))
@@ -138,8 +141,7 @@ void main() {
           hp: 45,
           notes: 'My Notes');
 
-      var editedChar = charToEdit.copyWith();
-      editedChar.hp = 25;
+      var editedChar = charToEdit.copyWith(hp: 25, initMod: 12);
 
       await tester.pumpWidget(BlocProvider<PartyBloc>(
           create: (context) => partyBloc!,
@@ -155,6 +157,14 @@ void main() {
       await tester.enterText(
           find.widgetWithText(TextField, charToEdit.hp.toString()),
           editedChar.hp.toString());
+      await tester.pumpAndSettle();
+
+      var spinner =
+          tester.widget<SpinnerButton>(find.byKey(Key(Keys.initModKey)));
+
+      await TestHelper.selectItemInNumberSpinnerDialog(
+          tester, spinner, editedChar.initMod!);
+
       await tester.pumpAndSettle();
 
       await tapButton(tester, character: charToEdit);

@@ -146,6 +146,7 @@ class CharacterScreenState extends State<CharacterScreen> {
                               characterName: nameController.text,
                               hp: int.tryParse(hpController.text),
                               initiative: int.tryParse(initController.text),
+                              initMod: _initMod.value,
                               notes: noteController.text,
                               color: color),
                         ),

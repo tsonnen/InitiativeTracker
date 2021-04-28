@@ -107,7 +107,7 @@ class TestHelper {
     );
   }
 
-  static Future<void> selectItemInSpinner(
+  static Future<void> selectItemInNumberSpinnerDialog(
       WidgetTester tester, SpinnerButton spinner, int targetVal) async {
     await tester.tap(find.byWidget(spinner));
 
@@ -115,8 +115,8 @@ class TestHelper {
 
     var picker = tester.widget<NumberPicker>(find.byType(NumberPicker));
 
-    await scrollNumberPicker(
-        tester.getTopLeft(find.byWidget(picker)), tester, 1, Axis.vertical);
+    await scrollNumberPicker(tester.getTopLeft(find.byWidget(picker)), tester,
+        targetVal - picker.value, Axis.vertical);
 
     await tester.pumpAndSettle();
     expect(find.byType(NumberPickerDialog), findsOneWidget);

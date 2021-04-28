@@ -40,7 +40,14 @@ dependencies:
   sqlite3_flutter_libs: ^0.4.1
   url_launcher: ^6.0.3
 
+dependency_overrides:
+  args: ^2.0.0
+  convert: ^3.0.0
+  crypto: ^3.0.0
+
 dev_dependencies:
+  integration_test:
+    sdk: flutter
   flutter_test:
     sdk: flutter
 
