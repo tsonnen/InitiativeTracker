@@ -29,7 +29,6 @@ void main() async {
     'show_notes': false
   });
 
-  await PreferenceManger.getPreferences();
   if (!kIsWeb) {
     AppInfo.getAppInfo();
   }
@@ -68,8 +67,10 @@ class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
     final themeNotifier = Provider.of<ThemeNotifier>(context);
-    var firstLaunch = PreferenceManger.getFirstRun();
-    PreferenceManger.setFirstRun(false);
+    var service = PrefService.of(context);
+    var firstLaunch = PreferenceManger.getFirstRun(service);
+    PreferenceManger.setFirstRun(false, service);
+
     return MultiBlocProvider(
         providers: [
           BlocProvider<PartyBloc>(create: (BuildContext context) => _partyBloc),

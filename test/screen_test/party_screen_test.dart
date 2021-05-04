@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:pref/pref.dart';
+
 import 'package:initiative_tracker/bloc/parties/parties_bloc.dart';
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
 import 'package:initiative_tracker/models/character_model.dart';
@@ -10,8 +13,6 @@ import 'package:initiative_tracker/models/character_list.dart';
 import 'package:initiative_tracker/screens/party_management_screen.dart';
 import 'package:initiative_tracker/screens/party_screen.dart';
 import 'package:initiative_tracker/widgets/party_screen_dialogs.dart';
-import 'package:mocktail/mocktail.dart';
-import 'package:pref/pref.dart';
 
 import '../testHelpers.dart';
 
@@ -146,14 +147,17 @@ void main() {
     });
 
     testWidgets('Test Party Reset', (WidgetTester tester) async {
-      await TestHelper.setMockPrefs({'pref_confirm_clear': false});
+      var service = PrefServiceCache(cache: {'confirm_clear': false});
+
       when(() => partyBloc!.state)
           .thenAnswer((_) => PartyLoadedSucess(partyModel));
       when(() => partiesBloc!.state)
           .thenAnswer((_) => PartiesLoadedSuccessful([partyModel]));
       when(() => partyBloc!.add(any(that: MatchType<GenerateParty>())))
           .thenReturn(null);
-      await tester.pumpWidget(createHomeScreen(partiesBloc, partyBloc));
+
+      await tester.pumpWidget(
+          createHomeScreen(partiesBloc, partyBloc, service: service));
       await tester.pumpAndSettle();
       await tester.tap(find.widgetWithIcon(IconButton, Icons.clear));
       await tester.pumpAndSettle();
@@ -285,9 +289,9 @@ void checkTitleText(Encounter partyModel) {
       findsOneWidget);
 }
 
-Widget createHomeScreen(
-    MockPartiesBloc? partiesBloc, MockPartyBloc? partyBloc) {
-  var service = PrefServiceCache();
+Widget createHomeScreen(MockPartiesBloc? partiesBloc, MockPartyBloc? partyBloc,
+    {BasePrefService? service}) {
+  service ??= PrefServiceCache();
   return PrefService(
       service: service,
       child: MultiBlocProvider(providers: [

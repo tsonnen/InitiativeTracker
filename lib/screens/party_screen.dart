@@ -1,22 +1,17 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pref/pref.dart';
 
-import 'package:initiative_tracker/helpers/app_info.dart';
 import 'package:initiative_tracker/bloc/parties/parties_bloc.dart';
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
 import 'package:initiative_tracker/helpers/keys.dart';
 import 'package:initiative_tracker/helpers/preference_manger.dart';
 import 'package:initiative_tracker/models/encounter.dart';
 import 'package:initiative_tracker/screens/character_screen.dart';
-import 'package:initiative_tracker/screens/party_management_screen.dart';
 import 'package:initiative_tracker/widgets/character_list.dart';
-import 'package:initiative_tracker/screens/help_screen.dart';
-import 'package:initiative_tracker/screens/settings_screen.dart';
 import 'package:initiative_tracker/widgets/dialogs.dart';
 import 'package:initiative_tracker/widgets/party_screen_dialogs.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:initiative_tracker/widgets/party_screen_drawer.dart';
 
 class PartyScreen extends StatefulWidget {
   static final String route = 'Home-Screen';
@@ -55,6 +50,7 @@ class PartyScreenState extends State<PartyScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var service = PrefService.of(context);
     return BlocBuilder<PartyBloc, PartyState>(builder: (context, state) {
       if (state is PartyInitial) {
         partyBloc.add(GenerateParty());
@@ -69,17 +65,18 @@ class PartyScreenState extends State<PartyScreen> {
             key: Key(Keys.roundCounterKey),
           ),
           actions: <Widget>[
-            if (PreferenceManger.getRollInititative())
+            if (PreferenceManger.getRollInititative(service))
               IconButton(
                   icon: Icon(Icons.refresh_outlined),
                   onPressed: () {
-                    partyBloc.add(RollParty(PreferenceManger.getNumberDice(),
-                        PreferenceManger.getNumberSides()));
+                    partyBloc.add(RollParty(
+                        PreferenceManger.getNumberDice(service),
+                        PreferenceManger.getNumberSides(service)));
                   }),
             IconButton(
               icon: Icon(Icons.clear),
               onPressed: () async {
-                if (PreferenceManger.getConfirmClearParty()) {
+                if (PreferenceManger.getConfirmClearParty(service)) {
                   var clear = await (showDialog<bool>(
                       context: context,
                       builder: (BuildContext context) {
@@ -99,7 +96,7 @@ class PartyScreenState extends State<PartyScreen> {
                   if (partyModel.partyName == null ||
                       partyModel.partyName!.isEmpty) {
                     saveParty(partyModel);
-                  } else if (PreferenceManger.getConfirmOverwrite()) {
+                  } else if (PreferenceManger.getConfirmOverwrite(service)) {
                     showDialog<bool>(
                         context: context,
                         builder: (BuildContext context) {
@@ -120,9 +117,9 @@ class PartyScreenState extends State<PartyScreen> {
         ),
         body: Container(
             child: CharacterListWidget(
-                showHP: PreferenceManger.getShowHP(),
-                showInitiative: PreferenceManger.getShowInitiative(),
-                showNotes: PreferenceManger.getShowNotes(),
+                showHP: PreferenceManger.getShowHP(service),
+                showInitiative: PreferenceManger.getShowInitiative(service),
+                showNotes: PreferenceManger.getShowNotes(service),
                 onLongPress: (characterModel) {
                   partyBloc.add(
                       DeletePartyCharacter(characterModel: characterModel!));
@@ -173,83 +170,5 @@ class PartyScreenState extends State<PartyScreen> {
         partiesBloc.add(AddParty(encounterModel));
       }
     });
-  }
-}
-
-class PartyScreenDrawer extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
-          DrawerHeader(
-            child: Text('Initiative Tracker'),
-          ),
-          ListTile(
-              leading: Icon(Icons.archive_rounded),
-              title: Text('Saved Parties'),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => PartyManagementScreen(),
-                  ),
-                );
-              }),
-          ListTile(
-              leading: Icon(Icons.settings),
-              title: Text('Settings'),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => SettingsPage(),
-                  ),
-                );
-              }),
-          ListTile(
-            leading: Icon(Icons.help),
-            title: Text('Help'),
-            onTap: () {
-              Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (context) => HelpPage()));
-            },
-          ),
-          if (!kIsWeb)
-            AboutListTile(
-              applicationName: 'Initiative Tracker',
-              icon: Icon(Icons.info),
-              applicationIcon: Image.asset(
-                'assets/images/app_image.png',
-                scale: 15,
-              ),
-              applicationVersion: AppInfo.version,
-              applicationLegalese: '\u{a9} 2021',
-              aboutBoxChildren: [
-                const SizedBox(height: 12),
-                RichText(
-                  text: TextSpan(
-                    children: <TextSpan>[
-                      TextSpan(
-                          style: Theme.of(context).textTheme.bodyText2,
-                          text: 'This is a simple initiative tracker. Please'
-                              ' send any questions or suggestions to '),
-                      TextSpan(
-                          style: TextStyle(color: Colors.blue),
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = () {
-                              launch('mailto:tsonnenapps@gmail.com');
-                            },
-                          text: 'tsonnenapps@gmail.com'),
-                      TextSpan(
-                          style: Theme.of(context).textTheme.bodyText2,
-                          text: '.'),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-        ],
-      ),
-    );
   }
 }

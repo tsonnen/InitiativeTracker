@@ -1,149 +1,71 @@
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:pref/pref.dart';
 
 class PreferenceManger {
-  static SharedPreferences? prefs;
-
-  static bool getFirstRun() {
-    if (prefs != null) {
-      return prefs!.getBool('pref_first_run') ?? true;
-    }
-    return true;
+  static bool getFirstRun(BasePrefService service) {
+    return service.get<bool>('first_run') ?? true;
   }
 
-  static void setFirstRun(bool value) async {
-    if (prefs != null) {
-      await prefs!.setBool('pref_first_run', value);
-    } else {
-      await getPreferences();
-      setFirstRun(value);
-    }
+  static void setFirstRun(bool value, BasePrefService service) async {
+    service.set<bool>('first_run', value);
   }
 
-  static int getNumberDice() {
-    if (prefs != null) {
-      var numDice = prefs!.getString('pref_num_dice') ?? '';
-      return int.tryParse(numDice) ?? 1;
-    }
-    return 1;
+  static int getNumberDice(BasePrefService service) {
+    return int.tryParse(service.get<String>('num_dice') ?? '') ?? 1;
   }
 
-  static int getNumberSides() {
-    if (prefs != null) {
-      var numSides = prefs!.getString('pref_num_sides') ?? '';
-      return int.tryParse(numSides) ?? 20;
-    }
-    return 20;
+  static int getNumberSides(BasePrefService service) {
+    return int.tryParse(service.get<String>('num_sides') ?? '') ?? 20;
   }
 
-  static bool getConfirmDelete() {
-    if (prefs != null) {
-      return prefs!.getBool('pref_confirm_delete') ?? true;
-    }
-    return true;
+  static bool getConfirmDelete(BasePrefService service) {
+    return service.get<bool>('confirm_delete') ?? true;
   }
 
-  static bool getConfirmOverwrite() {
-    if (prefs != null) {
-      return prefs!.getBool('pref_confirm_overwrite') ?? true;
-    }
-    return true;
+  static bool getConfirmOverwrite(BasePrefService service) {
+    return service.get<bool>('confirm_overwrite') ?? true;
   }
 
-  static bool getConfirmLoad() {
-    if (prefs != null) {
-      return prefs!.getBool('pref_confirm_load') ?? true;
-    }
-    return true;
+  static bool getConfirmLoad(BasePrefService service) {
+    return service.get<bool>('confirm_load') ?? true;
   }
 
-  static bool getShowHP() {
-    if (prefs != null) {
-      return prefs!.getBool('pref_show_hp') ?? true;
-    }
-    return true;
+  static bool getShowHP(BasePrefService service) {
+    return service.get<bool>('show_hp') ?? true;
   }
 
-  static bool getShowNotes() {
-    if (prefs != null) {
-      return prefs!.getBool('pref_show_notes') ?? true;
-    }
-    return true;
+  static bool getShowNotes(BasePrefService service) {
+    return service.get<bool>('show_notes') ?? true;
   }
 
-  static bool getConfirmClearParty() {
-    if (prefs != null) {
-      return prefs!.getBool('pref_confirm_clear') ?? true;
-    }
-    return true;
+  static bool getConfirmClearParty(BasePrefService service) {
+    return service.get<bool>('confirm_clear') ?? true;
   }
 
-  static bool getShowInitiative() {
-    if (prefs != null) {
-      return prefs!.getBool('pref_show_initiative') ?? true;
-    }
-    return true;
+  static bool getShowInitiative(BasePrefService service) {
+    return service.get<bool>('show_initiative') ?? true;
   }
 
-  static String? getSystemUUID() {
-    return prefs?.getString('pref_systemuuid');
+  static bool getRollInititative(BasePrefService service) {
+    return service.get<bool>('should_roll_init') ?? true;
   }
 
-  static Future<void> getPreferences() async {
-    prefs ??= await SharedPreferences.getInstance();
+  static Future<void> setConfirmLoad(
+      bool confirm, BasePrefService service) async {
+    service.set<bool>('confirm_load', confirm);
   }
 
-  static bool getRollInititative() {
-    if (prefs != null) {
-      return prefs!.getBool('pref_should_roll_init') ?? true;
-    }
-    return true;
+  static Future<void> setConfirmDelete(
+      bool confirm, BasePrefService service) async {
+    service.set<bool>('confirm_delete', confirm);
   }
 
-  static Future<void> setSystemUUID(String systemUUID) async {
-    if (prefs != null) {
-      await prefs!.setString('pref_systemuuid', systemUUID);
-    } else {
-      await getPreferences();
-      await setSystemUUID(systemUUID);
-    }
+  static Future<void> setRollInititative(
+      bool roll, BasePrefService service) async {
+    service.set<bool>('should_roll_init', roll);
   }
 
-  static Future<void> setConfirmLoad(bool confirm) async {
-    if (prefs != null) {
-      await prefs!.setBool('pref_confirm_load', confirm);
-    } else {
-      await getPreferences();
-      await setConfirmLoad(confirm);
-    }
-  }
-
-  static Future<void> setConfirmDelete(bool confirm) async {
-    if (prefs != null) {
-      await prefs!.setBool('pref_confirm_delete', confirm);
-    } else {
-      await getPreferences();
-      await setConfirmDelete(confirm);
-    }
-  }
-
-  static Future<void> setRollInititative(bool roll) async {
-    if (prefs != null) {
-      await prefs!.setBool('pref_should_roll_init', roll);
-    } else {
-      await getPreferences();
-      await setConfirmDelete(roll);
-    }
-  }
-
-  static Future<void> setVal(String key, dynamic val) async {
-    if (val is bool) {
-      await prefs!.setBool(key, val);
-    } else if (val is double) {
-      await prefs!.setDouble(key, val);
-    } else if (val is int) {
-      await prefs!.setInt(key, val);
-    } else {
-      throw UnimplementedError;
-    }
+  static Future<void> setVal(
+      String key, dynamic val, BasePrefService service) async {
+    service.set(key, val);
   }
 }

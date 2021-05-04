@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:pref/pref.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:initiative_tracker/bloc/parties/parties_bloc.dart';
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
 import 'package:initiative_tracker/models/encounter.dart';
-import 'package:initiative_tracker/helpers/preference_manger.dart';
 import 'package:initiative_tracker/widgets/dialogs.dart';
 import 'package:initiative_tracker/widgets/party_screen_dialogs.dart';
-import 'package:mocktail/mocktail.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../testHelpers.dart';
 
@@ -158,10 +159,7 @@ void main() {
       when(() => partiesBloc.state).thenAnswer((_) => PartiesInitial());
       when(() => partiesBloc.add(any())).thenReturn(null);
 
-      await tester.pumpWidget(MultiBlocProvider(providers: [
-        BlocProvider<PartyBloc>(create: (BuildContext context) => partyBloc),
-        BlocProvider<PartiesBloc>(create: (BuildContext context) => partiesBloc)
-      ], child: TestHelper.createDialogTestScreen(PartiesDialog())));
+      await tester.pumpWidget(createBlocDialogScreen(partyBloc, partiesBloc));
       await tester.pumpAndSettle();
       await TestHelper.openDialog(tester);
       await tester.pumpAndSettle();
@@ -180,10 +178,7 @@ void main() {
           .thenAnswer((_) => PartyLoadedSucess(partyModel));
       when(() => partiesBloc.state)
           .thenAnswer((_) => PartiesLoadedSuccessful(partyList));
-      await tester.pumpWidget(MultiBlocProvider(providers: [
-        BlocProvider<PartyBloc>(create: (BuildContext context) => partyBloc),
-        BlocProvider<PartiesBloc>(create: (BuildContext context) => partiesBloc)
-      ], child: TestHelper.createDialogTestScreen(PartiesDialog())));
+      await tester.pumpWidget(createBlocDialogScreen(partyBloc, partiesBloc));
       await tester.pumpAndSettle();
       await TestHelper.openDialog(tester);
       await tester.pumpAndSettle();
@@ -198,16 +193,16 @@ void main() {
     });
 
     testWidgets('Check Delete - No Confirm', (WidgetTester tester) async {
-      await PreferenceManger.setConfirmDelete(false);
+      var service = PrefServiceCache(cache: {'confirm_delete': false});
+
       when(() => partyBloc.state)
           .thenAnswer((_) => PartyLoadedSucess(partyModel));
       when(() => partiesBloc.state)
           .thenAnswer((_) => PartiesLoadedSuccessful(partyList));
       when(() => partiesBloc.add(DeleteParty(partyModel))).thenReturn(null);
-      await tester.pumpWidget(MultiBlocProvider(providers: [
-        BlocProvider<PartyBloc>(create: (BuildContext context) => partyBloc),
-        BlocProvider<PartiesBloc>(create: (BuildContext context) => partiesBloc)
-      ], child: TestHelper.createDialogTestScreen(PartiesDialog())));
+
+      await tester.pumpWidget(
+          createBlocDialogScreen(partyBloc, partiesBloc, service: service));
       await tester.pumpAndSettle();
       await TestHelper.openDialog(tester);
       await tester.pumpAndSettle();
@@ -222,17 +217,16 @@ void main() {
     });
 
     testWidgets('Check Delete - Confirm', (WidgetTester tester) async {
-      await PreferenceManger.setConfirmDelete(true);
+      var service = PrefServiceCache(cache: {'confirm_delete': true});
+
       when(() => partyBloc.state)
           .thenAnswer((_) => PartyLoadedSucess(partyModel));
       when(() => partiesBloc.state)
           .thenAnswer((_) => PartiesLoadedSuccessful(partyList));
       when(() => partiesBloc.add(DeleteParty(partyModel))).thenReturn(null);
 
-      await tester.pumpWidget(MultiBlocProvider(providers: [
-        BlocProvider<PartyBloc>(create: (BuildContext context) => partyBloc),
-        BlocProvider<PartiesBloc>(create: (BuildContext context) => partiesBloc)
-      ], child: TestHelper.createDialogTestScreen(PartiesDialog())));
+      await tester.pumpWidget(
+          createBlocDialogScreen(partyBloc, partiesBloc, service: service));
       await tester.pumpAndSettle();
       await TestHelper.openDialog(tester);
       await tester.pumpAndSettle();
@@ -255,17 +249,16 @@ void main() {
     });
 
     testWidgets('Check Load - No Confirm', (WidgetTester tester) async {
-      await PreferenceManger.setConfirmLoad(false);
+      var service = PrefServiceCache(cache: {'confirm_load': false});
+
       when(() => partyBloc.state)
           .thenAnswer((_) => PartyLoadedSucess(partyModel));
       when(() => partiesBloc.state)
           .thenAnswer((_) => PartiesLoadedSuccessful(partyList));
       when(() => partyBloc.add(LoadParty(partyModel))).thenReturn(null);
 
-      await tester.pumpWidget(MultiBlocProvider(providers: [
-        BlocProvider<PartyBloc>(create: (BuildContext context) => partyBloc),
-        BlocProvider<PartiesBloc>(create: (BuildContext context) => partiesBloc)
-      ], child: TestHelper.createDialogTestScreen(PartiesDialog())));
+      await tester.pumpWidget(
+          createBlocDialogScreen(partyBloc, partiesBloc, service: service));
       await tester.pumpAndSettle();
       await TestHelper.openDialog(tester);
       await tester.pumpAndSettle();
@@ -279,17 +272,15 @@ void main() {
     });
 
     testWidgets('Check Load - Confirm', (WidgetTester tester) async {
-      await PreferenceManger.setConfirmLoad(true);
+      var service = PrefServiceCache(cache: {'confirm_load': true});
       when(() => partyBloc.state)
           .thenAnswer((_) => PartyLoadedSucess(partyModel));
       when(() => partiesBloc.state)
           .thenAnswer((_) => PartiesLoadedSuccessful(partyList));
       when(() => partyBloc.add(LoadParty(partyModel))).thenReturn(null);
 
-      await tester.pumpWidget(MultiBlocProvider(providers: [
-        BlocProvider<PartyBloc>(create: (BuildContext context) => partyBloc),
-        BlocProvider<PartiesBloc>(create: (BuildContext context) => partiesBloc)
-      ], child: TestHelper.createDialogTestScreen(PartiesDialog())));
+      await tester.pumpWidget(
+          createBlocDialogScreen(partyBloc, partiesBloc, service: service));
       await tester.pumpAndSettle();
       await TestHelper.openDialog(tester);
       await tester.pumpAndSettle();
@@ -310,4 +301,22 @@ void main() {
       verify(() => partyBloc.add(LoadParty(partyModel))).called(1);
     });
   });
+}
+
+Widget createBlocDialogScreen(PartyBloc partyBloc, PartiesBloc partiesBloc,
+    {BasePrefService? service}) {
+  service ??= PrefServiceCache();
+
+  return PrefService(
+    service: service,
+    child: MultiBlocProvider(
+      providers: [
+        BlocProvider<PartyBloc>(create: (BuildContext context) => partyBloc),
+        BlocProvider<PartiesBloc>(create: (BuildContext context) => partiesBloc)
+      ],
+      child: TestHelper.createDialogTestScreen(
+        PartiesDialog(),
+      ),
+    ),
+  );
 }

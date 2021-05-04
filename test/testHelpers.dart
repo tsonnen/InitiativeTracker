@@ -3,14 +3,13 @@ import 'dart:io';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:initiative_tracker/bloc/parties/parties_bloc.dart';
-import 'package:initiative_tracker/bloc/party/party_bloc.dart';
-import 'package:initiative_tracker/helpers/preference_manger.dart';
-import 'package:initiative_tracker/widgets/numberpicker_dialog.dart';
-import 'package:initiative_tracker/widgets/spinner_button.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:numberpicker/numberpicker.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:initiative_tracker/bloc/parties/parties_bloc.dart';
+import 'package:initiative_tracker/bloc/party/party_bloc.dart';
+import 'package:initiative_tracker/widgets/numberpicker_dialog.dart';
+import 'package:initiative_tracker/widgets/spinner_button.dart';
 
 class MockPartyBloc extends MockBloc<PartyEvent, PartyState>
     implements PartyBloc {}
@@ -47,17 +46,6 @@ class TestHelper {
       debugPrint(WidgetsBinding.instance!.renderViewElement!.toStringDeep());
     } else {
       debugPrint('<no tree currently mounted>');
-    }
-  }
-
-  static Future<void> setMockPrefs(Map<String, Object> values) async {
-    if (PreferenceManger.prefs == null) {
-      SharedPreferences.setMockInitialValues(values);
-      await PreferenceManger.getPreferences();
-    } else {
-      values.entries.forEach((i) async {
-        await PreferenceManger.setVal(i.key, i.value);
-      });
     }
   }
 

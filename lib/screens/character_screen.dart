@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pref/pref.dart';
 
+import 'package:initiative_tracker/bloc/party/party_bloc.dart';
 import 'package:initiative_tracker/helpers/primitive_wrapper.dart';
 import 'package:initiative_tracker/helpers/keys.dart';
-import 'package:initiative_tracker/widgets/color_picker_button.dart';
-import 'package:initiative_tracker/bloc/party/party_bloc.dart';
-import 'package:initiative_tracker/models/character_model.dart';
 import 'package:initiative_tracker/helpers/preference_manger.dart';
 import 'package:initiative_tracker/helpers/random_generator.dart';
+import 'package:initiative_tracker/widgets/color_picker_button.dart';
+import 'package:initiative_tracker/models/character_model.dart';
 import 'package:initiative_tracker/widgets/numeric_text_form_field.dart';
 import 'package:initiative_tracker/widgets/spinner_button.dart';
 import 'package:initiative_tracker/widgets/styles.dart';
@@ -61,6 +62,7 @@ class CharacterScreenState extends State<CharacterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var service = PrefService.of(context);
     color ??= Theme.of(context).textTheme.bodyText1!.color;
 
     return Scaffold(
@@ -97,7 +99,7 @@ class CharacterScreenState extends State<CharacterScreen> {
                     ),
                   ],
                 ),
-                if (PreferenceManger.getShowHP())
+                if (PreferenceManger.getShowHP(service))
                   Container(
                     child: NumericTextFormField(
                       label: 'HP',
@@ -106,21 +108,22 @@ class CharacterScreenState extends State<CharacterScreen> {
                   ),
                 Row(
                   children: <Widget>[
-                    if (!PreferenceManger.getRollInititative() || widget.isEdit)
+                    if (!PreferenceManger.getRollInititative(service) ||
+                        widget.isEdit)
                       Flexible(
                         child: NumericTextFormField(
                           label: 'Initiative',
                           controller: initController,
                         ),
                       ),
-                    if (PreferenceManger.getRollInititative())
+                    if (PreferenceManger.getRollInititative(service))
                       Flexible(
                         child: SpinnerButton(-100, 100, _initMod, 'INIT MOD',
                             key: Key(Keys.initModKey)),
                       ),
                   ],
                 ),
-                if (PreferenceManger.getShowNotes())
+                if (PreferenceManger.getShowNotes(service))
                   Flexible(
                     child: TextFormField(
                       decoration: Styles.textFieldDecoration('Notes'),
@@ -160,13 +163,14 @@ class CharacterScreenState extends State<CharacterScreen> {
                         count: _number.value,
                         hp: int.tryParse(hpController.text),
                         initCalc: () {
-                          if (!PreferenceManger.getRollInititative() ||
+                          if (!PreferenceManger.getRollInititative(service) ||
                               widget.isEdit) {
                             return int.tryParse(initController.text) ?? 0;
                           }
 
-                          return rollDice(PreferenceManger.getNumberDice(),
-                                  PreferenceManger.getNumberSides()) +
+                          return rollDice(
+                                  PreferenceManger.getNumberDice(service),
+                                  PreferenceManger.getNumberSides(service)) +
                               _initMod.value;
                         },
                         color: color,

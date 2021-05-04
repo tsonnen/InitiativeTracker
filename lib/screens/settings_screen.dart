@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:initiative_tracker/helpers/theme.dart';
 import 'package:pref/pref.dart';
+import 'package:provider/provider.dart';
+
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
 import 'package:initiative_tracker/helpers/preference_manger.dart';
-import 'package:provider/provider.dart';
+import 'package:initiative_tracker/helpers/theme.dart';
 
 class SettingsPage extends StatefulWidget {
   static final String route = 'Settings-Page';
@@ -16,6 +17,7 @@ class SettingsPage extends StatefulWidget {
 class SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
+    var service = PrefService.of(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('Settings'),
@@ -54,7 +56,7 @@ class SettingsPageState extends State<SettingsPage> {
           PrefDropdown(
             title: Text('Number of Dice'),
             pref: 'num_dice',
-            disabled: !PreferenceManger.getRollInititative(),
+            disabled: !PreferenceManger.getRollInititative(service),
             items: List<int>.generate(10, (i) => (i + 1))
                 .map<DropdownMenuItem>((i) {
               return DropdownMenuItem(
@@ -64,7 +66,7 @@ class SettingsPageState extends State<SettingsPage> {
           PrefDropdown(
               title: Text('Number of Sides'),
               pref: 'num_sides',
-              disabled: !PreferenceManger.getRollInititative(),
+              disabled: !PreferenceManger.getRollInititative(service),
               items: ['2', '3', '4', '6', '8', '10', '12', '20']
                   .map<DropdownMenuItem>((i) =>
                       DropdownMenuItem(value: i, child: Text(i.toString())))

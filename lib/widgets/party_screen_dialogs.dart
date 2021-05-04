@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pref/pref.dart';
+
 import 'package:initiative_tracker/bloc/parties/parties_bloc.dart';
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
 import 'package:initiative_tracker/models/encounter.dart';
-
-import '../helpers/preference_manger.dart';
-import 'dialogs.dart';
+import 'package:initiative_tracker/helpers/preference_manger.dart';
+import 'package:initiative_tracker/widgets/dialogs.dart';
 
 class ConfirmClearPartyDialog extends StatelessWidget {
   final Encounter encounterModel;
@@ -86,6 +87,7 @@ class PartiesDialogState extends State<PartiesDialog> {
   Widget build(BuildContext context) {
     var partiesBloc = BlocProvider.of<PartiesBloc>(context);
     var partyBloc = BlocProvider.of<PartyBloc>(context);
+    var service = PrefService.of(context);
 
     return AlertDialog(
       title: Text('Manage Parties'),
@@ -104,7 +106,7 @@ class PartiesDialogState extends State<PartiesDialog> {
                           (item) => ListTile(
                             title: Text(item!.partyName ?? 'No Name'),
                             onLongPress: () {
-                              if (PreferenceManger.getConfirmDelete()) {
+                              if (PreferenceManger.getConfirmDelete(service)) {
                                 showDialog<bool>(
                                     context: context,
                                     builder: (context) {
@@ -120,7 +122,7 @@ class PartiesDialogState extends State<PartiesDialog> {
                               }
                             },
                             onTap: () {
-                              if (PreferenceManger.getConfirmLoad()) {
+                              if (PreferenceManger.getConfirmLoad(service)) {
                                 showDialog<bool>(
                                     context: context,
                                     builder: (context) {

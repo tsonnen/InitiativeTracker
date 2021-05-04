@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:pref/pref.dart';
+
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
 import 'package:initiative_tracker/helpers/keys.dart';
 import 'package:initiative_tracker/models/character_model.dart';
 import 'package:initiative_tracker/models/encounter.dart';
 import 'package:initiative_tracker/screens/character_screen.dart';
 import 'package:initiative_tracker/widgets/spinner_button.dart';
-import 'package:mocktail/mocktail.dart';
 
 import '../testHelpers.dart';
 
@@ -53,12 +55,13 @@ void main() {
       when(() => partyBloc!.add(any(that: MatchType<AddPartyCharacter>())))
           .thenReturn(null);
 
-      await TestHelper.setMockPrefs({'pref_should_roll_init': false});
+      var service = PrefServiceCache(cache: {'should_roll_init': false});
 
       var charToAdd = CharacterModel(
           characterName: 'Test Char', initiative: 12, hp: 12, notes: 'None');
 
-      await tester.pumpWidget(createCharacterScreen(partyBloc));
+      await tester
+          .pumpWidget(createCharacterScreen(partyBloc, service: service));
 
       await tester.pumpAndSettle();
 
@@ -93,9 +96,10 @@ void main() {
       var charToAdd = CharacterModel(characterName: 'Test Char', hp: 12);
       var numCharacters = 2;
 
-      await TestHelper.setMockPrefs({'pref_should_roll_init': true});
+      var service = PrefServiceCache(cache: ({'should_roll_init': true}));
 
-      await tester.pumpWidget(createCharacterScreen(partyBloc));
+      await tester
+          .pumpWidget(createCharacterScreen(partyBloc, service: service));
 
       await tester.pumpAndSettle();
 
@@ -128,7 +132,7 @@ void main() {
       partyBloc = MockPartyBloc();
     });
     testWidgets('Test Edit', (WidgetTester tester) async {
-      await TestHelper.setMockPrefs({'pref_should_roll_init': true});
+      var service = PrefServiceCache(cache: {'should_roll_init': true});
 
       when(() => partyBloc!.state)
           .thenAnswer((_) => PartyLoadedSucess(Encounter()));
@@ -145,7 +149,8 @@ void main() {
 
       await tester.pumpWidget(BlocProvider<PartyBloc>(
           create: (context) => partyBloc!,
-          child: createCharacterScreen(partyBloc, character: charToEdit)));
+          child: createCharacterScreen(partyBloc,
+              character: charToEdit, service: service)));
 
       await tester.pumpAndSettle();
 
@@ -182,11 +187,17 @@ Future<void> tapButton(WidgetTester tester, {CharacterModel? character}) async {
 }
 
 Widget createCharacterScreen(PartyBloc? partyBloc,
-    {CharacterModel? character}) {
-  return BlocProvider<PartyBloc>(
+    {CharacterModel? character, BasePrefService? service}) {
+  service ??= PrefServiceCache();
+  return PrefService(
+    service: service,
+    child: BlocProvider<PartyBloc>(
       create: (BuildContext context) => partyBloc!,
       child: MaterialApp(
-          home: CharacterScreen(
-        character: character,
-      )));
+        home: CharacterScreen(
+          character: character,
+        ),
+      ),
+    ),
+  );
 }

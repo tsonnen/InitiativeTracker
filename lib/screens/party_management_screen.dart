@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pref/pref.dart';
+
 import 'package:initiative_tracker/bloc/parties/parties_bloc.dart';
 import 'package:initiative_tracker/bloc/party/party_bloc.dart';
 import 'package:initiative_tracker/helpers/preference_manger.dart';
@@ -12,8 +14,9 @@ class PartyManagementScreen extends StatefulWidget {
 }
 
 class PartyManagementScreenState extends State<PartyManagementScreen> {
-  late var partiesBloc;
-  late var partyBloc;
+  late PartiesBloc partiesBloc;
+  late PartyBloc partyBloc;
+
   @override
   void initState() {
     partiesBloc = BlocProvider.of<PartiesBloc>(context);
@@ -24,6 +27,7 @@ class PartyManagementScreenState extends State<PartyManagementScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var service = PrefService.of(context);
     return Scaffold(
         appBar: AppBar(
           title: Text('Manage Parties'),
@@ -41,7 +45,7 @@ class PartyManagementScreenState extends State<PartyManagementScreen> {
                         title: Text(item!.partyName ?? 'No Name'),
                         trailing: TileDeleteActionRow(
                           onDeleteTap: () {
-                            if (PreferenceManger.getConfirmDelete()) {
+                            if (PreferenceManger.getConfirmDelete(service)) {
                               showDialog<bool>(
                                   context: context,
                                   builder: (context) {
@@ -58,7 +62,7 @@ class PartyManagementScreenState extends State<PartyManagementScreen> {
                           },
                           onActionTap: () async {
                             bool? loadParty = true;
-                            if (PreferenceManger.getConfirmLoad()) {
+                            if (PreferenceManger.getConfirmLoad(service)) {
                               loadParty = await showDialog<bool>(
                                   context: context,
                                   builder: (context) {
