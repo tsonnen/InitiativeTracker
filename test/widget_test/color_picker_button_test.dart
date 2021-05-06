@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:initiative_tracker/widgets/color_picker_button.dart';
 import 'package:initiative_tracker/widgets/dialogs.dart';
-import '../testHelpers.dart';
+import '../test_helper.dart';
 
 void main() {
   group('ColorPickerButton Tests', () {

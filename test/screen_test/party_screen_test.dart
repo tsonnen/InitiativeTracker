@@ -14,7 +14,7 @@ import 'package:initiative_tracker/screens/party_management_screen.dart';
 import 'package:initiative_tracker/screens/party_screen.dart';
 import 'package:initiative_tracker/widgets/party_screen_dialogs.dart';
 
-import '../testHelpers.dart';
+import '../test_helper.dart';
 
 void main() {
   setUpAll(() {

@@ -11,7 +11,7 @@ import 'package:initiative_tracker/models/encounter.dart';
 import 'package:initiative_tracker/widgets/dialogs.dart';
 import 'package:initiative_tracker/widgets/party_screen_dialogs.dart';
 
-import '../testHelpers.dart';
+import '../test_helper.dart';
 
 void main() {
   setUpAll(() {

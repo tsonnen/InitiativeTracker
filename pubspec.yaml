@@ -14,13 +14,10 @@ environment:
   sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
-  flutter:
-    sdk: flutter
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.0
   equatable: ^2.0.0
+  flutter:
+    sdk: flutter
   flutter_bloc: ^7.0.0
   flutter_circle_color_picker:
     git:
@@ -46,14 +43,13 @@ dependency_overrides:
   crypto: ^3.0.0
 
 dev_dependencies:
-  integration_test:
-    sdk: flutter
-  flutter_test:
-    sdk: flutter
-
   async: ^2.4.2
   bloc_test: ^8.0.0
   build_runner: ^1.11.1
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
   json_serializable: ^4.0.1
   mocktail: ^0.1.1 
   moor_generator: ^4.2.1

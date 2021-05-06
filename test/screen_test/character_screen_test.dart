@@ -11,7 +11,7 @@ import 'package:initiative_tracker/models/encounter.dart';
 import 'package:initiative_tracker/screens/character_screen.dart';
 import 'package:initiative_tracker/widgets/spinner_button.dart';
 
-import '../testHelpers.dart';
+import '../test_helper.dart';
 
 void main() {
   setUpAll(() {

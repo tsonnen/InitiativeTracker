@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:initiative_tracker/widgets/dialogs.dart';
 import 'package:mocktail/mocktail.dart';
 
-import '../testHelpers.dart';
+import '../test_helper.dart';
 
 void main() {
   setUpAll(() {
