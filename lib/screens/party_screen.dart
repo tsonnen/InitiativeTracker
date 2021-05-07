@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:initiative_tracker/helpers/uuid.dart';
 import 'package:pref/pref.dart';
 
 import 'package:initiative_tracker/bloc/parties/parties_bloc.dart';
@@ -106,6 +107,8 @@ class PartyScreenState extends State<PartyScreen> {
                       if (value!) {
                         partiesBloc.add(AddParty(partyModel));
                       } else if (!value) {
+                        partyModel =
+                            partyModel.copyWith(partyUUID: Uuid().generateV4());
                         saveParty(partyModel);
                       }
                     });

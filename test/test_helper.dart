@@ -3,6 +3,9 @@ import 'dart:io';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:initiative_tracker/helpers/uuid.dart';
+import 'package:initiative_tracker/moor/database.dart';
+import 'package:initiative_tracker/moor/parties_dao.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:numberpicker/numberpicker.dart';
 
@@ -19,6 +22,8 @@ class MockPartiesBloc extends MockBloc<PartiesEvent, PartiesState>
   MockPartiesBloc();
 }
 
+class MockPartiesDao extends Mock implements PartiesDao {}
+
 class MockNavigatorObserver extends Mock implements NavigatorObserver {}
 
 class FakeRoute<T> extends Fake implements Route<T> {}
@@ -32,6 +37,8 @@ class TestHelper {
     registerFallbackValue<PartiesEvent>(LoadParties());
 
     registerFallbackValue<Route<dynamic>>(FakeRoute());
+
+    registerFallbackValue<Party>(Party(partyUUID: Uuid().generateV4()));
   }
 
   static void dumpTree() {

@@ -1,7 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:initiative_tracker/moor/database.dart';
+import 'package:initiative_tracker/moor/parties_dao.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:pref/pref.dart';
 
@@ -16,6 +20,8 @@ import 'package:initiative_tracker/widgets/party_screen_dialogs.dart';
 
 import '../test_helper.dart';
 
+// TODO: (tsonnen) Find out why bloc initialized in setup fails, but passes in the test itself
+
 void main() {
   setUpAll(() {
     TestHelper.registerFallbacks();
@@ -27,28 +33,69 @@ void main() {
     return 'test_resources';
   });
   group('Home Screen Tests', () {
-    MockPartiesBloc? partiesBloc;
-    MockPartyBloc? partyBloc;
-    Encounter? partyModel;
+    late PartiesBloc partiesBloc;
+    late MockPartyBloc partyBloc;
+    late Encounter partyModel;
+    late MockPartiesDao partiesDao;
+    late List<Party> parties;
+
+    void partiesDaoMocks() {
+      when(() => partiesDao.addParty(any(that: MatchType<Party>())))
+          .thenAnswer((invocation) async {
+        parties.add(invocation.positionalArguments.first);
+        return parties.length;
+      });
+      when(() => partiesDao.allParties)
+          .thenAnswer((invocation) async => parties);
+      when(() => partiesDao.deleteParty(any(that: MatchType<Party>())))
+          .thenAnswer((invocation) async {
+        parties.remove(invocation.positionalArguments.first);
+        return parties.length;
+      });
+
+      when(() => partiesDao.upsert(any(that: MatchType<Party>())))
+          .thenAnswer((invocation) async {
+        var party = invocation.positionalArguments.first as Party;
+        var index = parties
+            .indexWhere((element) => element.partyUUID == party.partyUUID);
+        index != -1 ? parties[index] = party : parties.add(party);
+      });
+    }
+
+    void partyBlocMocks() {
+      when(() => partyBloc.state)
+          .thenAnswer((_) => PartyLoadedSucess(partyModel));
+
+      when(() => partyBloc.add(any(that: MatchType<DeletePartyCharacter>())))
+          .thenReturn(null);
+
+      when(() => partyBloc.add(any(that: MatchType<RefreshEncounter>())))
+          .thenAnswer((invocation) async* {
+        yield PartyModCharacter();
+        partyModel = (invocation.positionalArguments.first as RefreshEncounter)
+            .encounter;
+        yield PartyLoadedSucess(partyModel);
+      });
+    }
 
     setUp(() {
-      partiesBloc = MockPartiesBloc();
+      parties = <Party>[];
+      partiesDao = MockPartiesDao();
+      partiesDaoMocks();
+
       partyBloc = MockPartyBloc();
       partyModel = Encounter(
           characters: CharacterList(list: [
         CharacterModel(characterName: 'Joe', hp: 6, initiative: 7, notes: '')
       ]));
+      partyBlocMocks();
+
+      partiesBloc = PartiesBloc(partiesDao);
     });
 
     testWidgets('Should Route to Add Character Screen',
         (WidgetTester tester) async {
-      when(() => partyBloc!.state)
-          .thenAnswer((_) => PartyLoadedSucess(partyModel));
-      when(() => partiesBloc!.state)
-          .thenAnswer((_) => PartiesLoadedSuccessful([partyModel]));
-
       await tester.pumpWidget(createHomeScreen(partiesBloc, partyBloc));
-      await tester.pumpAndSettle();
 
       expect(
           find.widgetWithIcon(FloatingActionButton, Icons.add,
@@ -64,24 +111,19 @@ void main() {
 
     testWidgets('Should Route to Edit Character Screen',
         (WidgetTester tester) async {
-      when(() => partyBloc!.state)
-          .thenAnswer((_) => PartyLoadedSucess(partyModel));
-      when(() => partiesBloc!.state)
-          .thenAnswer((_) => PartiesLoadedSuccessful([partyModel]));
-
       await tester.pumpWidget(createHomeScreen(partiesBloc, partyBloc));
 
       await tester.pumpAndSettle();
 
       expect(
           find.widgetWithText(
-              ListTile, partyModel!.characters!.first!.characterName!,
+              ListTile, partyModel.characters!.first!.characterName!,
               skipOffstage: false),
           findsOneWidget);
 
       await tester.tap(find.descendant(
           of: find.widgetWithText(
-              ExpansionTile, partyModel!.characters!.first!.characterName!),
+              ExpansionTile, partyModel.characters!.first!.characterName!),
           matching: find.byIcon(Icons.edit)));
 
       await tester.pumpAndSettle();
@@ -90,42 +132,28 @@ void main() {
     });
 
     testWidgets('Should Delete Character', (WidgetTester tester) async {
-      when(() => partyBloc!.state)
-          .thenAnswer((_) => PartyLoadedSucess(partyModel));
-      when(() => partiesBloc!.state)
-          .thenAnswer((_) => PartiesLoadedSuccessful([partyModel]));
-      when(() => partyBloc!.add(any(that: MatchType<DeletePartyCharacter>())))
-          .thenReturn(null);
-
       await tester.pumpWidget(createHomeScreen(partiesBloc, partyBloc));
 
       await tester.pumpAndSettle();
 
       expect(
           find.widgetWithText(
-              ListTile, partyModel!.characters!.first!.characterName!,
+              ListTile, partyModel.characters!.first!.characterName!,
               skipOffstage: false),
           findsOneWidget);
 
       await tester.tap(find.descendant(
           of: find.widgetWithText(
-              ExpansionTile, partyModel!.characters!.first!.characterName!),
+              ExpansionTile, partyModel.characters!.first!.characterName!),
           matching: find.byIcon(Icons.delete)));
 
       await tester.pumpAndSettle();
 
-      verify(() => partyBloc!.add(any(that: MatchType<DeletePartyCharacter>())))
+      verify(() => partyBloc.add(any(that: MatchType<DeletePartyCharacter>())))
           .called(1);
     });
 
     testWidgets('Test Round Counter', (WidgetTester tester) async {
-      when(() => partyBloc!.state)
-          .thenAnswer((_) => PartyLoadedSucess(partyModel));
-      when(() => partiesBloc!.state)
-          .thenAnswer((_) => PartiesLoadedSuccessful([partyModel]));
-      when(() => partyBloc!.add(any(that: MatchType<ChangeRound>())))
-          .thenReturn(null);
-
       await tester.pumpWidget(createHomeScreen(partiesBloc, partyBloc));
 
       await tester.pumpAndSettle();
@@ -133,52 +161,40 @@ void main() {
       // Test round advance
       await tester.tap(find.widgetWithIcon(IconButton, Icons.navigate_next));
       await tester.pumpAndSettle();
-      verify(() => partyBloc!.add(ChangeRound(roundForward: true))).called(1);
+      verify(() => partyBloc.add(ChangeRound(roundForward: true))).called(1);
 
       // Test round advance
       await tester.tap(find.widgetWithIcon(IconButton, Icons.navigate_next));
       await tester.pumpAndSettle();
-      verify(() => partyBloc!.add(ChangeRound(roundForward: true))).called(1);
+      verify(() => partyBloc.add(ChangeRound(roundForward: true))).called(1);
 
       // Test going back a round
       await tester.tap(find.widgetWithIcon(IconButton, Icons.navigate_before));
       await tester.pumpAndSettle();
-      verify(() => partyBloc!.add(ChangeRound(roundForward: false))).called(1);
+      verify(() => partyBloc.add(ChangeRound(roundForward: false))).called(1);
     });
 
     testWidgets('Test Party Reset', (WidgetTester tester) async {
       var service = PrefServiceCache(cache: {'confirm_clear': false});
-
-      when(() => partyBloc!.state)
-          .thenAnswer((_) => PartyLoadedSucess(partyModel));
-      when(() => partiesBloc!.state)
-          .thenAnswer((_) => PartiesLoadedSuccessful([partyModel]));
-      when(() => partyBloc!.add(any(that: MatchType<GenerateParty>())))
-          .thenReturn(null);
-
       await tester.pumpWidget(
           createHomeScreen(partiesBloc, partyBloc, service: service));
       await tester.pumpAndSettle();
       await tester.tap(find.widgetWithIcon(IconButton, Icons.clear));
       await tester.pumpAndSettle();
 
-      verify(() => partyBloc!.add(any(that: MatchType<GenerateParty>())))
+      verify(() => partyBloc.add(any(that: MatchType<GenerateParty>())))
           .called(1);
     });
 
     testWidgets('Test HP Changes', (WidgetTester tester) async {
-      when(() => partyBloc!.state)
-          .thenAnswer((_) => PartyLoadedSucess(partyModel));
-      when(() => partiesBloc!.state)
-          .thenAnswer((_) => PartiesLoadedSuccessful([partyModel]));
       await tester.pumpWidget(createHomeScreen(partiesBloc, partyBloc));
 
       await tester.pumpAndSettle();
 
-      checkTitleText(partyModel!);
+      checkTitleText(partyModel);
       expect(
           find.widgetWithText(
-              ListTile, partyModel!.characters!.first!.hp.toString(),
+              ListTile, partyModel.characters!.first!.hp.toString(),
               skipOffstage: false),
           findsOneWidget);
 
@@ -186,28 +202,24 @@ void main() {
       await tester.pumpAndSettle();
       expect(
           find.widgetWithText(
-              ListTile, partyModel!.characters!.first!.hp.toString(),
+              ListTile, partyModel.characters!.first!.hp.toString(),
               skipOffstage: false),
           findsOneWidget);
-      expect(partyModel!.characters!.first!.hp, 5);
+      expect(partyModel.characters!.first!.hp, 5);
 
       await tester.tap(find.widgetWithIcon(IconButton, Icons.add));
       await tester.pumpAndSettle();
       expect(
           find.widgetWithText(
-              ListTile, partyModel!.characters!.first!.hp.toString(),
+              ListTile, partyModel.characters!.first!.hp.toString(),
               skipOffstage: false),
           findsOneWidget);
-      expect(partyModel!.characters!.first!.hp, 6);
+      expect(partyModel.characters!.first!.hp, 6);
     });
 
     testWidgets('Test Save Party', (WidgetTester tester) async {
-      when(() => partyBloc!.state)
-          .thenAnswer((_) => PartyLoadedSucess(partyModel));
-      when(() => partiesBloc!.state)
-          .thenAnswer((_) => PartiesLoadedSuccessful([partyModel]));
-      when(() => partiesBloc!.add(any(that: MatchType<AddParty>())))
-          .thenReturn(null);
+      // Not sure why this is needed. Fails without it
+      partiesBloc = PartiesBloc(partiesDao);
 
       await tester.pumpWidget(createHomeScreen(partiesBloc, partyBloc));
       await tester.pumpAndSettle();
@@ -222,19 +234,48 @@ void main() {
       await tester.tap(find.widgetWithText(TextButton, 'Save'));
       await tester.pumpAndSettle();
 
-      verify(() => partiesBloc!.add(any(that: MatchType<AddParty>())))
-          .called(1);
+      expect(parties.length, 1);
+    });
+
+    testWidgets('Test Save Party -- Should not Overwrite',
+        (WidgetTester tester) async {
+      // For some reason, BLOCs initialized in setup Fail
+      partiesBloc = PartiesBloc(partiesDao);
+      var partyBlocNOMOCK = PartyBloc();
+      var service = PrefServiceCache(cache: {'confirm_overwrite': true});
+
+      await tester.pumpWidget(
+          createHomeScreen(partiesBloc, partyBlocNOMOCK, service: service));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byIcon(Icons.save, skipOffstage: false));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(PartyNameDialog), findsOneWidget);
+
+      await tester.enterText(find.byType(TextField), 'Saved Party');
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(TextButton, 'Save'));
+      await tester.pumpAndSettle();
+
+      expect(parties.length, 1);
+
+      await tester.tap(find.byIcon(Icons.save, skipOffstage: false));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(PartyOverwriteDialog), findsOneWidget);
+      await tester.tap(find.widgetWithText(TextButton, 'No'));
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byType(TextField), 'Saved Party 2');
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(TextButton, 'Save'));
+      await tester.pumpAndSettle();
+
+      expect(parties.length, 2);
     });
 
     testWidgets('Test Party Management', (WidgetTester tester) async {
-      partyModel = partyModel!.copyWith(partyName: 'SAVED PARTY');
-      when(() => partyBloc!.state)
-          .thenAnswer((_) => PartyLoadedSucess(partyModel));
-      when(() => partiesBloc!.state)
-          .thenAnswer((_) => PartiesLoadedSuccessful([partyModel]));
-      when(() => partiesBloc!.add(any(that: MatchType<DeleteParty>())))
-          .thenReturn(null);
-
       await tester.pumpWidget(createHomeScreen(partiesBloc, partyBloc));
       await tester.pumpAndSettle();
 
@@ -248,10 +289,6 @@ void main() {
     });
 
     testWidgets('Test Help Route', (WidgetTester tester) async {
-      when(() => partyBloc!.state)
-          .thenAnswer((_) => PartyLoadedSucess(partyModel));
-      when(() => partiesBloc!.state)
-          .thenAnswer((_) => PartiesLoadedSuccessful([partyModel]));
       await tester.pumpWidget(createHomeScreen(partiesBloc, partyBloc));
       await tester.pumpAndSettle();
 
@@ -265,11 +302,6 @@ void main() {
     });
 
     testWidgets('Test Settings Route', (WidgetTester tester) async {
-      when(() => partyBloc!.state)
-          .thenAnswer((_) => PartyLoadedSucess(partyModel));
-      when(() => partiesBloc!.state)
-          .thenAnswer((_) => PartiesLoadedSuccessful([partyModel]));
-
       await tester.pumpWidget(createHomeScreen(partiesBloc, partyBloc));
       await tester.pumpAndSettle();
 
@@ -289,14 +321,13 @@ void checkTitleText(Encounter partyModel) {
       findsOneWidget);
 }
 
-Widget createHomeScreen(MockPartiesBloc? partiesBloc, MockPartyBloc? partyBloc,
+Widget createHomeScreen(PartiesBloc partiesBloc, PartyBloc partyBloc,
     {BasePrefService? service}) {
   service ??= PrefServiceCache();
   return PrefService(
       service: service,
       child: MultiBlocProvider(providers: [
-        BlocProvider<PartyBloc>(create: (BuildContext context) => partyBloc!),
-        BlocProvider<PartiesBloc>(
-            create: (BuildContext context) => partiesBloc!)
+        BlocProvider<PartyBloc>(create: (BuildContext context) => partyBloc),
+        BlocProvider<PartiesBloc>(create: (BuildContext context) => partiesBloc)
       ], child: MaterialApp(home: PartyScreen())));
 }
