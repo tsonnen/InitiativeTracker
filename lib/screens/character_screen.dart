@@ -97,8 +97,13 @@ class _CharacterScreenState extends State<CharacterScreen> {
                         child: NumericTextFormField(
                             label: '# Units',
                             controller: numberUnitsController,
-                            onChanged: (value) {
-                              if (value == null || value.isEmpty) {
+                            onFocusChange: (value) {
+                              if (value) {
+                                return;
+                              }
+                              var numberUnits =
+                                  int.tryParse(numberUnitsController.text) ?? 0;
+                              if (numberUnits < 1) {
                                 numberUnitsController.text = '1';
                               }
                             },

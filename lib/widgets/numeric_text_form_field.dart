@@ -7,14 +7,26 @@ class NumericTextFormField extends StatelessWidget {
   final TextEditingController? controller;
   final bool allowNegative;
   final Function(String?)? onChanged;
+  final Function(bool)? onFocusChange;
 
+  final _focus = FocusNode();
   NumericTextFormField(
       {Key? key,
       required this.label,
       this.controller,
       this.onChanged,
+      this.onFocusChange,
       this.allowNegative = false})
-      : super(key: key);
+      : super(key: key) {
+    _focus.addListener(_onFocusChange);
+  }
+
+  void _onFocusChange() {
+    if (onFocusChange == null) {
+      return;
+    }
+    onFocusChange!(_focus.hasFocus);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +41,7 @@ class NumericTextFormField extends StatelessWidget {
       controller: controller,
       onChanged: onChanged,
       inputFormatters: formatters,
+      focusNode: _focus,
     );
   }
 }
