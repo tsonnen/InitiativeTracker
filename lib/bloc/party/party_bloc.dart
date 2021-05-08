@@ -12,6 +12,9 @@ part 'party_state.dart';
 class PartyBloc extends Bloc<PartyEvent, PartyState> {
   PartyBloc() : super(PartyInitial());
 
+  PartyBloc.load(Encounter encounterModel)
+      : super(PartyLoadedSucess(encounterModel));
+
   @override
   Stream<PartyState> mapEventToState(
     PartyEvent event,

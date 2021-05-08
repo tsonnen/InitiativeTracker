@@ -8,6 +8,8 @@ import 'character_model.dart';
 class Encounter extends Party {
   int round;
 
+  int get characterCount => characters!.l!.length;
+
   Encounter(
       {this.round = 1,
       String? partyName,

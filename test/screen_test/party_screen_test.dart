@@ -1,11 +1,7 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:initiative_tracker/moor/database.dart';
-import 'package:initiative_tracker/moor/parties_dao.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:pref/pref.dart';
 
@@ -14,13 +10,13 @@ import 'package:initiative_tracker/bloc/party/party_bloc.dart';
 import 'package:initiative_tracker/models/character_model.dart';
 import 'package:initiative_tracker/models/encounter.dart';
 import 'package:initiative_tracker/models/character_list.dart';
+import 'package:initiative_tracker/moor/database.dart';
 import 'package:initiative_tracker/screens/party_management_screen.dart';
 import 'package:initiative_tracker/screens/party_screen.dart';
+import 'package:initiative_tracker/widgets/character_list.dart';
 import 'package:initiative_tracker/widgets/party_screen_dialogs.dart';
 
 import '../test_helper.dart';
-
-// TODO: (tsonnen) Find out why bloc initialized in setup fails, but passes in the test itself
 
 void main() {
   setUpAll(() {
@@ -33,11 +29,9 @@ void main() {
     return 'test_resources';
   });
   group('Home Screen Tests', () {
-    late PartiesBloc partiesBloc;
-    late MockPartyBloc partyBloc;
-    late Encounter partyModel;
     late MockPartiesDao partiesDao;
     late List<Party> parties;
+    late Encounter encounterModel;
 
     void partiesDaoMocks() {
       when(() => partiesDao.addParty(any(that: MatchType<Party>())))
@@ -62,40 +56,30 @@ void main() {
       });
     }
 
-    void partyBlocMocks() {
-      when(() => partyBloc.state)
-          .thenAnswer((_) => PartyLoadedSucess(partyModel));
-
-      when(() => partyBloc.add(any(that: MatchType<DeletePartyCharacter>())))
-          .thenReturn(null);
-
-      when(() => partyBloc.add(any(that: MatchType<RefreshEncounter>())))
-          .thenAnswer((invocation) async* {
-        yield PartyModCharacter();
-        partyModel = (invocation.positionalArguments.first as RefreshEncounter)
-            .encounter;
-        yield PartyLoadedSucess(partyModel);
-      });
-    }
-
     setUp(() {
+      encounterModel = Encounter(
+          characters: CharacterList(
+              list: List<CharacterModel>.generate(
+                  10,
+                  (index) => CharacterModel(
+                      characterName: 'Character $index',
+                      hp: index,
+                      initMod: index,
+                      initiative: index,
+                      notes: 'Notes for $index'))));
+
       parties = <Party>[];
       partiesDao = MockPartiesDao();
+
       partiesDaoMocks();
-
-      partyBloc = MockPartyBloc();
-      partyModel = Encounter(
-          characters: CharacterList(list: [
-        CharacterModel(characterName: 'Joe', hp: 6, initiative: 7, notes: '')
-      ]));
-      partyBlocMocks();
-
-      partiesBloc = PartiesBloc(partiesDao);
     });
 
     testWidgets('Should Route to Add Character Screen',
         (WidgetTester tester) async {
-      await tester.pumpWidget(createHomeScreen(partiesBloc, partyBloc));
+      await tester.pumpWidget(createHomeScreen(
+          partiesBloc: PartiesBloc(partiesDao), partyBloc: PartyBloc()));
+
+      await tester.pumpAndSettle();
 
       expect(
           find.widgetWithIcon(FloatingActionButton, Icons.add,
@@ -111,19 +95,21 @@ void main() {
 
     testWidgets('Should Route to Edit Character Screen',
         (WidgetTester tester) async {
-      await tester.pumpWidget(createHomeScreen(partiesBloc, partyBloc));
+      await tester.pumpWidget(createHomeScreen(
+          partiesBloc: PartiesBloc(partiesDao),
+          partyBloc: PartyBloc.load(encounterModel)));
 
       await tester.pumpAndSettle();
 
       expect(
           find.widgetWithText(
-              ListTile, partyModel.characters!.first!.characterName!,
+              ListTile, encounterModel.characters!.first!.characterName!,
               skipOffstage: false),
           findsOneWidget);
 
       await tester.tap(find.descendant(
           of: find.widgetWithText(
-              ExpansionTile, partyModel.characters!.first!.characterName!),
+              ExpansionTile, encounterModel.characters!.first!.characterName!),
           matching: find.byIcon(Icons.edit)));
 
       await tester.pumpAndSettle();
@@ -132,69 +118,88 @@ void main() {
     });
 
     testWidgets('Should Delete Character', (WidgetTester tester) async {
-      await tester.pumpWidget(createHomeScreen(partiesBloc, partyBloc));
+      var partyBloc = PartyBloc.load(encounterModel);
+      await tester.pumpWidget(createHomeScreen(
+          partiesBloc: PartiesBloc(partiesDao), partyBloc: partyBloc));
 
       await tester.pumpAndSettle();
 
       expect(
           find.widgetWithText(
-              ListTile, partyModel.characters!.first!.characterName!,
+              ListTile, encounterModel.characters!.first!.characterName!,
               skipOffstage: false),
           findsOneWidget);
 
       await tester.tap(find.descendant(
           of: find.widgetWithText(
-              ExpansionTile, partyModel.characters!.first!.characterName!),
+              ExpansionTile, encounterModel.characters!.first!.characterName!),
           matching: find.byIcon(Icons.delete)));
 
       await tester.pumpAndSettle();
 
-      verify(() => partyBloc.add(any(that: MatchType<DeletePartyCharacter>())))
-          .called(1);
+      expect(
+          find.widgetWithText(
+              ListTile, encounterModel.characters!.first!.characterName!,
+              skipOffstage: false),
+          findsNothing);
     });
 
     testWidgets('Test Round Counter', (WidgetTester tester) async {
-      await tester.pumpWidget(createHomeScreen(partiesBloc, partyBloc));
+      var partyBloc = PartyBloc.load(encounterModel);
+      await tester.pumpWidget(createHomeScreen(
+          partiesBloc: PartiesBloc(partiesDao), partyBloc: partyBloc));
 
       await tester.pumpAndSettle();
+
+      expect(find.text('Round 1'), findsOneWidget);
 
       // Test round advance
       await tester.tap(find.widgetWithIcon(IconButton, Icons.navigate_next));
       await tester.pumpAndSettle();
-      verify(() => partyBloc.add(ChangeRound(roundForward: true))).called(1);
+      expect(find.text('Round 2'), findsOneWidget);
 
       // Test round advance
       await tester.tap(find.widgetWithIcon(IconButton, Icons.navigate_next));
       await tester.pumpAndSettle();
-      verify(() => partyBloc.add(ChangeRound(roundForward: true))).called(1);
+      expect(find.text('Round 3'), findsOneWidget);
 
       // Test going back a round
       await tester.tap(find.widgetWithIcon(IconButton, Icons.navigate_before));
       await tester.pumpAndSettle();
-      verify(() => partyBloc.add(ChangeRound(roundForward: false))).called(1);
+      expect(find.text('Round 2'), findsOneWidget);
     });
 
     testWidgets('Test Party Reset', (WidgetTester tester) async {
       var service = PrefServiceCache(cache: {'confirm_clear': false});
-      await tester.pumpWidget(
-          createHomeScreen(partiesBloc, partyBloc, service: service));
-      await tester.pumpAndSettle();
-      await tester.tap(find.widgetWithIcon(IconButton, Icons.clear));
+      await tester.pumpWidget(createHomeScreen(
+          partiesBloc: PartiesBloc(partiesDao),
+          partyBloc: PartyBloc.load(encounterModel),
+          service: service));
       await tester.pumpAndSettle();
 
-      verify(() => partyBloc.add(any(that: MatchType<GenerateParty>())))
-          .called(1);
+      expect(find.byType(CharacterCard, skipOffstage: false),
+          findsNWidgets(encounterModel.characterCount));
+
+      await tester.tap(find.widgetWithIcon(IconButton, Icons.clear));
+      await tester.pumpAndSettle();
+      expect(find.byType(CharacterCard, skipOffstage: false), findsNothing);
     });
 
     testWidgets('Test HP Changes', (WidgetTester tester) async {
-      await tester.pumpWidget(createHomeScreen(partiesBloc, partyBloc));
+      encounterModel = Encounter(
+          characters: CharacterList(list: [
+        CharacterModel(characterName: 'Joe', hp: 6, initiative: 7, notes: '')
+      ]));
+
+      var partyBloc = PartyBloc.load(encounterModel);
+      await tester.pumpWidget(createHomeScreen(
+          partiesBloc: PartiesBloc(partiesDao), partyBloc: partyBloc));
 
       await tester.pumpAndSettle();
 
-      checkTitleText(partyModel);
       expect(
           find.widgetWithText(
-              ListTile, partyModel.characters!.first!.hp.toString(),
+              ListTile, encounterModel.characters!.first!.hp.toString(),
               skipOffstage: false),
           findsOneWidget);
 
@@ -202,26 +207,26 @@ void main() {
       await tester.pumpAndSettle();
       expect(
           find.widgetWithText(
-              ListTile, partyModel.characters!.first!.hp.toString(),
+              ListTile, encounterModel.characters!.first!.hp.toString(),
               skipOffstage: false),
           findsOneWidget);
-      expect(partyModel.characters!.first!.hp, 5);
+      expect(encounterModel.characters!.first!.hp, 5);
 
       await tester.tap(find.widgetWithIcon(IconButton, Icons.add));
       await tester.pumpAndSettle();
       expect(
           find.widgetWithText(
-              ListTile, partyModel.characters!.first!.hp.toString(),
+              ListTile, encounterModel.characters!.first!.hp.toString(),
               skipOffstage: false),
           findsOneWidget);
-      expect(partyModel.characters!.first!.hp, 6);
+      expect(encounterModel.characters!.first!.hp, 6);
     });
 
     testWidgets('Test Save Party', (WidgetTester tester) async {
-      // Not sure why this is needed. Fails without it
-      partiesBloc = PartiesBloc(partiesDao);
+      var partyBloc = PartyBloc.load(encounterModel);
+      await tester.pumpWidget(createHomeScreen(
+          partiesBloc: PartiesBloc(partiesDao), partyBloc: partyBloc));
 
-      await tester.pumpWidget(createHomeScreen(partiesBloc, partyBloc));
       await tester.pumpAndSettle();
 
       await tester.tap(find.byIcon(Icons.save, skipOffstage: false));
@@ -239,13 +244,13 @@ void main() {
 
     testWidgets('Test Save Party -- Should not Overwrite',
         (WidgetTester tester) async {
-      // For some reason, BLOCs initialized in setup Fail
-      partiesBloc = PartiesBloc(partiesDao);
-      var partyBlocNOMOCK = PartyBloc();
       var service = PrefServiceCache(cache: {'confirm_overwrite': true});
+      var partyBloc = PartyBloc.load(encounterModel);
+      await tester.pumpWidget(createHomeScreen(
+          partiesBloc: PartiesBloc(partiesDao),
+          partyBloc: partyBloc,
+          service: service));
 
-      await tester.pumpWidget(
-          createHomeScreen(partiesBloc, partyBlocNOMOCK, service: service));
       await tester.pumpAndSettle();
 
       await tester.tap(find.byIcon(Icons.save, skipOffstage: false));
@@ -276,7 +281,13 @@ void main() {
     });
 
     testWidgets('Test Party Management', (WidgetTester tester) async {
-      await tester.pumpWidget(createHomeScreen(partiesBloc, partyBloc));
+      var service = PrefServiceCache(cache: {'confirm_overwrite': true});
+      var partyBloc = PartyBloc.load(encounterModel);
+      await tester.pumpWidget(createHomeScreen(
+          partiesBloc: PartiesBloc(partiesDao),
+          partyBloc: partyBloc,
+          service: service));
+
       await tester.pumpAndSettle();
 
       await tester.tap(find.byTooltip('Open navigation menu'));
@@ -289,7 +300,8 @@ void main() {
     });
 
     testWidgets('Test Help Route', (WidgetTester tester) async {
-      await tester.pumpWidget(createHomeScreen(partiesBloc, partyBloc));
+      await tester.pumpWidget(createHomeScreen(
+          partiesBloc: PartiesBloc(partiesDao), partyBloc: PartyBloc()));
       await tester.pumpAndSettle();
 
       await tester.tap(find.byTooltip('Open navigation menu'));
@@ -302,7 +314,8 @@ void main() {
     });
 
     testWidgets('Test Settings Route', (WidgetTester tester) async {
-      await tester.pumpWidget(createHomeScreen(partiesBloc, partyBloc));
+      await tester.pumpWidget(createHomeScreen(
+          partiesBloc: PartiesBloc(partiesDao), partyBloc: PartyBloc()));
       await tester.pumpAndSettle();
 
       await tester.tap(find.byTooltip('Open navigation menu'));
@@ -316,18 +329,21 @@ void main() {
   });
 }
 
-void checkTitleText(Encounter partyModel) {
-  expect(find.widgetWithText(AppBar, 'Round ' + partyModel.round.toString()),
-      findsOneWidget);
-}
-
-Widget createHomeScreen(PartiesBloc partiesBloc, PartyBloc partyBloc,
-    {BasePrefService? service}) {
+Widget createHomeScreen(
+    {required PartiesBloc partiesBloc,
+    required PartyBloc partyBloc,
+    BasePrefService? service}) {
   service ??= PrefServiceCache();
   return PrefService(
-      service: service,
-      child: MultiBlocProvider(providers: [
+    service: service,
+    child: MultiBlocProvider(
+      providers: [
         BlocProvider<PartyBloc>(create: (BuildContext context) => partyBloc),
         BlocProvider<PartiesBloc>(create: (BuildContext context) => partiesBloc)
-      ], child: MaterialApp(home: PartyScreen())));
+      ],
+      child: MaterialApp(
+        home: PartyScreen(),
+      ),
+    ),
+  );
 }
