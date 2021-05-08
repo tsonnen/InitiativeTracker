@@ -9,7 +9,6 @@ import 'package:initiative_tracker/helpers/keys.dart';
 import 'package:initiative_tracker/models/character_model.dart';
 import 'package:initiative_tracker/models/encounter.dart';
 import 'package:initiative_tracker/screens/character_screen.dart';
-import 'package:initiative_tracker/widgets/spinner_button.dart';
 
 import '../test_helper.dart';
 
@@ -111,11 +110,8 @@ void main() {
           find.widgetWithText(TextField, 'HP'), charToAdd.hp.toString());
       await tester.pumpAndSettle();
 
-      var spinner =
-          tester.widget<SpinnerButton>(find.byKey(Key(Keys.numUnitKey)));
-
-      await TestHelper.selectItemInNumberSpinnerDialog(
-          tester, spinner, numCharacters);
+      await tester.enterText(
+          find.byKey(Key(Keys.numUnitKey)), numCharacters.toString());
 
       await tapButton(tester);
       await tester.pumpAndSettle();
@@ -164,11 +160,8 @@ void main() {
           editedChar.hp.toString());
       await tester.pumpAndSettle();
 
-      var spinner =
-          tester.widget<SpinnerButton>(find.byKey(Key(Keys.initModKey)));
-
-      await TestHelper.selectItemInNumberSpinnerDialog(
-          tester, spinner, editedChar.initMod!);
+      await tester.enterText(
+          find.byKey(Key(Keys.initModKey)), editedChar.initMod.toString());
 
       await tester.pumpAndSettle();
 

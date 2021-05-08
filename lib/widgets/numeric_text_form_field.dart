@@ -2,25 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:initiative_tracker/widgets/styles.dart';
 
-class NumericTextFormField extends StatefulWidget {
+class NumericTextFormField extends StatelessWidget {
   final String label;
-  final TextEditingController controller;
+  final TextEditingController? controller;
+  final bool allowNegative;
+  final Function(String?)? onChanged;
 
-  NumericTextFormField({required this.label, controller})
-      : controller = controller ?? TextEditingController();
+  NumericTextFormField(
+      {Key? key,
+      required this.label,
+      this.controller,
+      this.onChanged,
+      this.allowNegative = false})
+      : super(key: key);
 
-  @override
-  _NumericTextFormFieldState createState() => _NumericTextFormFieldState();
-}
-
-class _NumericTextFormFieldState extends State<NumericTextFormField> {
   @override
   Widget build(BuildContext context) {
+    var formatters = <TextInputFormatter>[];
+    formatters.add(FilteringTextInputFormatter.allow(
+      RegExp('${allowNegative ? '^-?' : ''}\\d*'),
+    ));
+
     return TextFormField(
-      decoration: Styles.textFieldDecoration(widget.label),
+      decoration: Styles.textFieldDecoration(label),
       keyboardType: TextInputType.number,
-      controller: widget.controller,
-      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+      controller: controller,
+      onChanged: onChanged,
+      inputFormatters: formatters,
     );
   }
 }
