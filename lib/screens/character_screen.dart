@@ -194,7 +194,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
                         initCalc: () {
                           if (!PreferenceManger.getRollInititative(service) ||
                               widget.isEdit) {
-                            return initiativeModifier;
+                            return int.tryParse(initController.text) ?? 0;
                           }
 
                           return rollDice(
@@ -204,9 +204,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
                         },
                         color: color,
                         notes: noteController.text,
-                        initMod:
-                            int.tryParse(initiativeModifierController.text) ??
-                                1);
+                        initMod: initiativeModifier);
 
                     characters.forEach((element) {
                       partyBloc.add(AddPartyCharacter(element));

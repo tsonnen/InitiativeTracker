@@ -36,23 +36,13 @@ void main() {
       await tapButton(tester);
 
       expect(find.text('Please enter a name'), findsOneWidget);
-
-      verifyNever(
-          () => partyBloc.add(any(that: MatchType<AddPartyCharacter>())));
+      expect(partyBloc.state.encounterModel!.characterCount, 0);
     });
   });
 
   group('Character Screen-Add Character', () {
-    MockPartyBloc? partyBloc;
-
-    setUp(() {
-      partyBloc = MockPartyBloc();
-    });
     testWidgets('Add Character-No Gen', (WidgetTester tester) async {
-      when(() => partyBloc!.state)
-          .thenAnswer((_) => PartyLoadedSucess(Encounter()));
-      when(() => partyBloc!.add(any(that: MatchType<AddPartyCharacter>())))
-          .thenReturn(null);
+      var partyBloc = PartyBloc();
 
       var service = PrefServiceCache(cache: {'should_roll_init': false});
 
@@ -83,15 +73,14 @@ void main() {
       await tapButton(tester);
       await tester.pumpAndSettle();
 
-      verify(() => partyBloc!.add(any(that: MatchType<AddPartyCharacter>())))
-          .called(1);
+      expect(
+          partyBloc.state.encounterModel!.characters!.first!
+              .almostEqual(charToAdd),
+          true);
     });
 
     testWidgets('Add Character-Gen', (WidgetTester tester) async {
-      when(() => partyBloc!.state)
-          .thenAnswer((_) => PartyLoadedSucess(Encounter()));
-      when(() => partyBloc!.add(any(that: MatchType<AddPartyCharacter>())))
-          .thenReturn(null);
+      var partyBloc = PartyBloc();
       var charToAdd = CharacterModel(characterName: 'Test Char', hp: 12);
       var numCharacters = 2;
 
@@ -116,25 +105,14 @@ void main() {
       await tapButton(tester);
       await tester.pumpAndSettle();
 
-      verify(() => partyBloc!.add(any(that: MatchType<AddPartyCharacter>())))
-          .called(numCharacters);
+      expect(partyBloc.state.encounterModel!.characterCount, numCharacters);
     });
   });
 
   group('Character Screen Edit Tests', () {
-    MockPartyBloc? partyBloc;
-
-    setUp(() {
-      partyBloc = MockPartyBloc();
-    });
     testWidgets('Test Edit', (WidgetTester tester) async {
       var service = PrefServiceCache(cache: {'should_roll_init': true});
-
-      when(() => partyBloc!.state)
-          .thenAnswer((_) => PartyLoadedSucess(Encounter()));
-      when(() => partyBloc!.add(any(that: MatchType<AddPartyCharacter>())))
-          .thenReturn(null);
-
+      var partyBloc = PartyBloc();
       var charToEdit = CharacterModel(
           characterName: 'Test Char',
           initiative: 12,
@@ -144,7 +122,7 @@ void main() {
       var editedChar = charToEdit.copyWith(hp: 25, initMod: 12);
 
       await tester.pumpWidget(BlocProvider<PartyBloc>(
-          create: (context) => partyBloc!,
+          create: (context) => partyBloc,
           child: createCharacterScreen(partyBloc,
               character: charToEdit, service: service)));
 
@@ -168,7 +146,7 @@ void main() {
       await tapButton(tester, character: charToEdit);
       await tester.pumpAndSettle();
 
-      verify(() => partyBloc!.add(AddPartyCharacter(editedChar))).called(1);
+      expect(partyBloc.state.encounterModel!.characters!.first, editedChar);
     });
   });
 }
@@ -179,13 +157,17 @@ Future<void> tapButton(WidgetTester tester, {CharacterModel? character}) async {
   await tester.pumpAndSettle();
 }
 
-Widget createCharacterScreen(PartyBloc? partyBloc,
+Widget createCharacterScreen(PartyBloc partyBloc,
     {CharacterModel? character, BasePrefService? service}) {
+  if (partyBloc.state is PartyInitial) {
+    partyBloc.add(GenerateParty());
+  }
+
   service ??= PrefServiceCache();
   return PrefService(
     service: service,
     child: BlocProvider<PartyBloc>(
-      create: (BuildContext context) => partyBloc!,
+      create: (BuildContext context) => partyBloc,
       child: MaterialApp(
         home: CharacterScreen(
           character: character,

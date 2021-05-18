@@ -26,7 +26,7 @@ class CharacterModel {
       this.initiative = 0,
       this.notes,
       this.initMod = 0,
-      this.color = Colors.white,
+      this.color = Colors.black,
       String? characterUUID})
       : characterUUID = characterUUID ?? Uuid().generateV4();
 
@@ -91,6 +91,14 @@ class CharacterModel {
     }
 
     return characters;
+  }
+
+  bool almostEqual(CharacterModel rhs) {
+    return characterName == rhs.characterName &&
+        hp == rhs.hp &&
+        initMod == rhs.initMod &&
+        initiative == rhs.initiative &&
+        notes == rhs.notes;
   }
 
   @override
