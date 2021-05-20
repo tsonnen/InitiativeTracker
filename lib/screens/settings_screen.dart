@@ -50,7 +50,9 @@ class SettingsPageState extends State<SettingsPage> {
             title: Text('Should Roll Initiative'),
             pref: 'should_roll_init',
             onChange: (val) {
-              setState(() {}); // Force page to rebuild
+              setState(() {
+                BlocProvider.of<PartyBloc>(context).add(ForcePartyRebuild());
+              }); // Force page to rebuild
             },
           ),
           PrefDropdown(
